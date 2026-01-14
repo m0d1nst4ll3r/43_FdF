@@ -1,0 +1,79 @@
+Landscape map looks like
+0 0 0
+0 1 0
+0 0 0
+
+
+
+Question 1: Do we enforce rectangular maps or do we handle non-rectangular ones?
+E.g my map is:
+0 0 0
+0 1
+0 0 0
+Is this valid? Do I draw a wireframe with just a missing link somewhere?
+If so, how far do we go and how do we handle missing links?
+E.g
+0   1
+1 1  
+0 1 0
+How would I handle the isolated link? Ignore it?
+
+
+
+Question 2: What separators do we accept between values in a map?
+What if my map looks like:
+0 0 0
+0 1  0
+0 0 0
+The [x3, y2] value has an extra space before it. Is that valid? Do we consider successive spaces the same as one space?
+Do we accept tabs instead of spaces?
+E.g
+0	10	0
+0	1	0
+0	100	0
+
+
+
+Question 3: Do bad maps lead to an error, or do we handle it anyway?
+E.g
+0 0 0
+0 a 0
+0 0 0
+'a' is not a value, do we throw an error, do we still display something but ignore a? Do we ignore it by skipping it and counting it as essentially a space, or do we count it as a missing link (see question 1)?
+
+
+
+Question 4: Do we enforce a limit on values?
+E.g
+0 2147483647 2147483648
+
+
+
+Question 5: Do we accept negative values?
+E.g
+0 0 0
+0 -1 0
+0 0 0
+
+
+More info:
+Landscape map can also look like
+0,0x556677 0,0x556677 0,0x556677
+0,0x556677 0,0x556677 0,0x556677
+0,0x556677 0,0x556677 0,0x556677
+For color
+
+
+
+Answers:
+1. Only handle rectangular map, else error (this is the simplest and most logic)
+2. is_space function, any amount of characters, meaning space tab space is fine
+3. Bad map = error (simplest)
+4. Limit is what fits within an int
+5. Yes, this is required in the subject
+
+
+
+
+
+

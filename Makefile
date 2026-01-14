@@ -6,7 +6,7 @@
 #    By: rpohlen <rpohlen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/20 14:37:51 by rpohlen           #+#    #+#              #
-#    Updated: 2026/01/14 12:22:57 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/01/14 15:16:04 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,9 +26,10 @@ INC					= inc \
 					  mlx
 LIB					= libft/libft.a \
 					  mlx/libmlx_Linux.a
+LINK				= -lXext -lX11
 
 CC					= cc
-CFLAGS				= -Wall -Wextra -Werror
+CFLAGS				= -Wall -Wextra -Werror -g
 CPPFLAGS			= $(addprefix -I,$(INC)) -MMD -MP
 MAKEFLAGS			+= --no-print-directory -j
 
@@ -37,7 +38,7 @@ all:				$(NAME)
 bonus:				$(NAME)
 
 $(NAME):			$(OBJ) $(LIB)
-					$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ $^
+					$(CC) $(CFLAGS) $(CPPFLAGS) $(LINK) -o $@ $^
 
 $(LIB):
 					$(MAKE) -C $(@D)
@@ -47,11 +48,12 @@ $(BUILDDIR)/%.o:	$(SRCDIR)/%.c
 					$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 clean:
-					@for f in $(dir $(LIB)); do $(MAKE) -C $$f clean; done
+					$(MAKE) -C libft clean
 					rm -rf $(BUILDDIR)
 
 fclean:
-					@for f in $(dir $(LIB)); do $(MAKE) -C $$f fclean; done
+					$(MAKE) -C libft fclean
+					$(MAKE) -C mlx clean
 					rm -rf $(NAME) $(BUILDDIR)
 
 re:

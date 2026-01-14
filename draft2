@@ -1,0 +1,49 @@
+## How to do this shit
+
+Reminders:
+1. We only handle rectangular maps, any incorrect value causes an error (e.g non-digit value, not an int) - negative values are ok
+2. There can be a color code after the value in the form (value,color)
+3. We accept any amount of whitespace (isspace) as separators between values
+Bonuses:
+- View panning
+- Zooming
+- Rotating
+- Height multiplier
+- Default colors relative to height (different palettes)
+
+Parsing's easy, but how do we store data?
+
+Array seems simplest, but 1D or 2D? (1D is probably better optimized)
+
+When we have the data, what do we do with it? We have to translate each point's [xy] coord onto our window. Since we want to start with an isometric view, we need to apply an offset to each point.
+
+A good start would be representing the points with dots, to start with. Without wires. A better start would be already having zoom, rotate etc... for the dots.
+
+Once we have the dots set up, we just need to calculate how to link them with wires, and draw that. Then, think about colors.
+
+Btw I haven't mentioned colors yet. Our 1D array can be a struct with just a height value, and a color value. Color value can be -1 if it was never set.
+
+
+
+
+
+
+
+Some thoughts already about rendering:
+
+If I do implement a zoom, how do I implement it?
+Wires have a width. They can be represented to be more or less small.
+Or their width can just be "1" (1 pixel, never more) no matter the zoom.
+In one case, zooming will look like the drawing gets bigger/closer.
+In the other, it will look like we are "expanding" space, because the wires will stay as thin and never grow wider.
+
+If the value is so high the point is outside the screen, we still need to draw a wire.
+
+Cool features other than zoom include:
+
+- Keybind to modify how high (or low) the points go (multiplier for height)
+- Rotate in all directions (left right, up down)
+- Pan view with arrows
+- Have default colors relative to height (if color isn't specified in map)
+- Different color palettes?
+- Changing background color?

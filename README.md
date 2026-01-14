@@ -1,13 +1,14 @@
 # FdF
 
-Rendering a 3D mesh using mlx.
+[Subject](https://cdn.intra.42.fr/pdf/pdf/185030/en.subject.pdf)
+
+This project is about creating a simple wireframe model representation of a 3D landscape by linking various points (x, y, z) thanks to line segments (edges).
 
 ## Instructions
 
 1. Clone repo
 ```bash
-git clone https://github.com/m0d1nst4ll3r/43_FdF.git
-cd 43_FdF
+git clone https://github.com/m0d1nst4ll3r/43_FdF.git && cd 43_FdF
 ```
 2. Clone mlx
 ```bash
