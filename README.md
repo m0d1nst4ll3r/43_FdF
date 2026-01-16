@@ -95,7 +95,7 @@ Finally, your color should be in `0xrrggbb` hexadecimal form. As far as I can se
 ### 3. You can change your image's pixels, but your image isn't displayed yet. Here's how to display it:
 
 ```c
-my_pixel_put(img, 1920 / 2, 1080 / 2, 0xff0000);
+my_pixel_put(img, 1920 / 2, 1080 / 2, 0xff0000); // Example use of my_pixel_put
 mlx_put_image_to_window(mlx, win, img.img, 0, 0);
 ```
 
