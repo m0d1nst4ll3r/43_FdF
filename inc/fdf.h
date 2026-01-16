@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/16 01:38:51 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/16 12:33:11 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@
 # include <errno.h>
 
 # include <time.h> // Remove this
+# include <sys/time.h> // Remove if I don't optimize like this
+# include <stdbool.h> // Remove if I don't use bools
 
 typedef struct	s_img
 {
@@ -45,12 +47,17 @@ typedef struct	s_img
 
 typedef struct	s_fdf
 {
-	char	**av;
-	void	*mlx;
-	void	*win;
-	t_img	img;
-	int		lmb_held;
-	int		rmb_held;
+	char			**av;
+	void			*mlx;
+	void			*win;
+	t_img			img;
+	int				lmb_held;
+	int				rmb_held;
+	bool			refresh_needed;
+	int				frame_count;
+	struct timeval	old_time;
+	struct timeval	cur_time;
+	struct timeval	fps_time;
 }	t_fdf;
 
 // mlx_util.c

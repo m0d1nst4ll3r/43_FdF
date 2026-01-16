@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 21:54:08 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/16 01:38:46 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/16 12:36:33 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ static int	pointer_motion_hook(int x, int y, t_fdf *d)
 {
 	if (d->lmb_held || d->rmb_held)
 	{
+		if (!d->refresh_needed)
+			d->refresh_needed = true;
 		if (d->lmb_held)
 			pixel_put(d->img, x, y, 0xff0000);
 		else
@@ -71,9 +73,47 @@ static int	mouse_hook(int button, int x, int y, t_fdf *d)
 	return (0);
 }
 
+static int	is_time_to_refresh(struct timeval old_time, struct timeval cur_time, int usec_to_refresh)
+{
+	if (old_time.tv_sec == cur_time.tv_sec)
+	{
+		if (old_time.tv_usec + usec_to_refresh < cur_time.tv_usec)
+			return (1);
+		return (0);
+	}
+	if (old_time.tv_sec + 1 == cur_time.tv_sec)
+	{
+		if (old_time.tv_usec + usec_to_refresh < cur_time.tv_usec + 1000000)
+			return (1);
+		return (0);
+	}
+	if (old_time.tv_sec + 1 < cur_time.tv_sec)
+		return (1);
+	return (0);
+}
+
 static int	sync_hook(t_fdf *d)
 {
-	mlx_put_image_to_window(d->mlx, d->win, d->img.img, 0, 0);
+/*	if (d->time != time(NULL))
+	{
+		ft_printf("%d\n", d->count);
+		d->time = time(NULL);
+		d->count = 0;
+	}*/
+	gettimeofday(&d->cur_time, NULL);
+	if (d->refresh_needed && is_time_to_refresh(d->old_time, d->cur_time, 6944))
+	{
+		d->old_time = d->cur_time;
+		mlx_put_image_to_window(d->mlx, d->win, d->img.img, 0, 0);
+		d->refresh_needed = false;
+		d->frame_count++;
+	}
+	if (d->fps_time.tv_sec < d->cur_time.tv_sec)
+	{
+		ft_printf("Fps: %d\n", d->frame_count);
+		d->frame_count = 0;
+		d->fps_time = d->cur_time;
+	}
 	return (0);
 }
 

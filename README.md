@@ -33,7 +33,7 @@ If make fails, see [minilibx readme](https://github.com/42paris/minilibx-linux/b
 
 Understanding how the mlx works is central to 42's graphical projects. Here's an imperfect but quick guide:
 
-(Quick reminder - you should link your objects with -lXext and -lX11, possibly even -lm and -lz on some computers)
+(Quick reminder - you should link your objects with -lXext and -lX11, possibly even -lm and -lz on some systems.)
 
 ### 1. First, you have to initialize a display instance, create a window for it, and create an image.
 
@@ -144,11 +144,19 @@ Yes, that last one is obscure. Also, the minilibx has specific `mlx_mouse_hook` 
 
 ### 6. What `mlx_loop_hook` is and why you should use it
 
-Todo
+The essence of your graphical program will probably be to write a certain amount of pixels to your image with `my_pixel_put` before refreshing it with `mlx_put_image_to_window`. But *when* exactly should you refresh your window? After every written pixel? After an entire image is calculated? Or just a set amount of times per second? Or yet another entirely different way?
+
+I don't believe there is any universal answer to this question, and I definitely think you should experiment with the possibilities (go crazy!). But if, like me, your original solution turns out to be quite sluggish and unenjoyable, then you are probably trying to refresh your image extremely fast, faster than your processor can handle, and you would benefit from setting a *refresh rate* (that is, running `mlx_put_image_to_window` a set amount of times per second). This is why `gettimeofday()` is allowed for graphical projects.
+
+The first step is writing yet another hook function but this time, hooking it to the main mlx loop which fires constantly in the background.
 
 ```c
 mlx_loop_hook(mlx, loop_hook, &data);
 ```
+
+If you pass a function to the loop hook, instead of firing on certain events like key presses, it will fire on every iteration of the mlx loop, which is the infinite loop that starts when you use `mlx_loop`. This loop isn't really limited in how many times in runs every second. Instead, it just gets slower as you pile up operations to be done during it.
+
+Here is a simple experiment to figure out how many times it runs per second (increment a value on every iteration, and print + reset every second):
 
 ```c
 int	loop_hook(t_mystruct *data)
@@ -164,7 +172,23 @@ int	loop_hook(t_mystruct *data)
 }
 ```
 
-### Thanks for reading and happy coding :)
+In my case, the loop runs about 14,000 times per second. That's pretty fast. Note that it'd run even faster without these instructions.
+
+Now, you can try putting your `mlx_put_image_to_window` in there instead of your other event hooks, and see what happens. First, if your user experience was extremely sluggish before, there's a good chance it will suddenly get much smoother and much more enjoyable. That's because you're not piling up work for your processor faster than it can execute it. You're just telling it to work whenever it has free time.
+
+In my case, the loop now runs 240 times per second. This is *significantly slower*, all of a sudden. This means that if I were to try running `mlx_put_image_to_window` faster than 240 times a second (which can happen very easily if I run it on a `MotionNotify` event, which fires about 600 times a second), my processor wouldn't be able to keep up and a queue would start forming.
+
+If you wanted now to only refresh your window 60 times per second, you'd have to call `gettimeofday()` and compare its return to your last refresh's timestamp. For 60 fps, you'd want to wait 1 / 60 milliseconds, or 16,666 microseconds. You can even set a condition for it not to refresh as long as you haven't written anything new to your image.
+
+And of course, if the operations you execute between two frames take more than 16,666 microseconds for your processor to complete, you will experience framerate drops! This is because the mlx loop only fires after your program has finished doing whatever it was doing (that is, unless you use multi-threading).
+
+### 7. Some end notes:
+
+I haven't talked about using xpm files (`mlx_xpm_file_to_image(void *mlx_ptr, char *filename, int *width, int *height)`) and more, as I'm still familiarizing myself with the mlx. Make sure to check out other resources and take a look at mlx.h which contains all the mlx function prototypes. Don't be afraid to try things. I suspect the mlx is so poorly documented because 42 wants us to figure it out through experimentation.
+
+Note that the mlx does not use your gpu, only your cpu. Not sure if there's a way to let it use your gpu though!
+
+### Thanks for reading and happy coding ^-^
 
 ## Resources
 

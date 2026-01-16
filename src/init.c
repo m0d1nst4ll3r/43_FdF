@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:02:53 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/16 01:38:51 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/16 12:31:29 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,10 @@ void	init_prog(t_fdf *d, char **av)
 	d->av = av; // copy av
 	d->lmb_held = 0;
 	d->rmb_held = 0;
+	d->refresh_needed = false;
+	d->frame_count = 0;
+	gettimeofday(&d->old_time, NULL);
+	d->fps_time = d->old_time;
 	init_mlx(d); // init mlx
 	// init mallocs (none for now)
 }
