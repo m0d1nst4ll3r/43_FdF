@@ -1,0 +1,37 @@
+Features to implement (along with base program):
+- Left click + dragging moves the view around
+- Right click + dragging rotates the view around
+- Mousewheel up/down changes the height (or depth when negative)
+- A GUI that displays when pressing 'h'
+	- GUI uses xpm file for a pretty little box visual
+	- Box has some useful info about the drawing (not sure yet)
+	 	- File name?
+		- Current heigh modifier
+		- Current zoom modifier
+		- Current color palette?
+		- State of hiding mesh which is behind other stuff (on/off)
+		- FPS?
+	- Box also has keybind info
+- Keybind to enable/disable (should be on by default) hiding mesh that's behind other stuff
+- Keybind to enable/disable default coloring
+
+
+Steps to implement all this:
+- Read map, store it somewhere
+- Use map to display small circles at first on every point that needs to be linked
+	- Need formula to draw a circle with a certain radius centered on a certain coord
+	- Can be a simple diamond btw, this isn't necessary, just to get a basic view of things
+- Figure out formula to view said points at an angle
+	- See how changing values in that formula changes the angle and does a "rotating" effect
+	- Start binding keys to change values in real time and figure out a way to do all this without lag
+- Should have movement in all directions for next step
+	- Next step is to manage to make pointer-controlled rotation and displacing
+	- If this isn't possible for whatever reason, key controls are still ok
+	- Can still have key controls with mouse, for completeness
+	- WASD moves view around, arrows rotate (or sth)
+- Try making a little GUI image with info that displays with h
+	- This is gonna be complicated because the only mlx function to display strings writes TO THE WINDOW directly, it doesn't allow writing to an image
+	- Yes this is dumb and yes the mlx is [censored]
+	- Pretty visuals with an xpm file, just for fun
+	- Enable dragging this window around
+
