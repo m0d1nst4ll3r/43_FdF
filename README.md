@@ -33,6 +33,8 @@ If make fails, see [minilibx readme](https://github.com/42paris/minilibx-linux/b
 
 Understanding how the mlx works is central to 42's graphical projects. Here's an imperfect but quick guide:
 
+(Quick reminder - you should link your objects with -lXext and -lX11, possibly even -lm and -lz on some computers)
+
 ### 1. First, you have to initialize a display instance, create a window for it, and create an image.
 
 ```c
