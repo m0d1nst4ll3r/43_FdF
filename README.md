@@ -31,9 +31,9 @@ If make fails, see [minilibx readme](https://github.com/42paris/minilibx-linux/b
 
 ## MLX for dummies
 
-Understanding how the mlx works is central to 42's graphical projects. Here's an imperfect but quick guider:
+Understanding how the mlx works is central to 42's graphical projects. Here's an imperfect but quick guide:
 
-1. First, you have to initialize a display instance, create a window for it, and create an image.
+### 1. First, you have to initialize a display instance, create a window for it, and create an image.
 
 ```c
 void	*mlx;
@@ -61,9 +61,9 @@ typedef struct	s_img
 {
 	void	*img;
 	char	*addr;
-	int		bpp; //bits per pixel
-	int		llen; //line length
-	int		endian;
+	int	bpp; //bits per pixel
+	int	llen; //line length
+	int	endian;
 }	t_img;
 
 img.addr = mlx_get_data_addr(img.img, &img.bpp, &img.llen, &img.endian);
@@ -71,7 +71,7 @@ img.addr = mlx_get_data_addr(img.img, &img.bpp, &img.llen, &img.endian);
 
 The 3 extra variables are environment-specific and handled by the mlx. Their values don't really matter, you'll just need to take some of them into account when writing into the image (nothing complicated, you'll see).
 
-2. To change a pixel's color, you need to write directly into the image you've created using the address you just got. You can make a function for it.
+### 2. To change a pixel's color, you need to write directly into the image you've created using the address you just got. You can make a function for it.
 
 ```c
 void	my_pixel_put(t_img img, int x, int y, int color)
@@ -82,24 +82,24 @@ void	my_pixel_put(t_img img, int x, int y, int color)
 
 I know, this looks complicated so let's take it step by step. First, you need to offset the address by your [x, y] using the variables you got before, to reach the correct position of the pixel you're trying to write to.
 
-Multiply y (y is the line of the pixel) by line length - you'd be tempted to multiply by whatever your window horizontal length is (like 1920), but `mlx_get_data_addr` gives us its own value because it *might* not be the same...
+Multiply y (y is the line of the pixel) by line length - you'd be tempted to multiply by whatever your window horizontal length is (like 1920) and the size of an int (4, so 1920 x 4), but `mlx_get_data_addr` gives us its own value because it *might* not be the same...
 
-Then multiply x (x is how many pixels are before the one you're trying to change) by how many bytes a pixel takes (which is `bits_per_pixel / 8`). This is probably 4, but, again... `mlx_get_data_addr` gave us a value because it might be different.
+Then multiply x (x is how many pixels are before the one you're trying to change - on its own line, anyway) by how many bytes a pixel takes (which is `bits_per_pixel / 8`). This is probably 4, but, again, `mlx_get_data_addr` gave us a value because it might be different.
 
 Then, you got the address as a `char *`, but colors are ints, so you need to convert it into `int *` before writing to it (or else you will only modify one byte, not 4).
 
-Finally, your color should be in 0xrrggbb hexadecimal form. As far as I can see, alpha values are ignored by the mlx (0xaarrggbb) so you don't need to bother.
+Finally, your color should be in `0xrrggbb` hexadecimal form. As far as I can see, alpha values are ignored by the mlx (`0xaarrggbb`) so you don't need to bother.
 
-3. You can change your image's pixels, but your image isn't displayed yet. Here's how to display it:
+### 3. You can change your image's pixels, but your image isn't displayed yet. Here's how to display it:
 
 ```c
 my_pixel_put(img, 1920 / 2, 1080 / 2, 0xff0000);
 mlx_put_image_to_window(mlx, win, img.img, 0, 0);
 ```
 
-4. Now you'll have a nice red pixel in the center of your window. But it disappears as soon as it appears. You need an infinite loop.
+### 4. Now you'll have a nice red pixel in the center of your window. But said window disappears before you can even look at it! You need an infinite loop.
 
-You could be tempted to create a `while (1)` loop yourself, but no need, and the mlx wouldn't work anyway. Instead, you use:
+You could be tempted to create a `while (1)` loop yourself, but no need, and the mlx wouldn't work with it anyway. Instead, you use:
 
 ```c
 mlx_loop(mlx);
@@ -107,13 +107,13 @@ mlx_loop(mlx);
 
 Note that it's no use writing any code beyond this line as it will never be executed. Not as long as the mlx loop isn't broken out of, which shouldn't really happen anyway.
 
-5. Your window stays open. But you have to hit Ctrl+C to close it. Not very nice. How do we make things happen with clicks and keypresses?
+### 5. Your window stays open. But you have to hit Ctrl+C to close it. Not very nice. How do we make things happen with clicks and keypresses?
 
 ```c
 mlx_hook(win, 2, 1L << 0, my_hook_function, &my_struct);
 ```
 
-Here you're telling mlx that on KeyPress events (that's the 2 and 1L << 2), `my_hook_function()` should fire, and the address containing `my_struct` should be passed to it.
+Here you're telling mlx that on `KeyPress` events (that's the `2` and `1L << 0`), `my_hook_function()` should fire, and the address containing `my_struct` should be passed to it.
 
 Hence, you should have such a function somewhere, which will look like:
 
@@ -128,19 +128,19 @@ Once you've done that (*before* `mlx_loop`), any keyboard key pressed will cause
 
 Note that we're passing an address of a structure there, but you can pass any address, or even *none*, if you don't particularly care. You probably will, though, if your program does anything fun.
 
-Now this hooks the KeyPress event, but there are many many more! There's a KeyRelease one, ButtonPress and ButtonRelease (for mouse buttons), MotionNotify (for mouse pointer motion), and more. Go look at the XLib doc for them (or look directly at X.h linked below).
+Now this hooks the `KeyPress` event, but there are many many more! There's a `KeyRelease` one, `ButtonPress` and `ButtonRelease` (for mouse buttons), `MotionNotify` (for mouse pointer motion), and more. Go look at the XLib doc for them (or look directly at X.h linked below).
 
 Here are a few more prototypes for different hook functions:
 
 ```c
 int	mouse_hook(int button, int x, int y, void *data); // ButtonPress is 4 and 1L << 2
 int	motion_hook(int x, int y, void *data); // MotionNotify is 6 and 1L << 6
-int clientmsg_hook(void *data); // 33 and 1, this fires on clicking X to close the window
+int	clientmsg_hook(void *data); // 33 and 1, this fires on clicking X to close the window
 ```
 
 Yes, that last one is obscure. Also, the minilibx has specific `mlx_mouse_hook` and `mlx_key_hook` functions, but you're better off using the generic one which will grant you much more freedom, even though it's slightly more difficult to use.
 
-6. What `mlx_loop_hook` is and why you should use it
+### 6. What `mlx_loop_hook` is and why you should use it
 
 Todo
 
@@ -162,7 +162,7 @@ int	loop_hook(t_mystruct *data)
 }
 ```
 
-7. Thanks for reading and happy coding :)
+### Thanks for reading and happy coding :)
 
 ## Resources
 
