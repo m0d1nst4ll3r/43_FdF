@@ -61,9 +61,9 @@ typedef struct	s_img
 {
 	void	*img;
 	char	*addr;
-	int	bpp; //bits per pixel
-	int	llen; //line length
-	int	endian;
+	int		bpp; //bits per pixel
+	int		llen; //line length
+	int		endian;
 }	t_img;
 
 img.addr = mlx_get_data_addr(img.img, &img.bpp, &img.llen, &img.endian);
