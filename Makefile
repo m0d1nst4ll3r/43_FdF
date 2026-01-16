@@ -6,47 +6,63 @@
 #    By: rpohlen <rpohlen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/20 14:37:51 by rpohlen           #+#    #+#              #
-#    Updated: 2026/01/14 15:16:04 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/01/15 22:04:03 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CFILES				= main.c
-
+# Source files
+CFILES				= main.c \
+					  init.c \
+					  exit.c \
+					  hook.c \
+					  mlx_util.c
 SRCDIR				= src
-BUILDDIR			= .build
-
 SRC					= $(addprefix $(SRCDIR)/, $(CFILES))
-OBJ					= $(SRC:$(SRCDIR)/%.c=$(BUILDDIR)/%.o)
-DEP					= $(OBJ:.o=.d)
 
-NAME				= fdf
-
-INC					= inc \
+# Include directories
+INCDIR				= inc \
 					  libft/inc \
 					  mlx
+
+# Build directory
+BUILDDIR			= .build
+
+# Object and dependency files
+OBJ					= $(SRC:%.c=$(BUILDDIR)/%.o)
+DEP					= $(OBJ:.o=.d)
+
+# Output binary
+NAME				= fdf
+
+# Libraries
 LIB					= libft/libft.a \
 					  mlx/libmlx_Linux.a
 LINK				= -lXext -lX11
 
+# Compiler settings
 CC					= cc
-CFLAGS				= -Wall -Wextra -Werror -g
-CPPFLAGS			= $(addprefix -I,$(INC)) -MMD -MP
+CFLAGS				= -Wall -Wextra -Werror -MMD -MP $(addprefix -I,$(INCDIR))
+
+# Make settings
 MAKEFLAGS			+= --no-print-directory -j
 
+# Default rule
 all:				$(NAME)
 
-bonus:				$(NAME)
-
+# Link
 $(NAME):			$(OBJ) $(LIB)
-					$(CC) $(CFLAGS) $(CPPFLAGS) $(LINK) -o $@ $^
+					$(CC) $(CFLAGS) $^ $(LINK) -o $@
 
+# Build libraries
 $(LIB):
 					$(MAKE) -C $(@D)
 
-$(BUILDDIR)/%.o:	$(SRCDIR)/%.c
+# Compile source -> object (auto-create directories)
+$(BUILDDIR)/%.o:	%.c
 					@mkdir -p $(@D)
-					$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+					$(CC) $(CFLAGS) -c -o $@ $<
 
+# Cleanup
 clean:
 					$(MAKE) -C libft clean
 					rm -rf $(BUILDDIR)
@@ -60,6 +76,7 @@ re:
 					$(MAKE) fclean
 					$(MAKE) all
 
+# Include dependency files
 -include $(DEP)
 
 .PHONY:		all clean fclean re

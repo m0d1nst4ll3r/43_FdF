@@ -1,28 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   mlx_util.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/14 11:58:06 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/15 23:44:04 by rapohlen         ###   ########.fr       */
+/*   Created: 2026/01/15 18:21:10 by rapohlen          #+#    #+#             */
+/*   Updated: 2026/01/15 18:22:16 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-int	main(int ac, char **av)
+// Writes directly into mlx image
+// Display does not update until next put_image_to_window
+void	pixel_put(t_img img, int x, int y, int color)
 {
-	t_fdf	data;
-
-	(void)ac;
-	//if (ac != 2)
-	//	return (0);
-	init_prog(&data, av); // Init MLX, av, and malloc addresses - can fail
-	//read_map(); // Read map and store it somewhere - can fail
-	set_hooks(&data); // cannot fail
-	// Draw first image and put to window
-	mlx_loop(data.mlx); // Loop
-	// exit_prog will be called by events (hitting Esc or clicking X)
+	*(int *)(img.addr + y * img.llen + x * img.bpp / 8) = color;
 }
