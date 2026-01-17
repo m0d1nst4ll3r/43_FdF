@@ -35,3 +35,23 @@ Steps to implement all this:
 	- Pretty visuals with an xpm file, just for fun
 	- Enable dragging this window around
 
+Progress:
+- Writing map filling function
+- This also checks map, ofc
+- Running into a problem:
+	Map format is not fully decided yet.
+	-?\d+(,0x[0-9a-f]{1,6})?
+	Meaning: an optional -, one or more digits, and an optional comma, then 0, then x, then between 1 and 8 digits or a, b, c, d, e, f
+	Two problems:
+	1. This does not test if the digits fit within an int. What do we do? We can either very annoyingly test for an int value, or we can just say whatever and let ints overflow.
+	What I mean by very annoyingly, it's not so annoying. It's just that I have to make a libft func for it and since it will run during map-filling, it will only detect this error quite late. Doable.
+	2. It's kinda annoying for the color because 0x0 is a color. 0xff is a color (blue). Shit, 255 is a color (blue again). So how about 0,255?
+	I mean, it's really up to me, right? I can say, "oh, you can only specify color with 0xrrggbb and cannot ommit anything even if they are all 0"
+	I can also say "oh well actually if you'd like to just write 0x0, or 0xf, or 0xff, or 0xffff, or 0xff00, etc... you can)
+	And I can also say "actually 0 is fine too"
+	And I can even say "actually 255 or 2026036 is fine too"
+	What's the point though? 0xrrggbb is fine and explicit. 0x000000 may be annoying to type but at least it looks exactly like what a color code would be.
+	All that matters in the end is how the maps are formatted, right?
+	Ok after a bit of grepping with RegExp, it would appear we have 0xff, 0xff00, and 0xff0000 for example, but not 0xf, not 0xfff, and no [0-9],(anything else than 0x..)
+	This means color HAS to be described as a hexadecimal value starting with 0x, and it can at least be 2 digit, 4 digit or 6 digit. But it would just make sense to allow it to be between 1 and 6 digits.
+	Go to work now.

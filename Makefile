@@ -6,7 +6,7 @@
 #    By: rpohlen <rpohlen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/20 14:37:51 by rpohlen           #+#    #+#              #
-#    Updated: 2026/01/15 22:04:03 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/01/17 16:06:11 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,7 +44,8 @@ CC					= cc
 CFLAGS				= -Wall -Wextra -Werror -MMD -MP $(addprefix -I,$(INCDIR))
 
 # Make settings
-MAKEFLAGS			+= --no-print-directory -j
+MAKEFLAGS			+= --no-print-directory
+MAKEFLAGS			:= $(MAKEFLAGS) $(if $(filter -j%,$(MAKEFLAGS)),,-j)
 
 # Default rule
 all:				$(NAME)

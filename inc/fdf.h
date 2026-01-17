@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/16 13:32:28 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/17 16:10:28 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,20 @@
 # include <stdbool.h> // Remove if I don't use bools
 # include <stdio.h> // Remove, this is for comparing speeds with my ft_printf
 
+// Structure for map array
+typedef struct	s_point
+{
+	int	height;
+	int	color;
+}	t_point;
+
+// List for reading file
+typedef struct	s_file
+{
+	char			*line;
+	struct s_file	*next;
+}	t_file;
+
 typedef struct	s_img
 {
 	void	*img;
@@ -53,8 +67,10 @@ typedef struct	s_fdf
 	void			*mlx;
 	void			*win;
 	t_img			img;
-	int				lmb_held;
-	int				rmb_held;
+	t_point			*map; // This contains our map data
+	t_file			*file; // This contains our file (only useful during program init)
+	int				lmb_held; // This isn't very useful for now
+	int				rmb_held; // All this is for fun for now
 	bool			refresh_needed;
 	int				frame_count;
 	struct timeval	old_time;

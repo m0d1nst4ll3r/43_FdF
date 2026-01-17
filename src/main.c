@@ -6,11 +6,24 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:06 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/15 23:44:04 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/17 16:10:28 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
+
+// We don't know how much to malloc our map
+// Until we open the file and start reading it
+// We can either remalloc all the time
+// Or we can read entirely once just to figure out how many lines and columns
+// (and we might as well just verify the validity of the map entirely while we're at it)
+//
+// Which method?
+// 1. Lots and lots of malloc and free calls and re-copying stuff. Bad.
+// 2. Same tbh because reading file twice causes as many mallocs/frees as there are lines.
+// 3. Think of another way?
+// Put all the lines in a chained list, verify validity of all the lines, then malloc
+// This is basically option 2 but without having to read the file twice and close/reopen
 
 int	main(int ac, char **av)
 {

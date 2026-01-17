@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:02:53 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/16 12:31:29 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/17 16:18:26 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ static void	init_mlx(t_fdf *d)
 void	init_prog(t_fdf *d, char **av)
 {
 	d->av = av; // copy av
+	d->file = NULL; // file list
+	d->map = NULL; // map array
 	d->lmb_held = 0;
 	d->rmb_held = 0;
 	d->refresh_needed = false;
