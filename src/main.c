@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:06 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/19 11:41:59 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/19 16:20:16 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,26 @@
 // Put all the lines in a chained list, verify validity of all the lines, then malloc
 // This is basically option 2 but without having to read the file twice and close/reopen
 
+void	display_map_to_make_sure_i_didnt_fuck_it_up(t_fdf data)
+{
+	int	x;
+	int	y;
+
+	y = 0;
+	ft_printf("Map is [%d] lines and [%d] col\n", data.map_height, data.map_width);
+	while (y < data.map_height)
+	{
+		x = 0;
+		while (x < data.map_width)
+		{
+			ft_printf("[%d][%d] ", data.map[y * data.map_width + x].height, data.map[y * data.map_width + x].color);
+			x++;
+		}
+		ft_printf("\n");
+		y++;
+	}
+}
+
 int	main(int ac, char **av)
 {
 	t_fdf	data;
@@ -33,8 +53,9 @@ int	main(int ac, char **av)
 		return (0);
 	init_prog(&data, av); // Init MLX, av, and malloc addresses - can fail
 	get_map(&data); // Read map and store it somewhere - can fail
-	set_hooks(&data); // cannot fail
-	// Draw first image and put to window
-	mlx_loop(data.mlx); // Loop
-	// exit_prog will be called by events (hitting Esc or clicking X)
+	display_map_to_make_sure_i_didnt_fuck_it_up(data);
+	//init_mlx(&data);
+	//set_hooks(&data); // cannot fail
+	//mlx_loop(data.mlx); // Loop
+	exit_prog(data, 0);
 }

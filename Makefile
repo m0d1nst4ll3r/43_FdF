@@ -6,7 +6,7 @@
 #    By: rpohlen <rpohlen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/20 14:37:51 by rpohlen           #+#    #+#              #
-#    Updated: 2026/01/17 16:06:11 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/01/19 15:51:58 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,7 @@
 CFILES				= main.c \
 					  init.c \
 					  exit.c \
+					  file.c \
 					  hook.c \
 					  mlx_util.c
 SRCDIR				= src
@@ -41,7 +42,7 @@ LINK				= -lXext -lX11
 
 # Compiler settings
 CC					= cc
-CFLAGS				= -Wall -Wextra -Werror -MMD -MP $(addprefix -I,$(INCDIR))
+CFLAGS				= -g -Wall -Wextra -Werror -MMD -MP $(addprefix -I,$(INCDIR))
 
 # Make settings
 MAKEFLAGS			+= --no-print-directory

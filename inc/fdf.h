@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/19 12:21:32 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/19 15:50:24 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 # include "xmacros.h"
 # include <string.h>
 # include <errno.h>
+# include <fcntl.h>
 
 # include <time.h> // Remove this
 # include <sys/time.h> // Remove if I don't optimize like this
@@ -87,6 +88,7 @@ int		pixel_put(t_img img, int x, int y, int color);
 
 // init.c
 void	init_prog(t_fdf *d, char **av);
+void	init_mlx(t_fdf *d);
 
 // exit.c
 void	exit_prog(t_fdf d, unsigned char exitval);
@@ -94,5 +96,9 @@ void	error_out(t_fdf d, char *s);
 
 // hook.c
 void	set_hooks(t_fdf *d);
+
+// file.c
+void	free_file(t_file **file);
+void	get_map(t_fdf *d);
 
 #endif

@@ -6,16 +6,14 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:02:53 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/19 11:48:00 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/19 15:49:52 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-static void	init_mlx(t_fdf *d)
+void	init_mlx(t_fdf *d)
 {
-	d->win = NULL;
-	d->img.img = NULL;
 	d->mlx = mlx_init();
 	if (!d->mlx)
 		error_out(*d, ERRMLX);
@@ -31,15 +29,16 @@ static void	init_mlx(t_fdf *d)
 
 void	init_prog(t_fdf *d, char **av)
 {
-	d->av = av; // copy av
-	d->file = NULL; // file list
-	d->map = NULL; // map array
+	d->av = av;
+	d->file = NULL;
+	d->map = NULL;
 	d->lmb_held = 0;
 	d->rmb_held = 0;
 	d->refresh_needed = false;
 	d->frame_count = 0;
 	gettimeofday(&d->old_time, NULL);
 	d->fps_time = d->old_time;
-	init_mlx(d); // init mlx
-	// init mallocs (none for now)
+	d->win = NULL;
+	d->img.img = NULL;
+	d->mlx = NULL;
 }

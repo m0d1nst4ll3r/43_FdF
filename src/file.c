@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 15:19:21 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/19 12:45:32 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/19 16:33:42 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ void	free_file(t_file **file)
 	{
 		last = cur;
 		cur = cur->next;
-		free(cur->line);
-		free(cur);
+		free(last->line);
+		free(last);
 	}
 	*file = NULL;
 }
@@ -50,7 +50,7 @@ void	read_file(t_fdf *d, int fd)
 	{
 		line = get_next_line(fd);
 		if (errno)
-			error_out(d, ERRREA);
+			error_out(*d, ERRREA);
 		if (!line)
 			return ;
 		line_node = new_line(line);
@@ -65,22 +65,26 @@ void	read_file(t_fdf *d, int fd)
 }
 
 // A valid point is [0-9]+(,0x[0-9a-fA-F]{1,6}])?
-// One or more digits followed by an optional comma, a 0x,
+// One or more digits followed by an optional group of comma, a 0x,
 //	and between 1 and 6 hexadecimal characters
-// We are not yet checking if the digit fits within a short
+// We are not yet checking if the digits fit within a short
 int	is_point_valid(char *line, int *i)
 {
 	int	count;
 
+	if (line[*i] != '-' && !ft_isdigit(line[*i]))
+		return (0);
+	if (line[*i] == '-')
+		(*i)++;
 	while (ft_isdigit(line[*i]))
-		*i++;
+		(*i)++;
 	if (line[*i] == ',' && line[*i + 1] == '0' && line[*i + 2] == 'x')
 	{
 		count = 0;
 		*i += 3;
 		while (count < 6 && ft_ishexa(line[*i]))
 		{
-			*i++;
+			(*i)++;
 			count++;
 		}
 		if (!count)
@@ -95,7 +99,6 @@ int	is_point_valid(char *line, int *i)
 int	is_line_valid(char *line)
 {
 	int	i;
-	int	j;
 	int	count;
 
 	i = 0;
@@ -131,7 +134,10 @@ int	is_map_valid(t_fdf *d)
 		if (!d->map_height && line_size)
 			d->map_width = line_size;
 		else if (!line_size || d->map_width != line_size)
+		{
+			ft_printf("Bad line_size! Expected: %d, got %d\n", d->map_width, line_size);
 			return (0);
+		}
 		d->map_height++;
 		cur = cur->next;
 	}
@@ -141,17 +147,21 @@ int	is_map_valid(t_fdf *d)
 // Returns 1 if the height value does not fit within a short
 int	fill_point(t_point *point, char *line, int *i)
 {
-	if (ft_atos(line + *i, &point->height)) // TODO: WRITE THIS FUNC
+	if (ft_atos(line + *i, &point->height))
 		return (1);
+	ft_printf("Just filled point with val %d\n", point->height);
 	while (ft_isdigit(line[*i]))
-		*i++;
+		(*i)++;
 	if (line[*i] == ',')
 	{
 		*i += 3;
-		point->color = ft_atoh(line + *i); // TODO: WRITE THIS TOO ... or maybe atoi_base?
+		point->color = ft_atoh(line + *i);
+		while (ft_ishexa(line[*i]))
+				(*i)++;
 	}
 	else
 		point->color = -1;
+	ft_printf("Just filled color with val %d\n", point->color);
 	return (0);
 }
 
@@ -164,10 +174,12 @@ int	fill_line(t_point *map, char *line)
 	x = 0;
 	while (line[i])
 	{
+		ft_printf("Testing line[%d]: %c\n", i, line[i]);
 		if (ft_isdigit(line[i]))
 		{
 			if (fill_point(map + x, line, &i))
 				return (1);
+			x++;
 		}
 		else
 			i++;
@@ -213,7 +225,7 @@ void	get_map(t_fdf *d)
 	read_file(d, fd);
 	if (!d->file)
 		error_out(*d, ERREMP);
-	if (is_map_valid(d))
+	if (!is_map_valid(d))
 		error_out(*d, ERRMAP);
 	fill_map(d);
 	free_file(&d->file);
