@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/17 16:10:28 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/19 12:21:32 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 # define ERRREA			"Error reading map"
 # define ERREMP			"Map is empty"
 # define ERRMAP			"Incorrect map format"
+# define ERRVAL			"Incorrect map format: values must fit within a short \
+(±32767)"
 
 # include "mlx.h"
 # include "libft.h"
@@ -41,8 +43,8 @@
 // Structure for map array
 typedef struct	s_point
 {
-	int	height;
-	int	color;
+	short	height;
+	int		color;
 }	t_point;
 
 // List for reading file
@@ -68,6 +70,8 @@ typedef struct	s_fdf
 	void			*win;
 	t_img			img;
 	t_point			*map; // This contains our map data
+	int				map_width;
+	int				map_height;
 	t_file			*file; // This contains our file (only useful during program init)
 	int				lmb_held; // This isn't very useful for now
 	int				rmb_held; // All this is for fun for now

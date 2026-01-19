@@ -55,3 +55,25 @@ Progress:
 	Ok after a bit of grepping with RegExp, it would appear we have 0xff, 0xff00, and 0xff0000 for example, but not 0xf, not 0xfff, and no [0-9],(anything else than 0x..)
 	This means color HAS to be described as a hexadecimal value starting with 0x, and it can at least be 2 digit, 4 digit or 6 digit. But it would just make sense to allow it to be between 1 and 6 digits.
 	Go to work now.
+
+More progress:
+- I was thinking about how to store and structure my data
+	- 1D or 2D array
+	- It seems generally 1D is better, so that's what I'll go for
+	- There could also be other ways to store it
+	- After thinking about it for quite some time, I figured that my approach was too hasty. I should already be thinking about the display algorithm and I can create fake hardcoded simple maps to test it out easily.
+	- HowEVER... since I've already started writing the file-reading code, I'll just finish it, just this once. But for next time, it might be more interesting to just create very rapidly a fake hard-coded map without messing around with opening files and expanding my program's structure. Next time.
+
+More more:
+- As stated above, working on input and file-reading
+- One thing is that I'm using a lot of atoi atos atoh etc...
+	- I can either just code them, or I can just right now, right away code an A to SomethingBase function which will do absolutely everything
+	- This theoretical function takes in a char * (the ascii part), a void * (where it should write stuff), a base (that's a char * too), and a size (that's a size_t, likely the return of a sizeof())
+	- It does the following:
+		- Convert the ascii part (could be written in a base format) into a numerical value, written into the void *, according to a size. The size is there for overflow (it's the amount of bytes available to us in the void * - if the ascii part takes any more space than that, it's overflow - we stop writing and simply return 1)
+		- The goal would be having a one-stop-shop for converting ascii into anything. Can even convert into something bigger than intmax_t
+
+
+
+
+

@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:06 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/17 16:10:28 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/19 11:41:59 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,10 @@ int	main(int ac, char **av)
 {
 	t_fdf	data;
 
-	(void)ac;
-	//if (ac != 2)
-	//	return (0);
+	if (ac != 2)
+		return (0);
 	init_prog(&data, av); // Init MLX, av, and malloc addresses - can fail
-	//read_map(); // Read map and store it somewhere - can fail
+	get_map(&data); // Read map and store it somewhere - can fail
 	set_hooks(&data); // cannot fail
 	// Draw first image and put to window
 	mlx_loop(data.mlx); // Loop
