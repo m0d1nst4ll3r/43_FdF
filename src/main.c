@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:06 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/19 16:20:16 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/27 14:57:36 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ int	main(int ac, char **av)
 		return (0);
 	init_prog(&data, av); // Init MLX, av, and malloc addresses - can fail
 	get_map(&data); // Read map and store it somewhere - can fail
-	display_map_to_make_sure_i_didnt_fuck_it_up(data);
-	//init_mlx(&data);
+	display_map_to_make_sure_i_didnt_fuck_it_up(data); //haha funny
+	//init_mlx(&data); // init mlx - displays window! we do it after map checking etc..
 	//set_hooks(&data); // cannot fail
 	//mlx_loop(data.mlx); // Loop
 	exit_prog(data, 0);

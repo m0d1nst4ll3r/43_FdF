@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:02:53 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/19 15:49:52 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/27 15:00:20 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	init_mlx(t_fdf *d)
 	if (!d->img.img)
 		error_out(*d, ERRIMG);
 	d->img.addr = mlx_get_data_addr(d->img.img, &d->img.bpp, &d->img.llen,
-			&d->img.endian); //cannot fail
+			&d->img.endian);
 }
 
 void	init_prog(t_fdf *d, char **av)
@@ -32,12 +32,14 @@ void	init_prog(t_fdf *d, char **av)
 	d->av = av;
 	d->file = NULL;
 	d->map = NULL;
-	d->lmb_held = 0;
+	d->map_dat = NULL;
+	d->map_widths = NULL;
+	d->lmb_held = 0; // Begin
 	d->rmb_held = 0;
-	d->refresh_needed = false;
+	d->refresh_needed = false; // Everything in here is for fun, might remove
 	d->frame_count = 0;
 	gettimeofday(&d->old_time, NULL);
-	d->fps_time = d->old_time;
+	d->fps_time = d->old_time; // End
 	d->win = NULL;
 	d->img.img = NULL;
 	d->mlx = NULL;

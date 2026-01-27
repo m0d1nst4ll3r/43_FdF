@@ -72,8 +72,3 @@ More more:
 	- It does the following:
 		- Convert the ascii part (could be written in a base format) into a numerical value, written into the void *, according to a size. The size is there for overflow (it's the amount of bytes available to us in the void * - if the ascii part takes any more space than that, it's overflow - we stop writing and simply return 1)
 		- The goal would be having a one-stop-shop for converting ascii into anything. Can even convert into something bigger than intmax_t
-
-
-
-
-

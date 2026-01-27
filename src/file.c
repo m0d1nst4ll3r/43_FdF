@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 15:19:21 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/19 16:33:42 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/27 16:00:58 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,19 +40,23 @@ t_file	*new_line(char *line)
 	return (new);
 }
 
-void	read_file(t_fdf *d, int fd)
+unsigned short	read_file(t_fdf *d, int fd)
 {
-	t_file	*line_node;
-	t_file	*last_node;
-	char	*line;
+	t_file			*line_node;
+	t_file			*last_node;
+	char			*line;
+	unsigned short	i;
 
+	i = 0;
 	while (1)
 	{
+		if (i == (unsigned short)-1)
+			error_out(*d, ERRLIN);
 		line = get_next_line(fd);
 		if (errno)
 			error_out(*d, ERRREA);
 		if (!line)
-			return ;
+			return (i);
 		line_node = new_line(line);
 		if (!line_node)
 			error_out(*d, ERRMAL);
@@ -61,6 +65,7 @@ void	read_file(t_fdf *d, int fd)
 		else
 			last_node->next = line_node;
 		last_node = line_node;
+		i++;
 	}
 }
 
@@ -206,6 +211,40 @@ void	fill_map(t_fdf *d)
 	}
 }
 
+// This is the new is_map_valid
+// Empty lines are valid, unless there are ONLY empty lines (checked later)
+// I mean... pff
+int	get_widths(t_fdf d)
+{
+	int				i;
+
+	i = 0;
+	while (d.file)
+	{
+		d.map_widths[i] = get_width(d.file->line);
+		if (d.map_widths[i] == -1) //TODO: WAS HERE LAST
+			error_out(*d, ERRMAP);
+		d.file = d.file->next;
+		i++;
+	}
+}
+
+unsigned int	get_total_map_width(unsigned short *map_widths,
+		unsigned short map_height)
+{
+	int				i;
+	unsigned int	sum;
+
+	sum = 0;
+	i = 0;
+	while (i < d->map_height)
+	{
+		sum += d->map_widths[i];
+		i++;
+	}
+	return (sum);
+}
+
 // This reads the file. In order, it:
 // 1. Tries to open the file, error if it can't
 // 2. Reads the file progressively, adding every line to a list,
@@ -215,18 +254,43 @@ void	fill_map(t_fdf *d)
 //		a. Inconsistent line sizes
 //		b. 
 // 4. Finally, mallocs the map data array and fills it
+// Changing all of this for flex map
+// 1. Should still try to open, error if it can't
+// 2. Should read the file, error if it fails
+// 1 and 2 don't change
+//		a. Now we should try to malloc map_widths with map_height (# of lines we just wrote)
+//		b. We should also malloc map with map_height (will contain addresses)
+// 3. When we process lines, we now allow different line lengths, and write the length into map_widths
+//		(we do not actually malloc the real map or write anything, we need to know total line lengths)
+// 4. Once this is done and there has been no error, we malloc map_dat of the sum of all line lengths we got
+// 		a. We also now write the addresses into map, and we write the actual points
+// 	Once all this is done, our map is finally fucking written (fucking phew)
 void	get_map(t_fdf *d)
 {
-	int		fd;
+	int				fd;
+	unsigned int	total_width;
 
-	fd = open(d->av[1], O_RDONLY);
+	fd = open(d->av[1], O_RDONLY); // 1.
 	if (fd == -1)
 		error_out(*d, ERROPN);
-	read_file(d, fd);
-	if (!d->file)
-		error_out(*d, ERREMP);
-	if (!is_map_valid(d))
+	d->map_height = read_file(d, fd); // 2.
+//	if (!d->map_height)
+//		error_out(*d, ERREMP);
+	if (d->map_height) // We are now allowing completely empty maps. Fuck it!
+	{
+		d->map = malloc(sizeof(*d->map) * d->map_height); // a.
+		d->map_widths = malloc(sizeof(*d->map_widths) * d->map_height); // b.
+		if (!d->map || !d->map_widths)
+			error_out(*d, ERRMAL);
+	}
+	if (get_widths(*d)) // 3.
 		error_out(*d, ERRMAP);
-	fill_map(d);
-	free_file(&d->file);
+	total_width = get_total_map_width(d->map_widths, d->map_height);
+	if (!total_width)
+
+	d->map = malloc(sizeof(*d->map) * total_width);
+	if (!d->map) // 4.
+		error_out(*d, ERRMAL);
+	fill_map(d); // a. (can fail due to overflow)
+	free_file(&d->file); // Map is written, don't need file anymore
 }

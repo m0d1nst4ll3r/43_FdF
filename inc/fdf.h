@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/19 15:50:24 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/27 15:56:06 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,13 @@
 # define WIN_NAME		"fdf"
 
 # define ERRMLX			"Error initializing mlx"
-# define ERRWIN			"Error initializing window"
-# define ERRIMG			"Error initializing image"
+# define ERRWIN			"Error initializing mlx window"
+# define ERRIMG			"Error initializing mlx image"
 # define ERRMAL			"Malloc error"
 # define ERROPN			"Error opening map"
 # define ERRREA			"Error reading map"
-# define ERREMP			"Map is empty"
+# define ERRHEI			"Map has too many lines (> 65535)"
+# define ERRWID			"Line has too many points (> 65535)"
 # define ERRMAP			"Incorrect map format"
 # define ERRVAL			"Incorrect map format: values must fit within a short \
 (±32767)"
@@ -70,10 +71,11 @@ typedef struct	s_fdf
 	void			*mlx;
 	void			*win;
 	t_img			img;
-	t_point			*map; // This contains our map data
-	int				map_width;
-	int				map_height;
-	t_file			*file; // This contains our file (only useful during program init)
+	t_point			*map_dat; // This is the 1D map containing all points
+	t_point			**map; // This is the 2D map used for browsing 1D map easily
+	unsigned short	*map_widths; // 1D width map, contains each line length
+	unsigned short	map_height; // Total vertical length of map (# of ints in width[])
+	t_file			*file; // This contains read file (only useful during program init)
 	int				lmb_held; // This isn't very useful for now
 	int				rmb_held; // All this is for fun for now
 	bool			refresh_needed;

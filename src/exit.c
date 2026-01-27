@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:20:08 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/19 15:44:22 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/27 15:00:20 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,10 @@ void	exit_prog(t_fdf d, unsigned char exitval)
 {
 	if (d.map)
 		free(d.map);
+	if (d.map_dat)
+		free(d.map_dat);
+	if (d.map_widths)
+		free(d.map_widths);
 	if (d.file)
 		free_file(&d.file);
 	if (d.img.img)
