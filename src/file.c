@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 15:19:21 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/27 16:00:58 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/27 18:47:51 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ unsigned short	read_file(t_fdf *d, int fd)
 	while (1)
 	{
 		if (i == (unsigned short)-1)
-			error_out(*d, ERRLIN);
+			error_out(*d, ERRHEI);
 		line = get_next_line(fd);
 		if (errno)
 			error_out(*d, ERRREA);
@@ -69,90 +69,14 @@ unsigned short	read_file(t_fdf *d, int fd)
 	}
 }
 
-// A valid point is [0-9]+(,0x[0-9a-fA-F]{1,6}])?
-// One or more digits followed by an optional group of comma, a 0x,
-//	and between 1 and 6 hexadecimal characters
-// We are not yet checking if the digits fit within a short
-int	is_point_valid(char *line, int *i)
-{
-	int	count;
-
-	if (line[*i] != '-' && !ft_isdigit(line[*i]))
-		return (0);
-	if (line[*i] == '-')
-		(*i)++;
-	while (ft_isdigit(line[*i]))
-		(*i)++;
-	if (line[*i] == ',' && line[*i + 1] == '0' && line[*i + 2] == 'x')
-	{
-		count = 0;
-		*i += 3;
-		while (count < 6 && ft_ishexa(line[*i]))
-		{
-			(*i)++;
-			count++;
-		}
-		if (!count)
-			return (0);
-	}
-	if (line[*i] && !ft_isspace(line[*i]))
-		return (0);
-	return (1);
-}
-
-// Returns line size or 0 if not valid
-int	is_line_valid(char *line)
-{
-	int	i;
-	int	count;
-
-	i = 0;
-	count = 0;
-	while (line[i])
-	{
-		if (!ft_isspace(line[i]))
-		{
-			count++;
-			if (!is_point_valid(line, &i))
-				return (0);
-		}
-		else
-			i++;
-	}
-	return (count);
-}
-
-// Checks for map validity
-// Also fills in map_width and map_height
-int	is_map_valid(t_fdf *d)
-{
-	t_file	*cur;
-	int		line_size;
-
-	d->map_height = 0;
-	cur = d->file;
-	while (cur)
-	{
-		line_size = is_line_valid(cur->line);
-		if (!line_size)
-			return (0);
-		if (!d->map_height && line_size)
-			d->map_width = line_size;
-		else if (!line_size || d->map_width != line_size)
-		{
-			ft_printf("Bad line_size! Expected: %d, got %d\n", d->map_width, line_size);
-			return (0);
-		}
-		d->map_height++;
-		cur = cur->next;
-	}
-	return (1);
-}
-
 // Returns 1 if the height value does not fit within a short
 int	fill_point(t_point *point, char *line, int *i)
 {
-	if (ft_atos(line + *i, &point->height))
+	int	ret;
+
+	ret = ft_atox(line + *i, 0, &point->height,
+			sizeof(point->height) | ATOX_LAX); //TODO: STOPPED HERE
+	if (ret < 0)
 		return (1);
 	ft_printf("Just filled point with val %d\n", point->height);
 	while (ft_isdigit(line[*i]))
@@ -172,18 +96,17 @@ int	fill_point(t_point *point, char *line, int *i)
 
 int	fill_line(t_point *map, char *line)
 {
-	int		i;
-	int		x;
+	int	i;
+	int	x;
 
 	i = 0;
 	x = 0;
 	while (line[i])
 	{
-		ft_printf("Testing line[%d]: %c\n", i, line[i]);
-		if (ft_isdigit(line[i]))
+		if (!ft_isspace(line[i]))
 		{
 			if (fill_point(map + x, line, &i))
-				return (1);
+					return (1);
 			x++;
 		}
 		else
@@ -192,43 +115,101 @@ int	fill_line(t_point *map, char *line)
 	return (0);
 }
 
-void	fill_map(t_fdf *d)
+// This has to not only fill the map but also write the correct addresses into the fake 2D map
+void	fill_map(t_fdf d)
 {
-	t_file	*cur;
-	int		y;
+	int		line;
+	int		i;
 
-	d->map = malloc(sizeof(*d->map) * (d->map_width * d->map_height));
-	if (!d->map)
-		error_out(*d, ERRMAL);
-	cur = d->file;
-	y = 0;
-	while (cur)
+	line = 0;
+	while (d.file)
 	{
-		if (fill_line(d->map + y * d->map_width, cur->line))
-			error_out(*d, ERRVAL);
-		y++;
-		cur = cur->next;
+		d.map[line] = d.map_dat;
+		i = 0;
+		while (i < d.map_widths[i])
+		{
+			if (fill_line(d.map_dat, d.file->line))
+				error_out(d, ERRVAL);
+			i++;
+		}
+		d.map_dat += d.map_widths[i];
+		line++;
+		d.file = d.file->next;
 	}
 }
 
-// This is the new is_map_valid
-// Empty lines are valid, unless there are ONLY empty lines (checked later)
-// I mean... pff
-int	get_widths(t_fdf d)
+// A valid point is -?[0-9]+(,0x[0-9a-fA-F]{1,6}])?
+// One or more digits followed by an optional group of comma, a 0x,
+//	and between 1 and 6 hexadecimal characters
+// We are not yet checking if the values fit within their type
+int	is_point_valid(char *line, int *i)
 {
-	int				i;
+	int	count;
+
+	if (line[*i] == '-')
+		(*i)++;
+	if (!ft_isdigit(line[*i]))
+		return (0);
+	while (ft_isdigit(line[*i]))
+		(*i)++;
+	if (line[*i] == ',' && line[*i + 1] == '0' && line[*i + 2] == 'x')
+	{
+		count = 0;
+		*i += 3;
+		while (count < 6 && ft_ishexa(line[*i]))
+		{
+			(*i)++;
+			count++;
+		}
+		if (!count)
+			return (0);
+	}
+	if (line[*i] && !ft_isspace(line[*i]))
+		return (0);
+	return (1);
+}
+
+// Returns line size or -1 if not valid
+int	get_width(t_fdf d, char *line)
+{
+	int	i;
+	int	width;
+
+	i = 0;
+	width = 0;
+	while (line[i])
+	{
+		if (!ft_isspace(line[i]))
+		{
+			if (width == (unsigned short)-1)
+				error_out(d, ERRWID);
+			width++;
+			if (!is_point_valid(line, &i))
+				error_out(d, ERRMAP);
+		}
+		else
+			i++;
+	}
+	return (width);
+}
+
+// Parse file to write widths in width array
+void	get_widths(t_fdf d)
+{
+	int	i;
 
 	i = 0;
 	while (d.file)
 	{
-		d.map_widths[i] = get_width(d.file->line);
-		if (d.map_widths[i] == -1) //TODO: WAS HERE LAST
-			error_out(*d, ERRMAP);
+		d.map_widths[i] = get_width(d, d.file->line);
+		if (d.map_widths[i] == -1)
+			error_out(d, ERRMAP);
 		d.file = d.file->next;
 		i++;
 	}
 }
 
+// Get the combined width of every line (for mallocing 1D map)
 unsigned int	get_total_map_width(unsigned short *map_widths,
 		unsigned short map_height)
 {
@@ -282,15 +263,17 @@ void	get_map(t_fdf *d)
 		d->map_widths = malloc(sizeof(*d->map_widths) * d->map_height); // b.
 		if (!d->map || !d->map_widths)
 			error_out(*d, ERRMAL);
+		get_widths(*d); // 3.
+		total_width = get_total_map_width(d->map_widths, d->map_height);
+		if (total_width)
+		{
+			d->map = malloc(sizeof(*d->map) * total_width);
+			if (!d->map) // 4.
+				error_out(*d, ERRMAL);
+			fill_map(d); // a. (can fail due to overflow)
+		}
 	}
-	if (get_widths(*d)) // 3.
-		error_out(*d, ERRMAP);
-	total_width = get_total_map_width(d->map_widths, d->map_height);
-	if (!total_width)
-
-	d->map = malloc(sizeof(*d->map) * total_width);
-	if (!d->map) // 4.
-		error_out(*d, ERRMAL);
-	fill_map(d); // a. (can fail due to overflow)
+	// Remember, at this point map can be NULL if there were no lines or they were all empty
+	// map_height doesn't have to be 0 though, and map_widths can be an array with 0's inside
 	free_file(&d->file); // Map is written, don't need file anymore
 }
