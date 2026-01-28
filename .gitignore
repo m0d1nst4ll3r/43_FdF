@@ -5,6 +5,7 @@ fdf
 .vscode/
 *~
 \#*\#
+*.swp
 
 # Build directories
 .build/

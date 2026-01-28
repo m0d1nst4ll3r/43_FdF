@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 21:54:08 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/28 15:30:23 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/28 17:32:21 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	black_fill(t_img img)
 	}
 }
 
-static int	key_hook(int key, t_fdf *d)
+static int	key_down_hook(int key, t_fdf *d)
 {
 	if (key == ESC)
 		exit_prog(*d, 0);
@@ -43,6 +43,13 @@ static int	key_hook(int key, t_fdf *d)
 	}
 	else if (key == 'b')
 		d->invert_draw = !d->invert_draw;
+	return (0);
+}
+
+static int	key_up_hook(int key, t_fdf *d)
+{
+	(void)key;
+	(void)d;
 	return (0);
 }
 
@@ -175,7 +182,7 @@ static int	pointer_motion_hook(int x, int y, t_fdf *d)
 		{
 			if (draw_circle(d->img, x, y, d->brush_width, combine_colors(d->r, d->g, d->b), d->full_circle, d->invert_draw))
 				d->refresh_needed = true;
-			rotate_colors(d, 1);
+			rotate_colors(d, ROTATE_SPEED);
 		}
 		else
 		{
@@ -198,16 +205,25 @@ static void	decrease_brush_width(t_fdf *d)
 		d->brush_width--;
 }
 
-static int	mouse_hook(int button, int x, int y, t_fdf *d)
+static int	mouse_up_hook(int button, int x, int y, t_fdf *d)
 {
 	(void)x;
 	(void)y;
+	if (button == LMB)
+		d->lmb_held = !d->lmb_held;
+	else if (button == RMB)
+		d->rmb_held = !d->rmb_held;
+	return (0);
+}
+
+static int	mouse_down_hook(int button, int x, int y, t_fdf *d)
+{
 	if (button == LMB)
 	{
 		d->lmb_held = !d->lmb_held;
 		if (draw_circle(d->img, x, y, d->brush_width, combine_colors(d->r, d->g, d->b), d->full_circle, d->invert_draw))
 			d->refresh_needed = true;
-		rotate_colors(d, 1);
+		rotate_colors(d, ROTATE_SPEED);
 	}
 	else if (button == RMB)
 	{
@@ -255,10 +271,10 @@ static int	sync_hook(t_fdf *d)
 
 void	set_hooks(t_fdf *d)
 {
-	mlx_hook(d->win, KEYPRESS, KEYPRESSMASK, key_hook, d);
-//	mlx_hook(d->win, KEYRELEASE, KEYRELEASEMASK, key_hook, d);
-	mlx_hook(d->win, BUTTONPRESS, BUTTONPRESSMASK, mouse_hook, d);
-	mlx_hook(d->win, BUTTONRELEASE, BUTTONRELEASEMASK, mouse_hook, d);
+	mlx_hook(d->win, KEYPRESS, KEYPRESSMASK, key_down_hook, d);
+	mlx_hook(d->win, KEYRELEASE, KEYRELEASEMASK, key_up_hook, d);
+	mlx_hook(d->win, BUTTONPRESS, BUTTONPRESSMASK, mouse_down_hook, d);
+	mlx_hook(d->win, BUTTONRELEASE, BUTTONRELEASEMASK, mouse_up_hook, d);
 	mlx_hook(d->win, MOTIONNOTIFY, POINTERMOTIONMASK, pointer_motion_hook, d);
 	mlx_hook(d->win, CLIENTMESSAGE, 1, clientmsg_hook, d);
 	mlx_loop_hook(d->mlx, sync_hook, d);
