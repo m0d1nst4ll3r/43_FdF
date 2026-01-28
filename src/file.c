@@ -6,13 +6,13 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 15:19:21 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/28 11:56:42 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/28 15:43:21 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-// Called at the end of map-building/at exit
+// Called at the end of map-building + at exit
 void	free_file(t_file **file)
 {
 	t_file	*last;

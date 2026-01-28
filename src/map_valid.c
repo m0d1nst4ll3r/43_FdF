@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:53:56 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/28 12:01:29 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/28 15:42:51 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 //		- ",0x"
 //		- Between 1 and 6 hexadecimal characters
 // Note that overflow is not being checked yet
-int	is_point_valid(char *line, int *i)
+static int	is_point_valid(char *line, int *i)
 {
 	int	count;
 
@@ -48,7 +48,7 @@ int	is_point_valid(char *line, int *i)
 
 // Returns line size
 // Also checks for line format
-int	get_width(t_fdf d, char *line)
+static int	get_width(t_fdf d, char *line)
 {
 	int	i;
 	int	width;

@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/28 11:43:01 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/28 15:44:39 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,21 +87,27 @@ typedef struct	s_fdf
 }	t_fdf;
 
 // mlx_util.c
-int		pixel_put(t_img img, int x, int y, int color);
+int				pixel_put(t_img img, int x, int y, int color);
 
 // init.c
-void	init_prog(t_fdf *d, char **av);
-void	init_mlx(t_fdf *d);
+void			init_prog(t_fdf *d, char **av);
+void			init_mlx(t_fdf *d);
 
 // exit.c
-void	exit_prog(t_fdf d, unsigned char exitval);
-void	error_out(t_fdf d, char *s);
+void			exit_prog(t_fdf d, unsigned char exitval);
+void			error_out(t_fdf d, char *s);
 
 // hook.c
-void	set_hooks(t_fdf *d);
+void			set_hooks(t_fdf *d);
 
 // file.c
-void	free_file(t_file **file);
-void	get_map(t_fdf *d);
+void			free_file(t_file **file);
+unsigned short	read_file(t_fdf *d);
+
+// map_build.c
+void			get_map(t_fdf *d);
+
+// map_valid.c
+void			get_widths(t_fdf d);
 
 #endif

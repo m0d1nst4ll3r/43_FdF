@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:06 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/28 11:30:29 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/28 18:14:48 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,25 +17,34 @@ void	display_map_to_make_sure_i_didnt_fuck_it_up(t_fdf data)
 	int	x;
 	int	y;
 
-	y = 0;
+/*	y = 0;
 	ft_printf("Map has %d lines\nLine lengths:\n", data.map_height);
 	while (y < data.map_height)
 	{
 		ft_printf("Line %2d is %3d points long\n", y, data.map_widths[y]);
 		y++;
-	}
+	}*/
 	y = 0;
 	while (y < data.map_height)
 	{
 		x = 0;
 		while (x < data.map_widths[y])
 		{
-			ft_printf("% 5hd,%#8X  ", data.map[y][x].height, data.map[y][x].color);
+			if (data.map[y][x].color == -1)
+				ft_printf("%hd ", data.map[y][x].height);
+			else
+				ft_printf("%hd,%#x ", data.map[y][x].height, data.map[y][x].color);
 			x++;
 		}
 		ft_printf("\n");
 		y++;
 	}
+}
+
+// Test function
+static void	draw_image(t_fdf *d)
+{
+	(void)d;
 }
 
 //	Steps:
@@ -55,8 +64,9 @@ void	display_map_to_make_sure_i_didnt_fuck_it_up(t_fdf data)
 //		(lines may have different lengths or be empty)
 //		c. Malloc map (we had to wait since it has to be 1 big block)
 //		d. Fill map (this might still fail, this is where we check for overflow)
-// 3. ... ??? Stuff
-// 		- At this point file is read and map is built
+// 3. Interpret map to draw our first picture
+//		- At this point the project would be done without bonuses
+//		- For now we will interpret the map in a very simplistic way
 //
 int	main(int ac, char **av)
 {
@@ -64,11 +74,12 @@ int	main(int ac, char **av)
 
 	if (ac != 2)
 		return (0);
-	init_prog(&data, av); // Init MLX, av, and malloc addresses - can fail
-	get_map(&data); // Read map and store it somewhere - can fail
+	init_prog(&data, av);
+	get_map(&data);
 	display_map_to_make_sure_i_didnt_fuck_it_up(data);
-	//init_mlx(&data); // init mlx - displays window! we do it after map checking etc..
-	//set_hooks(&data); // cannot fail
-	//mlx_loop(data.mlx); // Loop
+	init_mlx(&data);
+	draw_image(&data); // Test function to see what we can do with map
+	set_hooks(&data);
+	mlx_loop(data.mlx);
 	exit_prog(data, 0);
 }
