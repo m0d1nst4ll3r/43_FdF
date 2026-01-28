@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:02:53 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/28 14:43:00 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/28 15:24:38 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void	init_prog(t_fdf *d, char **av)
 	d->g = 0;
 	d->b = 255;
 	d->full_circle = 1;
+	d->invert_draw = 0;
 	d->lmb_held = 0;
 	d->rmb_held = 0;
 	d->refresh_needed = false;

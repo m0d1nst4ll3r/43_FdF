@@ -1,33 +1,23 @@
-# FdF
+## MLX_Paint
 
-[Subject](https://cdn.intra.42.fr/pdf/pdf/185030/en.subject.pdf)
+Random fun with MLX!
 
-This project is about creating a simple wireframe model representation of a 3D landscape by linking various points (x, y, z) thanks to line segments (edges).
+Code is _very_ ugly for now. Probably forever. Most of it is contained in `hook.c`.
 
-## Instructions
+For now you can draw full or empty circles around with left click.
 
-1. Clone repo
-```bash
-git clone https://github.com/m0d1nst4ll3r/43_FdF.git && cd 43_FdF
-```
-2. Clone mlx
-```bash
-git clone https://github.com/42paris/minilibx-linux.git
-```
-3. Clone libft
-```bash
-git clone https://github.com/m0d1nst4ll3r/43_mylibft.git
-```
-4. Run make
-```bash
-make
-```
-5. Run fdf
-```bash
-./fdf
-```
+Color auto-changes as you draw. Press space to switch between full/empty circles.
 
-If make fails, see [minilibx readme](https://github.com/42paris/minilibx-linux/blob/master/README.md) for packages to install.
+Erase with right click. Press 'b' to only draw on black pixels (will not replace non-black, creating a depth effect).
+
+Press 'r' to erase entire image (make it black).
+
+Might add:
+- Prettier code which is actually readable and compact
+- Color palette
+- Visualizing how big your draw circle is (follows cursor around)
+- Other shapes
+- Actually drawing lines (Bresenham algorithm) between pointer motion calls
 
 ## MLX for dummies
 

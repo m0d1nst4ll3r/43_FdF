@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/28 14:42:49 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/28 15:29:03 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,11 @@ typedef struct	s_fdf
 	unsigned char	b;
 	unsigned char	brush_width;
 	bool			full_circle;
+	bool			invert_draw;
 }	t_fdf;
 
 // mlx_util.c
-int		pixel_put(t_img img, int x, int y, int color);
+int		pixel_put(t_img img, int x, int y, int color, bool invert);
 
 // init.c
 void	init_prog(t_fdf *d, char **av);
