@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/16 13:32:28 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/28 14:42:49 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@
 # define WIN_X			1920
 # define WIN_Y			1080
 # define WIN_NAME		"fdf"
+
+# define BRUSH_WID_MAX	255
+# define BRUSH_WID_MIN	0
 
 # define ERRMLX			"Error initializing mlx"
 # define ERRWIN			"Error initializing window"
@@ -33,10 +36,8 @@
 # include <string.h>
 # include <errno.h>
 
-# include <time.h> // Remove this
 # include <sys/time.h> // Remove if I don't optimize like this
 # include <stdbool.h> // Remove if I don't use bools
-# include <stdio.h> // Remove, this is for comparing speeds with my ft_printf
 
 typedef struct	s_img
 {
@@ -56,10 +57,13 @@ typedef struct	s_fdf
 	int				lmb_held;
 	int				rmb_held;
 	bool			refresh_needed;
-	int				frame_count;
 	struct timeval	old_time;
 	struct timeval	cur_time;
-	struct timeval	fps_time;
+	unsigned char	r;
+	unsigned char	g;
+	unsigned char	b;
+	unsigned char	brush_width;
+	bool			full_circle;
 }	t_fdf;
 
 // mlx_util.c
