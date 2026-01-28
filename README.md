@@ -197,3 +197,9 @@ mlx - https://github.com/42paris/minilibx-linux
 mlx tutorial - https://harm-smits.github.io/42docs/libs/minilibx/getting_started.html
 
 x.h file - https://codebrowser.dev/kde/include/X11/X.h.html
+
+regexp - https://regex101.com/
+
+Bresenham algorithm (to draw lines between points) - https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+
+Midpoint circle algorithm (to draw circles) - https://en.wikipedia.org/wiki/Midpoint_circle_algorithm

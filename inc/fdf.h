@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/27 15:56:06 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/28 11:43:01 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ typedef struct	s_fdf
 	unsigned short	*map_widths; // 1D width map, contains each line length
 	unsigned short	map_height; // Total vertical length of map (# of ints in width[])
 	t_file			*file; // This contains read file (only useful during program init)
+	int				fd;
 	int				lmb_held; // This isn't very useful for now
 	int				rmb_held; // All this is for fun for now
 	bool			refresh_needed;

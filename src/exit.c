@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:20:08 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/27 15:00:20 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/28 11:44:22 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void	exit_prog(t_fdf d, unsigned char exitval)
 		free(d.map_widths);
 	if (d.file)
 		free_file(&d.file);
+	ft_close(&d->fd);
 	if (d.img.img)
 		mlx_destroy_image(d.mlx, d.img.img);
 	if (d.win)
