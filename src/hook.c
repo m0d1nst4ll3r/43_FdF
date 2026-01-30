@@ -6,16 +6,101 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 21:54:08 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/16 13:32:03 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/30 17:44:05 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
+static void	move_down(t_fdf *d)
+{
+	d->y_offset += MOVE_SPEED;
+	d->redraw_needed = true;
+}
+
+static void	move_up(t_fdf *d)
+{
+	d->y_offset -= MOVE_SPEED;
+	d->redraw_needed = true;
+}
+
+static void	move_left(t_fdf *d)
+{
+	d->x_offset -= MOVE_SPEED;
+	d->redraw_needed = true;
+}
+
+static void	move_right(t_fdf *d)
+{
+	d->x_offset += MOVE_SPEED;
+	d->redraw_needed = true;
+}
+
+static void	shift_down(t_fdf *d)
+{
+	d->height_mod--;
+	d->redraw_needed = true;
+}
+
+static void	shift_up(t_fdf *d)
+{
+	d->height_mod++;
+	d->redraw_needed = true;
+}
+
+static void	shift_left(t_fdf *d)
+{
+	d->line_offset--;
+	d->redraw_needed = true;
+}
+
+static void	shift_right(t_fdf *d)
+{
+	d->line_offset++;
+	d->redraw_needed = true;
+}
+
+static void	zoom_in(t_fdf *d)
+{
+	d->point_distance++;
+	d->redraw_needed = true;
+}
+
+static void	zoom_out(t_fdf *d)
+{
+	d->point_distance--;
+	d->redraw_needed = true;
+}
+
 static int	key_hook(int key, t_fdf *d)
 {
 	if (key == ESC)
 		exit_prog(*d, 0);
+	else if (key == UP) //Y_OFFSET
+		move_down(d);
+	else if (key == DOWN)
+		move_up(d);
+	else if (key == LEFT) //X_OFFSET
+		move_right(d);
+	else if (key == RIGHT)
+		move_left(d);
+	else if (key == LSHIFT) // POINTS_DISTANCE
+		zoom_in(d);
+	else if (key == LCTRL)
+		zoom_out(d);
+/*	else if (key == 'w') // none
+		;
+	else if (key == 's')
+		;*/
+	else if (key == 'a') // LINE_OFFSET
+		shift_left(d);
+	else if (key == 'd')
+		shift_right(d);
+	else if (key == 'r') // HEIGHT_MOD
+		shift_up(d);
+	else if (key == 'f')
+		shift_down(d);
+	//ft_printf("%d\n", key);
 	return (0);
 }
 
@@ -94,15 +179,33 @@ static int	is_time_to_refresh(struct timeval old_time, struct timeval cur_time, 
 	return (0);
 }
 
+static void	reset_image(t_img img)
+{
+	int	y;
+	int	x;
+
+	y = 0;
+	while (y < WIN_Y)
+	{
+		x = 0;
+		while (x < WIN_X)
+		{
+			pixel_put(img, x, y, 0);
+			x++;
+		}
+		y++;
+	}
+}
+
 static int	sync_hook(t_fdf *d)
 {
-/*	if (d->time != time(NULL))
-	{
-		ft_printf("%d\n", d->count);
-		d->time = time(NULL);
-		d->count = 0;
-	}*/
 	gettimeofday(&d->cur_time, NULL);
+	if (d->redraw_needed)
+	{
+		reset_image(d->img);
+		draw_image(d); // For now this is a very basic function, will improve
+		d->redraw_needed = false;
+	}
 	if (d->refresh_needed && is_time_to_refresh(d->old_time, d->cur_time, REFRESH_RATE))
 	{
 		d->old_time = d->cur_time;
@@ -122,7 +225,7 @@ static int	sync_hook(t_fdf *d)
 void	set_hooks(t_fdf *d)
 {
 	mlx_hook(d->win, KEYPRESS, KEYPRESSMASK, key_hook, d);
-	mlx_hook(d->win, KEYRELEASE, KEYRELEASEMASK, key_hook, d);
+//	mlx_hook(d->win, KEYRELEASE, KEYRELEASEMASK, key_hook, d);
 	mlx_hook(d->win, BUTTONPRESS, BUTTONPRESSMASK, mouse_hook, d);
 	mlx_hook(d->win, BUTTONRELEASE, BUTTONRELEASEMASK, mouse_hook, d);
 	mlx_hook(d->win, MOTIONNOTIFY, POINTERMOTIONMASK, pointer_motion_hook, d);

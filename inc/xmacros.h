@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 20:37:32 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/15 22:13:17 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/30 15:14:15 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,12 @@
 
 // Keys
 # define ESC						65307
+# define UP							65362
+# define DOWN						65364
+# define LEFT						65361
+# define RIGHT						65363
+# define LCTRL						65507
+# define LSHIFT						65505
 
 // Mouse buttons
 # define LMB						1

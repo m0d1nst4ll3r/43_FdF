@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:02:53 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/27 15:00:20 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/30 16:21:54 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,12 @@ void	init_prog(t_fdf *d, char **av)
 	d->map = NULL;
 	d->map_dat = NULL;
 	d->map_widths = NULL;
+	d->x_offset = X_OFFSET;
+	d->y_offset = Y_OFFSET;
+	d->point_distance = POINT_DISTANCE;
+	d->height_mod = HEIGHT_MOD;
+	d->line_offset = LINE_OFFSET;
+	d->redraw_needed = 1;
 	d->lmb_held = 0; // Begin
 	d->rmb_held = 0;
 	d->refresh_needed = false; // Everything in here is for fun, might remove
