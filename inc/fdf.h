@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/30 18:08:50 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/30 19:28:53 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,9 +88,22 @@ typedef struct	s_img
 
 typedef struct	s_fdf_keys
 {
-	bool	lmb_held;
-	bool	rmb_held;
-	bool	w_down;
+	bool	lmb;
+	bool	rmb;
+	bool	w;
+	bool	s;
+	bool	a;
+	bool	d;
+	bool	lshift;
+	bool	lctrl;
+	bool	z;
+	bool	x;
+	bool	r;
+	bool	f;
+	bool	up;
+	bool	down;
+	bool	left;
+	bool	right;
 }	t_fdf_keys;
 
 typedef struct	s_fdf
@@ -110,8 +123,7 @@ typedef struct	s_fdf
 	int				point_distance;
 	int				height_mod;
 	int				line_offset;
-	int				lmb_held; // This isn't very useful for now
-	int				rmb_held; // All this is for fun for now
+	t_fdf_keys		key_states;
 	bool			refresh_needed; // Note that it should be useful later if I want to implement mouse-dragging to rotate the shape around
 	int				frame_count; // In that case, mlx_loop will not only put_image but also draw_image
 	struct timeval	old_time; // Draw_image in that case should have a dedicated redraw_needed value that updates on user interaction

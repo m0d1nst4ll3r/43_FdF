@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 21:54:08 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/30 17:44:05 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/01/30 19:41:16 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,35 +72,55 @@ static void	zoom_out(t_fdf *d)
 	d->redraw_needed = true;
 }
 
-static int	key_hook(int key, t_fdf *d)
+static int	key_down_hook(int key, t_fdf *d)
 {
 	if (key == ESC)
 		exit_prog(*d, 0);
-	else if (key == UP) //Y_OFFSET
-		move_down(d);
+	if (key == UP) 
+		d->key_states.up = true;
 	else if (key == DOWN)
-		move_up(d);
-	else if (key == LEFT) //X_OFFSET
-		move_right(d);
+		d->key_states.down = true;
+	else if (key == LEFT) 
+		d->key_states.left = true;
 	else if (key == RIGHT)
-		move_left(d);
-	else if (key == LSHIFT) // POINTS_DISTANCE
-		zoom_in(d);
+		d->key_states.right = true;
+	else if (key == LSHIFT) 
+		d->key_states.lshift = true;
 	else if (key == LCTRL)
-		zoom_out(d);
-/*	else if (key == 'w') // none
-		;
-	else if (key == 's')
-		;*/
-	else if (key == 'a') // LINE_OFFSET
-		shift_left(d);
+		d->key_states.lctrl = true;
+	else if (key == 'a') 
+		d->key_states.a = true;
 	else if (key == 'd')
-		shift_right(d);
-	else if (key == 'r') // HEIGHT_MOD
-		shift_up(d);
+		d->key_states.d = true;
+	else if (key == 'r') 
+		d->key_states.r = true;
 	else if (key == 'f')
-		shift_down(d);
-	//ft_printf("%d\n", key);
+		d->key_states.f = true;
+	return (0);
+}
+
+static int	key_up_hook(int key, t_fdf *d)
+{
+	if (key == UP) 
+		d->key_states.up = false;
+	else if (key == DOWN)
+		d->key_states.down = false;
+	else if (key == LEFT) 
+		d->key_states.left = false;
+	else if (key == RIGHT)
+		d->key_states.right = false;
+	else if (key == LSHIFT) 
+		d->key_states.lshift = false;
+	else if (key == LCTRL)
+		d->key_states.lctrl = false;
+	else if (key == 'a') 
+		d->key_states.a = false;
+	else if (key == 'd')
+		d->key_states.d = false;
+	else if (key == 'r') 
+		d->key_states.r = false;
+	else if (key == 'f')
+		d->key_states.f = false;
 	return (0);
 }
 
@@ -195,6 +215,31 @@ static void	reset_image(t_img img)
 		}
 		y++;
 	}
+}
+
+static void	key_states_handler(t_fdf *d)
+{
+	if (d->key_states.up) 
+		move_down(d);
+	if (d->key_states.down)
+		move_up(d);
+	if (d->key_states.left) 
+		move_right(d);
+	if (d->key_states.right)
+		move_left(d);
+	if (d->key_states.lshift) 
+		zoom_in(d);
+	if (d->key_states.lctrl)
+		zoom_out(d);
+	if (d->key_states.a) 
+		shift_left(d);
+	if (d->key_states.d)
+		shift_right(d);
+	if (d->key_states.r) 
+		shift_up(d);
+	if (d->key_states.f)
+		shift_down(d);
+	return (0);
 }
 
 static int	sync_hook(t_fdf *d)
