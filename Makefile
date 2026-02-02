@@ -6,7 +6,7 @@
 #    By: rpohlen <rpohlen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/20 14:37:51 by rpohlen           #+#    #+#              #
-#    Updated: 2026/01/28 15:41:32 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/02 17:28:43 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,11 +14,18 @@
 CFILES				= main.c \
 					  init.c \
 					  exit.c \
-					  file.c \
+					  mlx_util.c \
+					  map_file.c \
 					  map_build.c \
 					  map_valid.c \
+					  interact_height.c \
+					  interact_zoom.c \
+					  interact_rotate.c \
+					  interact_translate.c \
 					  hook.c \
-					  mlx_util.c
+					  hook_mouse.c \
+					  hook_keyboard.c \
+					  draw.c
 SRCDIR				= src
 SRC					= $(addprefix $(SRCDIR)/, $(CFILES))
 

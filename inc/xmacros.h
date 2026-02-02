@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 20:37:32 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/30 15:14:15 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/02 17:32:12 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,20 @@
 # define XMACROS_H
 
 // Keys
-# define ESC						65307
-# define UP							65362
-# define DOWN						65364
-# define LEFT						65361
-# define RIGHT						65363
-# define LCTRL						65507
-# define LSHIFT						65505
+# define KEY_ESC						65307
+# define KEY_UP							65362
+# define KEY_DOWN						65364
+# define KEY_LEFT						65361
+# define KEY_RIGHT						65363
+# define KEY_LCTRL						65507
+# define KEY_LSHIFT						65505
 
 // Mouse buttons
-# define LMB						1
-# define MMB						2
-# define RMB						3
-# define MWU						4
-# define MWD						5
+# define BTN_LMB						1
+# define BTN_MMB						2
+# define BTN_RMB						3
+# define BTN_MWU						4
+# define BTN_MWD						5
 
 
 // Event names

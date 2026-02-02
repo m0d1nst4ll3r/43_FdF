@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/30 19:28:53 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/02 18:33:36 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,27 @@
 # define REFRESH_RATE	16666
 // How long to hold the key down for it to start repeating (OS is 500ms)
 // Current 250 ms
-# define KEY_DELAY		250000
+# define REPEAT_DELAY	500000
 // Frequency of key repeats (OS is 33hz)
-// Current 66 hz
-# define KEY_REPEAT		15000
+// Current 33 hz
+# define REPEAT_RATE	30000
 # define WIN_X			1920
 # define WIN_Y			1080
 # define WIN_NAME		"fdf"
+
+# define NUM_KEYS		12
+# define W			0
+# define S			1
+# define A			2
+# define D			3
+# define LSHIFT		4
+# define LCTRL		5
+# define R			6
+# define F			7
+# define UP			8
+# define DOWN		9
+# define LEFT		10
+# define RIGHT		11
 
 # define X_OFFSET		500
 # define Y_OFFSET		500
@@ -44,6 +58,7 @@
 # define ERRMAP			"Incorrect map format"
 # define ERRVAL			"Incorrect map format: values must fit within a short \
 (±32767)"
+# define ERRTIME		"Error using gettimeofday"
 
 # include "mlx.h"
 # include "libft.h"
@@ -51,11 +66,22 @@
 # include <string.h>
 # include <errno.h>
 # include <fcntl.h>
+# include <sys/time.h>
+# include <stdbool.h>
 
-# include <time.h> // Remove this
-# include <sys/time.h> // Remove if I don't optimize like this
-# include <stdbool.h> // Remove if I don't use bools
-# include <stdio.h> // Remove, this is for comparing speeds with my ft_printf
+// Keys can be:
+// Off		Not pressed
+// On		Pressed, next frame will execute movement
+// Wait		Pressed, movement was executed, waiting for repeat delay
+// Repeat	Pressed, enough time passed so key is now repeating
+// Keys move states downwards. Releasing the key resets it to Off.
+// If a key has been waiting, new keys will only wait as long as the first one.
+typedef enum	e_key_state
+{
+	OFF,
+	ON,
+	REPEAT
+}	t_key_state;
 
 // Structure for map array
 typedef struct	s_point
@@ -86,26 +112,6 @@ typedef struct	s_img
 	int		endian;
 }	t_img;
 
-typedef struct	s_fdf_keys
-{
-	bool	lmb;
-	bool	rmb;
-	bool	w;
-	bool	s;
-	bool	a;
-	bool	d;
-	bool	lshift;
-	bool	lctrl;
-	bool	z;
-	bool	x;
-	bool	r;
-	bool	f;
-	bool	up;
-	bool	down;
-	bool	left;
-	bool	right;
-}	t_fdf_keys;
-
 typedef struct	s_fdf
 {
 	char			**av;
@@ -117,13 +123,18 @@ typedef struct	s_fdf
 	unsigned short	*map_widths; // 1D width map, contains each line length
 	unsigned short	map_height; // Total vertical length of map (# of ints in width[])
 	t_file			*file; // This contains read file (only useful during program init)
-	int				fd;
+	int				fd; // Has to be here to close it in exit_prog
 	int				x_offset; // This is for testing/fun but should be useful later for
-	int				y_offset;
-	int				point_distance;
-	int				height_mod;
-	int				line_offset;
-	t_fdf_keys		key_states;
+	int				y_offset; // -
+	int				point_distance; // -
+	int				height_mod; // -
+	int				line_offset; // -
+	t_key_state		key_state[NUM_KEYS];
+	t_key_state		key_repeat_state;
+	struct timeval	key_repeat_time;
+	float			key_repeat_time_ratio;
+	bool			lmb_held;
+	bool			rmb_held;
 	bool			refresh_needed; // Note that it should be useful later if I want to implement mouse-dragging to rotate the shape around
 	int				frame_count; // In that case, mlx_loop will not only put_image but also draw_image
 	struct timeval	old_time; // Draw_image in that case should have a dedicated redraw_needed value that updates on user interaction
@@ -138,25 +149,48 @@ int				pixel_put(t_img img, int x, int y, int color);
 // init.c
 void			init_prog(t_fdf *d, char **av);
 void			init_mlx(t_fdf *d);
-
 // exit.c
 void			exit_prog(t_fdf d, unsigned char exitval);
 void			error_out(t_fdf d, char *s);
 
-// hook.c
-void			set_hooks(t_fdf *d);
-
-// file.c
+//	MAP BUILDING
+// map_file.c
 void			free_file(t_file **file);
 unsigned short	read_file(t_fdf *d);
-
 // map_build.c
 void			get_map(t_fdf *d);
-
 // map_valid.c
 void			get_widths(t_fdf d);
 
-// TEST FUNC
-void			draw_image(t_fdf *d);
+//	EVENT HOOKS
+// hook.c
+void			set_hooks(t_fdf *d);
+// hook_mouse.c
+int				pointer_motion_hook(int x, int y, t_fdf *d); // TODO: pointer motion controls
+int				mouse_down_hook(int button, int x, int y, t_fdf *d);
+int				mouse_up_hook(int button, int x, int y, t_fdf *d);
+// hook_keyboard.c
+int				key_down_hook(int key, t_fdf *d);
+int				key_up_hook(int key, t_fdf *d);
+
+// INTERACTIVE
+// interact_translate.c
+void			move_right(t_fdf *d, int actions);
+void			move_left(t_fdf *d, int actions);
+void			move_up(t_fdf *d, int actions);
+void			move_down(t_fdf *d, int actions);
+// interact_zoom.c
+void			zoom_in(t_fdf *d, int actions); // TODO: zoom is bad
+void			zoom_out(t_fdf *d, int actions);
+// interact_rotate.c
+void			shift_left(t_fdf *d, int actions); // TODO: rotate is bad, improve
+void			shift_right(t_fdf *d, int actions); // func names are not even good
+// interact_height.c
+void			shift_up(t_fdf *d, int actions); // TODO: float instead of int
+void			shift_down(t_fdf *d, int actions); // Call this with MWU MWD
+
+// draw.c
+void			draw_image(t_fdf *d); // TODO: improve everything, this was done super fast
+// TODO: draw calculates points and lines outside of screen - bad
 
 #endif

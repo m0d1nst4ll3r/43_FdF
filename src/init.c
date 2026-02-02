@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:02:53 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/30 16:21:54 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/02 15:23:14 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,18 @@ void	init_mlx(t_fdf *d)
 			&d->img.endian);
 }
 
+void	init_keys(t_fdf *d)
+{
+	int	i;
+
+	i = 0;
+	while (i < NUM_KEYS)
+	{
+		d->key_state[i] = OFF;
+		i++;
+	}
+}
+
 void	init_prog(t_fdf *d, char **av)
 {
 	d->av = av;
@@ -40,8 +52,9 @@ void	init_prog(t_fdf *d, char **av)
 	d->height_mod = HEIGHT_MOD;
 	d->line_offset = LINE_OFFSET;
 	d->redraw_needed = 1;
-	d->lmb_held = 0; // Begin
-	d->rmb_held = 0;
+	init_keys(d);
+	d->lmb_held = false;
+	d->rmb_held = false;
 	d->refresh_needed = false; // Everything in here is for fun, might remove
 	d->frame_count = 0;
 	gettimeofday(&d->old_time, NULL);

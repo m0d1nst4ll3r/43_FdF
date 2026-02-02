@@ -6,177 +6,15 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 21:54:08 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/30 19:41:16 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/02 17:56:02 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-static void	move_down(t_fdf *d)
-{
-	d->y_offset += MOVE_SPEED;
-	d->redraw_needed = true;
-}
-
-static void	move_up(t_fdf *d)
-{
-	d->y_offset -= MOVE_SPEED;
-	d->redraw_needed = true;
-}
-
-static void	move_left(t_fdf *d)
-{
-	d->x_offset -= MOVE_SPEED;
-	d->redraw_needed = true;
-}
-
-static void	move_right(t_fdf *d)
-{
-	d->x_offset += MOVE_SPEED;
-	d->redraw_needed = true;
-}
-
-static void	shift_down(t_fdf *d)
-{
-	d->height_mod--;
-	d->redraw_needed = true;
-}
-
-static void	shift_up(t_fdf *d)
-{
-	d->height_mod++;
-	d->redraw_needed = true;
-}
-
-static void	shift_left(t_fdf *d)
-{
-	d->line_offset--;
-	d->redraw_needed = true;
-}
-
-static void	shift_right(t_fdf *d)
-{
-	d->line_offset++;
-	d->redraw_needed = true;
-}
-
-static void	zoom_in(t_fdf *d)
-{
-	d->point_distance++;
-	d->redraw_needed = true;
-}
-
-static void	zoom_out(t_fdf *d)
-{
-	d->point_distance--;
-	d->redraw_needed = true;
-}
-
-static int	key_down_hook(int key, t_fdf *d)
-{
-	if (key == ESC)
-		exit_prog(*d, 0);
-	if (key == UP) 
-		d->key_states.up = true;
-	else if (key == DOWN)
-		d->key_states.down = true;
-	else if (key == LEFT) 
-		d->key_states.left = true;
-	else if (key == RIGHT)
-		d->key_states.right = true;
-	else if (key == LSHIFT) 
-		d->key_states.lshift = true;
-	else if (key == LCTRL)
-		d->key_states.lctrl = true;
-	else if (key == 'a') 
-		d->key_states.a = true;
-	else if (key == 'd')
-		d->key_states.d = true;
-	else if (key == 'r') 
-		d->key_states.r = true;
-	else if (key == 'f')
-		d->key_states.f = true;
-	return (0);
-}
-
-static int	key_up_hook(int key, t_fdf *d)
-{
-	if (key == UP) 
-		d->key_states.up = false;
-	else if (key == DOWN)
-		d->key_states.down = false;
-	else if (key == LEFT) 
-		d->key_states.left = false;
-	else if (key == RIGHT)
-		d->key_states.right = false;
-	else if (key == LSHIFT) 
-		d->key_states.lshift = false;
-	else if (key == LCTRL)
-		d->key_states.lctrl = false;
-	else if (key == 'a') 
-		d->key_states.a = false;
-	else if (key == 'd')
-		d->key_states.d = false;
-	else if (key == 'r') 
-		d->key_states.r = false;
-	else if (key == 'f')
-		d->key_states.f = false;
-	return (0);
-}
-
 static int	clientmsg_hook(t_fdf *d)
 {
 	exit_prog(*d, 0);
-	return (0);
-}
-
-static void	eraser(t_fdf *d, int x, int y, int width)
-{
-	int	i;
-	int	j;
-
-	i = x - width / 2;
-	if (i < 0)
-		i = 0;
-	while (i <= 1919 && i <= x + width / 2)
-	{
-		j = y - width / 2;
-		if (j < 0)
-			j = 0;
-		while (j <= 1079 && j <= y + width / 2)
-		{
-			if (pixel_put(d->img, i, j, 0x000000) && !d->refresh_needed)
-				d->refresh_needed = true;
-			j++;
-		}
-		i++;
-	}
-	
-}
-
-static int	pointer_motion_hook(int x, int y, t_fdf *d)
-{
-	if (x >= 0 && x <= 1919 && y >= 0 && y <= 1079 && (d->lmb_held || d->rmb_held))
-	{
-		if (d->lmb_held)
-		{
-			if (pixel_put(d->img, x, y, 0xff0000) && !d->refresh_needed)
-				d->refresh_needed = true;
-		}
-		else
-			eraser(d, x, y, 40);
-	}
-	return (0);
-}
-
-static int	mouse_hook(int button, int x, int y, t_fdf *d)
-{
-	(void)x;
-	(void)y;
-	if (button == LMB)
-		d->lmb_held = !d->lmb_held;
-	else if (button == RMB)
-		d->rmb_held = !d->rmb_held;
 	return (0);
 }
 
@@ -217,34 +55,119 @@ static void	reset_image(t_img img)
 	}
 }
 
+// States:
+// - OFF
+// Key is off, nothing to do
+// - ON
+// Key is on, need to execute its function once, then move to REPEAT
+// - REPEAT (& repeat on)
+// Key repeats at desired hz
+// - REPEAT (& repeat off)
+// Waiting for repeat to be on
+//
+// Repeat on/off logic:
+// When no key is pressed, repeat is OFF
+// When any key is ON and swaps to REPEAT, repeat is ON (waiting)
+// Key repeat timer is set to current time
+// Whenever current time - key repeat time is higher than FREQ
+// Repeat is now REPEAT (on)
+// Whenever no keys are pressed, repeat goes back to OFF
+//
+// Whenever enough time has passed during repeat, keys with REPEAT will repeat
+// And the timer will update
+static int	get_repeat_actions(t_fdf *d)
+{
+	int	actions;
+
+	if (d->key_repeat_state == REPEAT)
+	{
+		d->key_repeat_time_ratio += (float)ft_time_diff(d->cur_time,
+				d->key_repeat_time) / REPEAT_RATE;
+		actions = (int)d->key_repeat_time_ratio;
+		d->key_repeat_time_ratio -= (float)actions;
+		d->key_repeat_time = d->cur_time;
+		return (actions);
+	}
+	return (0);
+}
+
+// WIP: int a is bad, cannot differentiate
+static void	execute_keys(t_fdf *d, bool r, int a)
+{
+	if (d->key_state[UP] == ON || (d->key_state[UP] == REPEAT && r))
+		move_down(d, a);
+	if (d->key_state[DOWN] == ON || (d->key_state[DOWN] == REPEAT && r))
+		move_up(d, a);
+	if (d->key_state[LEFT] == ON || (d->key_state[LEFT] == REPEAT && r))
+		move_right(d, a);
+	if (d->key_state[RIGHT] == ON || (d->key_state[RIGHT] == REPEAT && r))
+		move_left(d, a);
+	if (d->key_state[LSHIFT] == ON || (d->key_state[LSHIFT] == REPEAT && r))
+		zoom_in(d, a);
+	if (d->key_state[LCTRL] == ON || (d->key_state[LCTRL] == REPEAT && r))
+		zoom_out(d, a);
+	if (d->key_state[A] == ON || (d->key_state[A] == REPEAT && r))
+		shift_left(d, a);
+	if (d->key_state[D] == ON || (d->key_state[D] == REPEAT && r))
+		shift_right(d, a);
+	if (d->key_state[R] == ON || (d->key_state[R] == REPEAT && r))
+		shift_up(d, a);
+	if (d->key_state[F] == ON || (d->key_state[F] == REPEAT && r))
+		shift_down(d, a);
+}
+
+static void	update_repeat_state(t_fdf *d)
+{
+	int		i;
+	bool	any_on;
+
+	i = 0;
+	any_on = false;
+	while (i < NUM_KEYS)
+	{
+		if (d->key_state[i] == ON || d->key_state[i] == REPEAT)
+		{
+			any_on = true;
+			d->key_state[i] = REPEAT;
+		}
+		i++;
+	}
+	if (!any_on)
+		d->key_repeat_state = OFF;
+	else if (any_on && d->key_repeat_state == OFF)
+	{
+		d->key_repeat_time = d->cur_time;
+		d->key_repeat_state = ON;
+	}
+	else if (d->key_repeat_state == ON && ft_time_diff(d->cur_time, d->key_repeat_time) > REPEAT_DELAY)
+	{
+		d->key_repeat_state = REPEAT;
+		d->key_repeat_time = d->cur_time;
+		d->key_repeat_time_ratio = 0;
+	}
+}
+
 static void	key_states_handler(t_fdf *d)
 {
-	if (d->key_states.up) 
-		move_down(d);
-	if (d->key_states.down)
-		move_up(d);
-	if (d->key_states.left) 
-		move_right(d);
-	if (d->key_states.right)
-		move_left(d);
-	if (d->key_states.lshift) 
-		zoom_in(d);
-	if (d->key_states.lctrl)
-		zoom_out(d);
-	if (d->key_states.a) 
-		shift_left(d);
-	if (d->key_states.d)
-		shift_right(d);
-	if (d->key_states.r) 
-		shift_up(d);
-	if (d->key_states.f)
-		shift_down(d);
-	return (0);
+	int		actions;
+	bool	repeat;
+
+	actions = get_repeat_actions(d);
+	repeat = true;
+	if (!actions)
+	{
+		repeat = false;
+		actions = 1;
+	}
+	execute_keys(d, repeat, actions);
+	update_repeat_state(d);
 }
 
 static int	sync_hook(t_fdf *d)
 {
-	gettimeofday(&d->cur_time, NULL);
+	if (gettimeofday(&d->cur_time, NULL))
+	   error_out(*d, ERRTIME);
+	key_states_handler(d);
 	if (d->redraw_needed)
 	{
 		reset_image(d->img);
@@ -258,9 +181,9 @@ static int	sync_hook(t_fdf *d)
 		d->refresh_needed = false;
 		d->frame_count++;
 	}
-	if (d->fps_time.tv_sec < d->cur_time.tv_sec)
+	if (ft_time_diff(d->cur_time, d->fps_time) > 1000000)
 	{
-		printf("Fps: %d\n", d->frame_count);
+		ft_printf("\r\033[KFps: %d", d->frame_count);
 		d->frame_count = 0;
 		d->fps_time = d->cur_time;
 	}
@@ -269,10 +192,10 @@ static int	sync_hook(t_fdf *d)
 
 void	set_hooks(t_fdf *d)
 {
-	mlx_hook(d->win, KEYPRESS, KEYPRESSMASK, key_hook, d);
-//	mlx_hook(d->win, KEYRELEASE, KEYRELEASEMASK, key_hook, d);
-	mlx_hook(d->win, BUTTONPRESS, BUTTONPRESSMASK, mouse_hook, d);
-	mlx_hook(d->win, BUTTONRELEASE, BUTTONRELEASEMASK, mouse_hook, d);
+	mlx_hook(d->win, KEYPRESS, KEYPRESSMASK, key_down_hook, d);
+	mlx_hook(d->win, KEYRELEASE, KEYRELEASEMASK, key_up_hook, d);
+	mlx_hook(d->win, BUTTONPRESS, BUTTONPRESSMASK, mouse_down_hook, d);
+	mlx_hook(d->win, BUTTONRELEASE, BUTTONRELEASEMASK, mouse_up_hook, d);
 	mlx_hook(d->win, MOTIONNOTIFY, POINTERMOTIONMASK, pointer_motion_hook, d);
 	mlx_hook(d->win, CLIENTMESSAGE, 1, clientmsg_hook, d);
 	mlx_loop_hook(d->mlx, sync_hook, d);
