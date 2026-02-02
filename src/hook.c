@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 21:54:08 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/02 17:56:02 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/02 18:38:26 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,6 +192,7 @@ static int	sync_hook(t_fdf *d)
 
 void	set_hooks(t_fdf *d)
 {
+	mlx_do_key_autorepeatoff(d->mlx);
 	mlx_hook(d->win, KEYPRESS, KEYPRESSMASK, key_down_hook, d);
 	mlx_hook(d->win, KEYRELEASE, KEYRELEASEMASK, key_up_hook, d);
 	mlx_hook(d->win, BUTTONPRESS, BUTTONPRESSMASK, mouse_down_hook, d);
