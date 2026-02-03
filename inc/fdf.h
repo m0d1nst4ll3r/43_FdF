@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/02 18:33:36 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/03 12:28:54 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # define REFRESH_RATE	16666
 // How long to hold the key down for it to start repeating (OS is 500ms)
 // Current 250 ms
-# define REPEAT_DELAY	500000
+# define REPEAT_DELAY	250000
 // Frequency of key repeats (OS is 33hz)
 // Current 33 hz
 # define REPEAT_RATE	30000
@@ -45,7 +45,7 @@
 # define POINT_DISTANCE	100
 # define HEIGHT_MOD		10
 # define LINE_OFFSET	20
-# define MOVE_SPEED		5
+# define MOVE_SPEED		15
 
 # define ERRMLX			"Error initializing mlx"
 # define ERRWIN			"Error initializing mlx window"
@@ -135,6 +135,7 @@ typedef struct	s_fdf
 	float			key_repeat_time_ratio;
 	bool			lmb_held;
 	bool			rmb_held;
+	t_coord			mouse_pos;
 	bool			refresh_needed; // Note that it should be useful later if I want to implement mouse-dragging to rotate the shape around
 	int				frame_count; // In that case, mlx_loop will not only put_image but also draw_image
 	struct timeval	old_time; // Draw_image in that case should have a dedicated redraw_needed value that updates on user interaction
@@ -175,10 +176,8 @@ int				key_up_hook(int key, t_fdf *d);
 
 // INTERACTIVE
 // interact_translate.c
-void			move_right(t_fdf *d, int actions);
-void			move_left(t_fdf *d, int actions);
-void			move_up(t_fdf *d, int actions);
-void			move_down(t_fdf *d, int actions);
+void			move_x(t_fdf *d, int actions);
+void			move_y(t_fdf *d, int actions);
 // interact_zoom.c
 void			zoom_in(t_fdf *d, int actions); // TODO: zoom is bad
 void			zoom_out(t_fdf *d, int actions);

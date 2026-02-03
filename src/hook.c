@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 21:54:08 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/02 18:38:26 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/03 12:27:48 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,13 +95,13 @@ static int	get_repeat_actions(t_fdf *d)
 static void	execute_keys(t_fdf *d, bool r, int a)
 {
 	if (d->key_state[UP] == ON || (d->key_state[UP] == REPEAT && r))
-		move_down(d, a);
+		move_y(d, MOVE_SPEED * a);
 	if (d->key_state[DOWN] == ON || (d->key_state[DOWN] == REPEAT && r))
-		move_up(d, a);
+		move_y(d, - (MOVE_SPEED * a));
 	if (d->key_state[LEFT] == ON || (d->key_state[LEFT] == REPEAT && r))
-		move_right(d, a);
+		move_x(d, MOVE_SPEED * a);
 	if (d->key_state[RIGHT] == ON || (d->key_state[RIGHT] == REPEAT && r))
-		move_left(d, a);
+		move_x(d, - (MOVE_SPEED * a));
 	if (d->key_state[LSHIFT] == ON || (d->key_state[LSHIFT] == REPEAT && r))
 		zoom_in(d, a);
 	if (d->key_state[LCTRL] == ON || (d->key_state[LCTRL] == REPEAT && r))
