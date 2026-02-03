@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:05:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/02 17:06:42 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/03 13:56:17 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,6 +158,14 @@ static void	link_points(t_fdf *d, int x, int y)
 // It's ugly, but that's ok. Part of the process.
 // Next step, draw lines between pixels!!! Bresenham time.
 // We're giving up circles. It was fun but bye bye.
+// Step 4 done: I've got good interactivity, with even mouse motion.
+// Next step is to fix perspective, zooming, and rotating.
+// Step after that will be colors. Then, we'll have something 99% good.
+// Next we should center the shape at 1st draw (so we can see everything) - this doesn't need to be perfect.
+// Next step after that would be hiding lines according to depth.
+// With all that done, we should have something pretty much "good enough" I guess, and I can move on.
+// Unless I want to do more, like not calculating outside of screen, doing default colors, etc...
+// (after cleaning up code completely ofc)
 void	draw_image(t_fdf *d)
 {
 	int	x;

@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 21:54:08 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/03 12:27:48 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/03 13:55:47 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ static int	get_repeat_actions(t_fdf *d)
 	return (0);
 }
 
-// WIP: int a is bad, cannot differentiate
 static void	execute_keys(t_fdf *d, bool r, int a)
 {
 	if (d->key_state[UP] == ON || (d->key_state[UP] == REPEAT && r))

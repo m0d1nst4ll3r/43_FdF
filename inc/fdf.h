@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/03 12:28:54 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/03 14:03:22 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 // Framerate limit
 // Current 60 hz
-# define REFRESH_RATE	16666
+# define REFRESH_RATE	5000
 // How long to hold the key down for it to start repeating (OS is 500ms)
 // Current 250 ms
 # define REPEAT_DELAY	250000
