@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 16:49:36 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/02 18:34:17 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/04 15:51:11 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static void	set_key_state(int key, t_fdf *d, t_key_state state)
 int	key_down_hook(int key, t_fdf *d)
 {
 	if (key == KEY_ESC)
-		exit_prog(*d, 0);
+		exit_prog(d, 0);
 	set_key_state(key, d, ON);
 	return (0);
 }

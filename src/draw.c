@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:05:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/03 13:56:17 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/04 14:08:34 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,41 @@ static void	draw_line(t_img img, t_coord p1, t_coord p2)
 	}
 }
 
+static t_coord	transform(t_coord point, int height, float angle)
+{
+	int	tmp;
+
+	tmp = point.x;
+	point.x = (tmp - point.y) * cos(angle);
+	point.y = (tmp + point.y) * sin(angle) - height;
+	return (point);
+}
+
+// Modified version for 3d transform
+static void	link_points(t_fdf *d, int x, int y)
+{
+	t_coord	cur;
+	t_coord	right;
+	t_coord	below;
+
+	cur.x = y + d->x_offset + x * d->point_distance;
+	cur.y = d->y_offset + y * d->point_distance;
+	if (y + 1 < d->map_height && x < d->map_widths[y + 1]) // bottom exists
+	{
+		below.x = (y + 1) + d->x_offset + x * d->point_distance;
+		below.y = d->y_offset + (y + 1) * d->point_distance;
+		draw_line(d->img, transform(cur, d->map[y][x].height * d->height_mod, d->angle),
+				transform(below, d->map[y + 1][x].height * d->height_mod, d->angle));
+	}
+	if (x + 1 < d->map_widths[y])
+	{
+		right.x = y + d->x_offset + (x + 1) * d->point_distance;
+		right.y = d->y_offset + y * d->point_distance;
+		draw_line(d->img, transform(cur, d->map[y][x].height * d->height_mod, d->angle),
+				transform(right, d->map[y][x + 1].height * d->height_mod, d->angle));
+	}
+}
+
 // This is it
 // Now
 // We need to link every point together
@@ -107,7 +142,7 @@ static void	draw_line(t_img img, t_coord p1, t_coord p2)
 // Summarizing:
 // 1. 2 functions calls (right, down) MAX, 0 minimum (no neighbours)
 // 2. Points can be in any octant configuration
-static void	link_points(t_fdf *d, int x, int y)
+/*static void	link_points(t_fdf *d, int x, int y)
 {
 	t_coord	cur;
 	t_coord	right;
@@ -127,7 +162,7 @@ static void	link_points(t_fdf *d, int x, int y)
 		right.y = d->y_offset + y * d->point_distance - d->map[y][x + 1].height * d->height_mod;
 		draw_line(d->img, cur, right);
 	}
-}
+}*/
 
 // We're gonna try to place points on the screen, according to where they should be on the map
 // Ex

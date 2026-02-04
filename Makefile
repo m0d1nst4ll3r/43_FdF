@@ -6,7 +6,7 @@
 #    By: rpohlen <rpohlen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/20 14:37:51 by rpohlen           #+#    #+#              #
-#    Updated: 2026/02/02 17:28:43 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/04 14:03:52 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,7 +47,7 @@ NAME				= fdf
 # Libraries
 LIB					= libft/libft.a \
 					  mlx/libmlx_Linux.a
-LINK				= -lXext -lX11
+LINK				= -lXext -lX11 -lm
 
 # Compiler settings
 CC					= cc

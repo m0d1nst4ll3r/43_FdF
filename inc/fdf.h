@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/03 14:03:22 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/04 15:44:57 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,18 +27,18 @@
 # define WIN_NAME		"fdf"
 
 # define NUM_KEYS		12
-# define W			0
-# define S			1
-# define A			2
-# define D			3
-# define LSHIFT		4
-# define LCTRL		5
-# define R			6
-# define F			7
-# define UP			8
-# define DOWN		9
-# define LEFT		10
-# define RIGHT		11
+# define W				0
+# define S				1
+# define A				2
+# define D				3
+# define LSHIFT			4
+# define LCTRL			5
+# define R				6
+# define F				7
+# define UP				8
+# define DOWN			9
+# define LEFT			10
+# define RIGHT			11
 
 # define X_OFFSET		500
 # define Y_OFFSET		500
@@ -46,6 +46,9 @@
 # define HEIGHT_MOD		10
 # define LINE_OFFSET	20
 # define MOVE_SPEED		15
+# define START_ANGLE	0.523599
+
+# define ANGLE_MOVE		0.01
 
 # define ERRMLX			"Error initializing mlx"
 # define ERRWIN			"Error initializing mlx window"
@@ -68,6 +71,7 @@
 # include <fcntl.h>
 # include <sys/time.h>
 # include <stdbool.h>
+# include <math.h> // for sin/cos used in 3D transform
 
 // Keys can be:
 // Off		Not pressed
@@ -129,6 +133,7 @@ typedef struct	s_fdf
 	int				point_distance; // -
 	int				height_mod; // -
 	int				line_offset; // -
+	float			angle;
 	t_key_state		key_state[NUM_KEYS];
 	t_key_state		key_repeat_state;
 	struct timeval	key_repeat_time;
@@ -151,8 +156,8 @@ int				pixel_put(t_img img, int x, int y, int color);
 void			init_prog(t_fdf *d, char **av);
 void			init_mlx(t_fdf *d);
 // exit.c
-void			exit_prog(t_fdf d, unsigned char exitval);
-void			error_out(t_fdf d, char *s);
+void			exit_prog(t_fdf *d, unsigned char exitval);
+void			error_out(t_fdf *d, char *s);
 
 //	MAP BUILDING
 // map_file.c

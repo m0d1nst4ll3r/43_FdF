@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:02:53 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/02 15:23:14 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/04 15:50:31 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@ void	init_mlx(t_fdf *d)
 {
 	d->mlx = mlx_init();
 	if (!d->mlx)
-		error_out(*d, ERRMLX);
+		error_out(d, ERRMLX);
 	d->win = mlx_new_window(d->mlx, WIN_X, WIN_Y, WIN_NAME);
 	if (!d->win)
-		error_out(*d, ERRWIN);
+		error_out(d, ERRWIN);
 	d->img.img = mlx_new_image(d->mlx, WIN_X, WIN_Y);
 	if (!d->img.img)
-		error_out(*d, ERRIMG);
+		error_out(d, ERRIMG);
 	d->img.addr = mlx_get_data_addr(d->img.img, &d->img.bpp, &d->img.llen,
 			&d->img.endian);
 }
@@ -51,6 +51,7 @@ void	init_prog(t_fdf *d, char **av)
 	d->point_distance = POINT_DISTANCE;
 	d->height_mod = HEIGHT_MOD;
 	d->line_offset = LINE_OFFSET;
+	d->angle = START_ANGLE;
 	d->redraw_needed = 1;
 	init_keys(d);
 	d->lmb_held = false;

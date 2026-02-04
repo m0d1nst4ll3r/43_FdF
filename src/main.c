@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:06 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/02 17:51:02 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/04 15:45:14 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,5 +50,5 @@ int	main(int ac, char **av)
 	init_mlx(&data);
 	set_hooks(&data);
 	mlx_loop(data.mlx);
-	exit_prog(data, 0);
+	exit_prog(&data, 0);
 }
