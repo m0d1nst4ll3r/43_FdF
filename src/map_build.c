@@ -30,12 +30,12 @@ static unsigned int	get_total_width(unsigned short *map_widths,
 }
 
 // Returns 1 if the height value does not fit within a short
-static int	fill_point(t_point *point, char *line, int *i)
+static int	fill_point(t_map_point *point, char *line, int *i)
 {
 	int	ret;
 
-	ret = ft_atox(line + *i, 0, &point->height,
-			sizeof(point->height) | ATOX_LAX);
+	ret = ft_atox(line + *i, 0, &point->z,
+			sizeof(point->z) | ATOX_LAX);
 	if (ret < 0)
 		return (1);
 	*i += ret;
@@ -47,7 +47,7 @@ static int	fill_point(t_point *point, char *line, int *i)
 	return (0);
 }
 
-static int	fill_line(t_point *map, char *line)
+static int	fill_line(t_map_point *map, char *line)
 {
 	int	i;
 	int	x;

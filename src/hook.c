@@ -176,7 +176,7 @@ static int	sync_hook(t_fdf *d)
 	if (d->refresh_needed && is_time_to_refresh(d->old_time, d->cur_time, REFRESH_RATE))
 	{
 		d->old_time = d->cur_time;
-		mlx_put_image_to_window(d->mlx, d->win, d->img.img, 0, 0);
+		mlx_put_image_to_window(d->mlx, d->win, d->img.ptr, 0, 0);
 		d->refresh_needed = false;
 		d->frame_count++;
 	}

@@ -12,10 +12,10 @@
 
 #include "fdf.h"
 
-static void	draw_line_low(t_img img, t_coord p1, t_coord p2)
+static void	draw_line_low(t_img img, t_point p1, t_point p2)
 {
-	t_coord	t;
-	t_coord	i;
+	t_point	t;
+	t_point	i;
 	int		yi;
 	int		d;
 
@@ -44,10 +44,10 @@ static void	draw_line_low(t_img img, t_coord p1, t_coord p2)
 	}
 }
 
-static void	draw_line_high(t_img img, t_coord p1, t_coord p2)
+static void	draw_line_high(t_img img, t_point p1, t_point p2)
 {
-	t_coord	t;
-	t_coord	i;
+	t_point	t;
+	t_point	i;
 	int		xi;
 	int		d;
 
@@ -77,7 +77,7 @@ static void	draw_line_high(t_img img, t_coord p1, t_coord p2)
 }
 
 // Draw a line between point p1 and point p2
-static void	draw_line(t_img img, t_coord p1, t_coord p2)
+static void	draw_line(t_img img, t_point p1, t_point p2)
 {
 	if (ft_abs(p2.y - p1.y) < ft_abs(p2.x - p1.x))
 	{
@@ -95,7 +95,7 @@ static void	draw_line(t_img img, t_coord p1, t_coord p2)
 	}
 }
 
-static t_coord	transform(t_coord point, int height, float angle)
+static t_point	transform(t_point point, int height, float angle)
 {
 	int	tmp;
 
@@ -108,9 +108,9 @@ static t_coord	transform(t_coord point, int height, float angle)
 // Modified version for 3d transform
 static void	link_points(t_fdf *d, int x, int y)
 {
-	t_coord	cur;
-	t_coord	right;
-	t_coord	below;
+	t_point	cur;
+	t_point	right;
+	t_point	below;
 
 	cur.x = y + d->x_offset + x * d->point_distance;
 	cur.y = d->y_offset + y * d->point_distance;
@@ -118,15 +118,15 @@ static void	link_points(t_fdf *d, int x, int y)
 	{
 		below.x = (y + 1) + d->x_offset + x * d->point_distance;
 		below.y = d->y_offset + (y + 1) * d->point_distance;
-		draw_line(d->img, transform(cur, d->map[y][x].height * d->height_mod, d->angle),
-				transform(below, d->map[y + 1][x].height * d->height_mod, d->angle));
+		draw_line(d->img, transform(cur, d->map[y][x].z * d->height_mod, d->angle),
+				transform(below, d->map[y + 1][x].z * d->height_mod, d->angle));
 	}
 	if (x + 1 < d->map_widths[y])
 	{
 		right.x = y + d->x_offset + (x + 1) * d->point_distance;
 		right.y = d->y_offset + y * d->point_distance;
-		draw_line(d->img, transform(cur, d->map[y][x].height * d->height_mod, d->angle),
-				transform(right, d->map[y][x + 1].height * d->height_mod, d->angle));
+		draw_line(d->img, transform(cur, d->map[y][x].z * d->height_mod, d->angle),
+				transform(right, d->map[y][x + 1].z * d->height_mod, d->angle));
 	}
 }
 

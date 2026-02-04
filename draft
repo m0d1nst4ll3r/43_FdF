@@ -7,3 +7,10 @@ However, I never really did real isometric graphics. It is MANDATORY in the subj
 Isometric is 120 degrees between all lines.
 
 I should try to get that, and then implement rotation/zoom (with pointer motion rotation).
+
+Missions for now:
+- Rewrite/restructure code to be clearer
+	- More sub-structures
+	- Better variable names
+	- Normed comments (before typedef or function)
+	- Use AI to suggest better names - I can improve a lot there

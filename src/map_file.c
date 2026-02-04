@@ -13,10 +13,10 @@
 #include "fdf.h"
 
 // Called at the end of map-building + at exit
-void	free_file(t_file **file)
+void	free_file(t_file_contents **file)
 {
-	t_file	*last;
-	t_file	*cur;
+	t_file_contents	*last;
+	t_file_contents	*cur;
 
 	cur = *file;
 	while (cur)
@@ -29,9 +29,9 @@ void	free_file(t_file **file)
 	*file = NULL;
 }
 
-static t_file	*new_line(char *line)
+static t_file_contents	*new_line(char *line)
 {
-	t_file	*new;
+	t_file_contents	*new;
 
 	new = malloc(sizeof(*new));
 	if (!new)
@@ -44,8 +44,8 @@ static t_file	*new_line(char *line)
 // Write file into a chained list with gnl
 unsigned short	read_file(t_fdf *d)
 {
-	t_file			*line_node;
-	t_file			*last_node;
+	t_file_contents			*line_node;
+	t_file_contents			*last_node;
 	char			*line;
 	unsigned short	i;
 

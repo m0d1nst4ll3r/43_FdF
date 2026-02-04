@@ -20,10 +20,10 @@ void	init_mlx(t_fdf *d)
 	d->win = mlx_new_window(d->mlx, WIN_X, WIN_Y, WIN_NAME);
 	if (!d->win)
 		error_out(d, ERRWIN);
-	d->img.img = mlx_new_image(d->mlx, WIN_X, WIN_Y);
-	if (!d->img.img)
+	d->img.ptr = mlx_new_image(d->mlx, WIN_X, WIN_Y);
+	if (!d->img.ptr)
 		error_out(d, ERRIMG);
-	d->img.addr = mlx_get_data_addr(d->img.img, &d->img.bpp, &d->img.llen,
+	d->img.addr = mlx_get_data_addr(d->img.ptr, &d->img.bpp, &d->img.llen,
 			&d->img.endian);
 }
 
@@ -61,6 +61,6 @@ void	init_prog(t_fdf *d, char **av)
 	gettimeofday(&d->old_time, NULL);
 	d->fps_time = d->old_time; // End
 	d->win = NULL;
-	d->img.img = NULL;
+	d->img.ptr = NULL;
 	d->mlx = NULL;
 }

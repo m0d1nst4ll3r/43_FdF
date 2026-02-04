@@ -23,8 +23,8 @@ void	exit_prog(t_fdf *d, unsigned char exitval)
 	if (d->file)
 		free_file(&d->file);
 	ft_close(&d->fd);
-	if (d->img.img)
-		mlx_destroy_image(d->mlx, d->img.img);
+	if (d->img.ptr)
+		mlx_destroy_image(d->mlx, d->img.ptr);
 	if (d->win)
 		mlx_destroy_window(d->mlx, d->win);
 	if (d->mlx)
