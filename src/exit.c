@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:20:08 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/28 15:41:11 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/04 11:39:09 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void	exit_prog(t_fdf d, unsigned char exitval)
 		mlx_destroy_window(d.mlx, d.win);
 	if (d.mlx)
 	{
+		mlx_do_key_autorepeaton(d.mlx);
 		mlx_destroy_display(d.mlx);
 		free(d.mlx);
 	}
