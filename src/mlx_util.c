@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:21:10 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/30 14:44:10 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 16:13:21 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,16 @@
 
 // Writes directly into mlx image
 // Display does not update until next put_image_to_window
-int	pixel_put(t_img img, int x, int y, int color)
+// Only returns true if pixel was actually changed
+bool	pixel_put(t_img img, t_point point, int color)
 {
 	char	*addr;
 
-	if (x < 0 || y < 0 || x >= WIN_X || y >= WIN_Y)
-		return (0);
-	addr = img.addr + y * img.llen + x * img.bpp / 8;
-	if (*(int *)addr != color)
-	{
-		*(int *)addr = color;
-		return (1);
-	}
-	return (0);
+	if (point.x < 0 || point.y < 0 || point.x >= WIN_X || point.y >= WIN_Y)
+		return (false);
+	addr = img.addr + point.y * img.llen + point.x * img.bypp;
+	if (*(int *)addr == color)
+		return (false);
+	*(int *)addr = color;
+	return (true);
 }

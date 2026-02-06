@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:48:13 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/28 17:55:07 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 16:07:31 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int	fill_point(t_map_point *point, char *line, int *i)
 		*i += 1 + ft_atox(line + *i + 1, BASE16, &point->color,
 				sizeof(point->color) | ATOX_LAX);
 	else
-		point->color = -1;
+		point->color = DEFAULT_COLOR;
 	return (0);
 }
 

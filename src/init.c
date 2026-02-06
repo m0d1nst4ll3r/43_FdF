@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:02:53 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 01:16:34 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 16:05:43 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ static void	init_mouse(t_mouse *mouse)
 // gettimeofday can fail
 static bool	init_time(t_time *time)
 {
-	time->first_image = true;
 	time->img_state = IMG_NEED_REDRAW;
 	time->frame_count = 0;
 	time->loop_count = 0;
@@ -84,6 +83,9 @@ static bool	init_time(t_time *time)
 //	- key/mouse values
 //		- do not init repeat ratio, it is set to 0 automatically at repeat start
 //		- do not init mouse pos, this is set on false->true lmb/rmb held change
+//	- time values
+//		- do not init last_key_repeat, it is set on key state ON->REPEAT change
+//		- do not init current, it is set on mlx loop
 void	init_prog(t_fdf *d, char *filename)
 {
 	init_mlx_null(&d->mlx);

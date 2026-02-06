@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 01:20:38 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 16:14:46 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,9 @@
 # define DEFAULT_HEIGHT_MOD	1
 # define DEFAULT_ZOOM		1
 # define DEFAULT_ANGLE		0.523599
+
+// Map building constants
+# define DEFAULT_COLOR		0xffffff
 
 // Error strings
 # define DEFAULT_ERR	"Undefined error"
@@ -121,11 +124,14 @@ typedef struct	s_file_contents
 }	t_file_contents;
 
 // Mlx img object
+// - bypp	bytes per pixel (bpp / 8), in case compiler does not optimize
+//			the redundant / 8 operation made on each pixel_put
 typedef struct	s_img
 {
 	void		*ptr;
 	char		*addr;
 	int			bpp;
+	int			bypp;
 	int			llen;
 	int			endian;
 }	t_img;
@@ -250,7 +256,7 @@ typedef struct	s_fdf
 }	t_fdf;
 
 // mlx_util.c
-int				pixel_put(t_img img, int x, int y, int color);
+bool			pixel_put(t_img img, t_point point, int color);
 
 //	INIT/EXIT/ERROR
 // init_subfuncs.c
