@@ -6,7 +6,7 @@
 #    By: rpohlen <rpohlen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/20 14:37:51 by rpohlen           #+#    #+#              #
-#    Updated: 2026/02/06 01:21:33 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/06 18:03:32 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,9 @@ CFILES				= main.c \
 					  hook.c \
 					  hook_mouse.c \
 					  hook_keyboard.c \
+					  hook_engine_loop.c \
+					  hook_key_repeat.c \
+					  hook_window_button.c \
 					  draw.c
 SRCDIR				= src
 SRC					= $(addprefix $(SRCDIR)/, $(CFILES))
