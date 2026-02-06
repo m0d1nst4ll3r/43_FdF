@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:06 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/05 22:00:34 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 01:24:21 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@
 // 4. Set up all hooks
 //		- keyboard
 //		- mouse
-//		- game loop
+//		- engine loop
 // 5. Enter mlx loop
-//		- mandatory draw on first game loop
+//		- mandatory draw on first engine loop
 //		- now user can interact with program
 //		- exit on ESC or X window button
 //	6. Whether we exit normally or through an error, always free all
@@ -38,6 +38,6 @@ int	main(int ac, char **av)
 	get_map(&data);
 	init_mlx(&data);
 	set_hooks(&data);
-	mlx_loop(data.mlx);
+	mlx_loop(data.mlx.ptr);
 	exit_prog(&data, 0);
 }
