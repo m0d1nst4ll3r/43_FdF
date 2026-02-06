@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 16:14:46 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 17:38:56 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,18 @@
 # define WIN_NAME			"fdf"
 # define WIN_X				1920
 # define WIN_Y				1080
-# define SHOW_FPS			1
 # define REFRESH_RATE_USEC	16666
+# define SHOW_FPS			1
+# define POINT_DISTANCE		100
+
+// Interactivity constants
 # define REPEAT_DELAY_USEC	250000
 # define REPEAT_RATE_USEC	30000
-# define POINT_DISTANCE		100
 # define MOVE_SPEED			15
+# define ZOOM_SPEED			0.1
 # define ANGLE_MOVE			0.01
+# define HEIGHT_MOVE		0.1
+# define HEIGHT_MIN			0.2
 
 // Starting states
 # define DEFAULT_X_OFFSET	500
@@ -202,7 +207,7 @@ typedef struct s_key
 	t_repeat	repeat;
 	t_key_state	states[KEY_COUNT];
 	int			codes[KEY_COUNT];
-	void		(*actions[KEY_COUNT])(t_fdf *);
+	void		(*actions[KEY_COUNT])(t_fdf *, int);
 }	t_key;
 
 // Mouse data
@@ -256,7 +261,7 @@ typedef struct	s_fdf
 }	t_fdf;
 
 // mlx_util.c
-bool			pixel_put(t_img img, t_point point, int color);
+bool			pixel_put(t_img *img, t_point point, int color);
 
 //	INIT/EXIT/ERROR
 // init_subfuncs.c
@@ -292,6 +297,10 @@ int				mouse_up_hook(int button, int x, int y, t_fdf *d);
 // hook_keyboard.c
 int				key_down_hook(int key, t_fdf *d);
 int				key_up_hook(int key, t_fdf *d);
+// hook_window_button.c
+int				clientmsg_hook(t_fdf *d);
+// hook_engine_loop.c
+int				engine_loop(t_fdf *d);
 
 // INTERACTIVE
 // interact_translate.c
@@ -302,13 +311,15 @@ void			zoom_in(t_fdf *d, int actions); // TODO: zoom is bad
 void			zoom_out(t_fdf *d, int actions);
 // interact_rotate.c
 void			shift_left(t_fdf *d, int actions); // TODO: rotate is bad, improve
-void			shift_right(t_fdf *d, int actions); // func names are not even good
+void			shift_right(t_fdf *d, int actions); // rename funcs to rotate_x _y
 // interact_height.c
-void			shift_up(t_fdf *d, int actions); // TODO: float instead of int
+void			shift_up(t_fdf *d, int actions);
 void			shift_down(t_fdf *d, int actions);
 
 // draw.c
-void			draw_image(t_fdf *d); // TODO: improve everything, this was done super fast
+bool			reset_image(t_img *img);
+bool			draw_image(t_fdf *d);
+// TODO: improve everything, this was done super fast
 // TODO: draw calculates points and lines outside of screen - bad
 
 #endif

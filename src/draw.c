@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:05:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/04 14:08:34 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 17:20:32 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,18 +130,6 @@ static void	link_points(t_fdf *d, int x, int y)
 	}
 }
 
-// This is it
-// Now
-// We need to link every point together
-// We're starting top left
-// Finishing bottom right
-// Logically we only need to link each point to its right & down neighbours (if they exist)
-// So we're checking for validity of x+1 and y+1 then choosing them as links for bresenham bullshit
-// Note that FOR NOW points should always be to the right (on the same line) or downwards (left, same col, or right)
-// But as we move on points will maybe be in any configuration (all 8 octants in bresenham)
-// Summarizing:
-// 1. 2 functions calls (right, down) MAX, 0 minimum (no neighbours)
-// 2. Points can be in any octant configuration
 /*static void	link_points(t_fdf *d, int x, int y)
 {
 	t_coord	cur;
@@ -164,43 +152,6 @@ static void	link_points(t_fdf *d, int x, int y)
 	}
 }*/
 
-// We're gonna try to place points on the screen, according to where they should be on the map
-// Ex
-// 0 0 0
-// 0 0 0
-// 0 0 0
-// We should have 9 points in a rectangular grid (for now, no angle)
-// We need to figure out the distance between points
-// We'll display points as little red circles for now (reusing the mlx_paint circle draw algorithm)
-// Distance between points for now will just be a macro that I can define
-// We'll figure out how to center the thing later
-// Step 1 achieved: we can draw circles where points should be (without height)
-// Next step, height
-// Step 2 achieved: height works
-// This is ugly cause there's no isometric effect, next step: isometric
-// Now we're getting into the interesting stuff
-// A basic isometric effect is just that each new line should have a X offset that grows every line
-// Let's try that
-// We're getting something interesting here, but let's add keys to modify them in real time and see how the image changes
-// This way we can get an idea of what looks right and what doesn't, what looks like rotation, etc...
-// We need keys for everything:
-// X/Y offsets - that's arrow keys cause why not
-// Point distance - this should have some kind of zoom effect, we'll place it on shift/ctrl
-// Line offset - AD for now
-// XZ for now will move circle_radius (clamped between 1 and something...)
-// FR will move height_mod
-// Step 3 achieved: all hooks are set and I can move my shit around
-// It's ugly, but that's ok. Part of the process.
-// Next step, draw lines between pixels!!! Bresenham time.
-// We're giving up circles. It was fun but bye bye.
-// Step 4 done: I've got good interactivity, with even mouse motion.
-// Next step is to fix perspective, zooming, and rotating.
-// Step after that will be colors. Then, we'll have something 99% good.
-// Next we should center the shape at 1st draw (so we can see everything) - this doesn't need to be perfect.
-// Next step after that would be hiding lines according to depth.
-// With all that done, we should have something pretty much "good enough" I guess, and I can move on.
-// Unless I want to do more, like not calculating outside of screen, doing default colors, etc...
-// (after cleaning up code completely ofc)
 void	draw_image(t_fdf *d)
 {
 	int	x;
@@ -219,3 +170,25 @@ void	draw_image(t_fdf *d)
 	}
 	d->refresh_needed = 1;
 }
+
+bool	reset_image(t_img *img)
+{
+	t_point	point;
+	bool	changed;
+
+	changed = false;
+	point.y = 0;
+	while (point.y < WIN_Y)
+	{
+		point.x = 0;
+		while (point.x < WIN_X)
+		{
+			if (pixel_put(img, point, 0))
+				changed = true;
+			point.x++;
+		}
+		point.y++;
+	}
+	return (changed);
+}
+

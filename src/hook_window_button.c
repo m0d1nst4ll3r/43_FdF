@@ -1,26 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   interact_rotate.c                                  :+:      :+:    :+:   */
+/*   hook_window_button.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/02 17:01:29 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 17:03:48 by rapohlen         ###   ########.fr       */
+/*   Created: 2026/02/06 17:10:17 by rapohlen          #+#    #+#             */
+/*   Updated: 2026/02/06 17:10:30 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-// Broken for now. TODO
-void	shift_left(t_fdf *d, int actions)
+int	clientmsg_hook(t_fdf *d)
 {
-	(void)d;
-	(void)actions;
+	exit_prog(d, 0);
+	return (0);
 }
 
-void	shift_right(t_fdf *d, int actions)
-{
-	(void)d;
-	(void)actions;
-}

@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 16:48:23 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/03 12:26:39 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 17:36:10 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,36 +14,38 @@
 
 int	pointer_motion_hook(int x, int y, t_fdf *d)
 {
-	if (d->lmb_held)
+	if (d->mouse.lmb_held)
 	{
-		if (x != d->mouse_pos.x)
+		if (x != d->mouse.pos.x)
 		{
-			move_x(d, x - d->mouse_pos.x);
-			d->mouse_pos.x = x;
+			move_right(d, x - d->mouse.pos.x);
+			d->mouse.pos.x = x;
 		}
-		if (y != d->mouse_pos.y)
+		if (y != d->mouse.pos.y)
 		{
-			move_y(d, y - d->mouse_pos.y);
+			move_down(d, y - d->mouse.pos.y);
 			d->mouse_pos.y = y;
 		}
 	}
-	// TODO: rmg_held (when I have good rotation)
+	// TODO: rmb_held (when I have good rotation)
 	return (0);
 }
 
+// LMB/RMB enable position tracking used in pointer motion hook
+// MWU/MWD act on zoom
 int	mouse_down_hook(int button, int x, int y, t_fdf *d)
 {
 	if (button == BTN_LMB)
 	{
-		d->mouse_pos.x = x;
-		d->mouse_pos.y = y;
-		d->lmb_held = true;
+		d->mouse.pos.x = x;
+		d->mouse.pos.y = y;
+		d->mouse.lmb_held = true;
 	}
 	else if (button == BTN_RMB)
 	{
-		d->mouse_pos.x = x;
-		d->mouse_pos.y = y;
-		d->rmb_held = true;
+		d->mouse.pos.x = x;
+		d->mouse.pos.y = y;
+		d->mouse.rmb_held = true;
 	}
 	else if (button == BTN_MWU)
 		zoom_in(d, 1);
@@ -52,13 +54,13 @@ int	mouse_down_hook(int button, int x, int y, t_fdf *d)
 	return (0);
 }
 
-int	mouse_up_hook(int button, int x, int y, t_fdf *d)
+int	mouse_up_hook(int button, int x, int y, t_mouse *mouse)
 {
 	(void)x;
 	(void)y;
 	if (button == BTN_LMB)
-		d->lmb_held = false;
+		mouse->lmb_held = false;
 	else if (button == BTN_RMB)
-		d->rmb_held = false;
+		mouse->rmb_held = false;
 	return (0);
 }
