@@ -6,100 +6,84 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 17:47:09 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 18:01:50 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 18:35:20 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-// States:
-// - OFF
-// Key is off, nothing to do
-// - ON
-// Key is on, need to execute its function once, then move to REPEAT
-// - REPEAT (& repeat on)
-// Key repeats at desired hz
-// - REPEAT (& repeat off)
-// Waiting for repeat to be on
-//
-// Repeat on/off logic:
-// When no key is pressed, repeat is OFF
-// When any key is ON and swaps to REPEAT, repeat is ON (waiting)
-// Key repeat timer is set to current time
-// Whenever current time - key repeat time is higher than FREQ
-// Repeat is now REPEAT (on)
-// Whenever no keys are pressed, repeat goes back to OFF
-//
-// Whenever enough time has passed during repeat, keys with REPEAT will repeat
-// And the timer will update
-static int	get_repeat_actions(t_fdf *d)
+// E.g if REPEAT_RATE is 10 ms (100 hz)
+// And if since last engine loop, 25 ms passed (because of very high frametime)
+// Then keys repeated 2.5 times since last loop iteration
+// If there was a leftover 0.6 key repeat times from last time
+// Then we consider that keys repeated 3 times, and a leftover of 0.1 carries
+//	over to the next loop iteration.
+// This should only be useful in case of either very high key repeat frequency
+//	or very high frametime.
+static int	update_repeat_time_ratio(t_fdf *d)
 {
 	int	actions;
 
-	if (d->key_repeat_state == REPEAT)
+	if (d->key.repeat.state == REPEAT)
 	{
-		d->key_repeat_time_ratio += (float)ft_time_diff(d->cur_time,
-				d->key_repeat_time) / REPEAT_RATE;
-		actions = (int)d->key_repeat_time_ratio;
-		d->key_repeat_time_ratio -= (float)actions;
-		d->key_repeat_time = d->cur_time;
+		d->key.repeat.time_ratio += (float)ft_time_diff(d->time.current,
+				d->time.last_key_repeat) / KEY_REPEAT_RATE_USEC;
+		d->time.last_key_repeat = d->time.current;
+		actions = (int)d->key.repeat.time_ratio;
+		d->key.repeat.time_ratio -= actions;
 		return (actions);
 	}
 	return (0);
 }
 
-static void	execute_keys(t_fdf *d, bool r, int a)
+// If key is on, execute once, go to repeat
+// If key is repeat, execute however many key repeats were simulated
+// Return value is used to update key repeat state
+static bool	execute_keys(t_fdf *d, int actions)
 {
-	if (d->key_state[UP] == ON || (d->key_state[UP] == REPEAT && r))
-		move_y(d, MOVE_SPEED * a);
-	if (d->key_state[DOWN] == ON || (d->key_state[DOWN] == REPEAT && r))
-		move_y(d, - (MOVE_SPEED * a));
-	if (d->key_state[LEFT] == ON || (d->key_state[LEFT] == REPEAT && r))
-		move_x(d, MOVE_SPEED * a);
-	if (d->key_state[RIGHT] == ON || (d->key_state[RIGHT] == REPEAT && r))
-		move_x(d, - (MOVE_SPEED * a));
-	if (d->key_state[LSHIFT] == ON || (d->key_state[LSHIFT] == REPEAT && r))
-		zoom_in(d, a);
-	if (d->key_state[LCTRL] == ON || (d->key_state[LCTRL] == REPEAT && r))
-		zoom_out(d, a);
-	if (d->key_state[A] == ON || (d->key_state[A] == REPEAT && r))
-		shift_left(d, a);
-	if (d->key_state[D] == ON || (d->key_state[D] == REPEAT && r))
-		shift_right(d, a);
-	if (d->key_state[R] == ON || (d->key_state[R] == REPEAT && r))
-		shift_up(d, a);
-	if (d->key_state[F] == ON || (d->key_state[F] == REPEAT && r))
-		shift_down(d, a);
-}
-
-static void	update_repeat_state(t_fdf *d)
-{
+	bool	any_key_on;
 	int		i;
-	bool	any_on;
 
+	any_key_on = false;
 	i = 0;
-	any_on = false;
-	while (i < NUM_KEYS)
+	while (i < KEY_COUNT)
 	{
-		if (d->key_state[i] == ON || d->key_state[i] == REPEAT)
+		if (d->key.states[i] == ON || d->key.states[i] == REPEAT)
 		{
-			any_on = true;
-			d->key_state[i] = REPEAT;
+			any_key_on = true;
+			if (d->key.states[i] == ON)
+				d->key.actions[i](d, 1);
+			else if (actions)
+				d->key.actions[i](d, actions);
+			d->key.states[i] = REPEAT;
 		}
 		i++;
 	}
+	return (any_key_on);
+}
+
+// No keys on?	->	Turn timer off.
+// Any keys on?
+//	Timer off?		->	Start it anew.
+//	Timer on?
+//		Is it still running? 	->	Calculate whether it should end
+//		Is it already over?		->	Do nothing.
+static void	update_repeat_state(t_fdf *d, bool any_key_on)
+{
 	if (!any_on)
 		d->key_repeat_state = OFF;
-	else if (any_on && d->key_repeat_state == OFF)
+	else if (d->key.repeat.state == OFF)
 	{
-		d->key_repeat_time = d->cur_time;
-		d->key_repeat_state = ON;
+		d->time.last_key_repeat = d->time.current;
+		d->key.repeat.state = ON;
 	}
-	else if (d->key_repeat_state == ON && ft_time_diff(d->cur_time, d->key_repeat_time) > REPEAT_DELAY)
+	else if (d->key_repeat_state == ON
+		&& ft_time_diff(d->time.current, d->time.last_key_repeat)
+		> KEY_REPEAT_DELAY_USEC)
 	{
-		d->key_repeat_state = REPEAT;
-		d->key_repeat_time = d->cur_time;
-		d->key_repeat_time_ratio = 0;
+		d->key.repeat.state = REPEAT;
+		d->time.last_key_repeat = d->time.current;
+		d->key.repeat.time_ratio = 0;
 	}
 }
 
@@ -120,21 +104,15 @@ static void	update_repeat_state(t_fdf *d)
 //	- The amount of times a REPEAT key fires its action depends on the age
 //		of the timer compared to the desired KEY_REPEAT_RATE.
 //		- E.g if KEY_REPEAT_RATE * 3 time passed since last engine loop, the
-//			action triggers thrice.
+//			action triggers thrice
 //		- This ratio is saved in its own float, partial completion carries over
-//			the next engine loop iteration.
+//			the next engine loop iteration
 void	key_states_handler(t_fdf *d)
 {
 	int		actions;
-	bool	repeat;
+	bool	any_key_on;
 
 	actions = get_repeat_actions(d);
-	repeat = true;
-	if (!actions)
-	{
-		repeat = false;
-		actions = 1;
-	}
-	execute_keys(d, repeat, actions);
-	update_repeat_state(d);
+	execute_keys(d, actions);
+	update_repeat_state(d, any_key_on);
 }

@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 17:38:56 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 18:37:52 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,13 @@
 # define POINT_DISTANCE		100
 
 // Interactivity constants
-# define REPEAT_DELAY_USEC	250000
-# define REPEAT_RATE_USEC	30000
-# define MOVE_SPEED			15
-# define ZOOM_SPEED			0.1
-# define ANGLE_MOVE			0.01
-# define HEIGHT_MOVE		0.1
-# define HEIGHT_MIN			0.2
+# define KEY_REPEAT_DELAY_USEC	250000
+# define KYE_REPEAT_RATE_USEC	30000
+# define MOVE_SPEED				15
+# define ZOOM_SPEED				0.1
+# define ANGLE_MOVE				0.01
+# define HEIGHT_MOVE			0.1
+# define HEIGHT_MIN				0.2
 
 // Starting states
 # define DEFAULT_X_OFFSET	500
@@ -187,12 +187,12 @@ typedef struct s_file
 }	t_file;
 
 // Key repeat data
-// - repeat_ratio	# of times keys repeated since last engine loop iteration
-// - repeat			repeat state (off, wait, repeat)
+// - time_ratio		# of times keys repeated since last engine loop iteration
+// - state			repeat state (off, wait, repeat)
 // Used for replacing OS key repeat functionality
 typedef struct s_repeat
 {
-	float		ratio;
+	float		time_ratio;
 	t_key_state	state;
 }	t_repeat;
 
@@ -264,13 +264,13 @@ typedef struct	s_fdf
 bool			pixel_put(t_img *img, t_point point, int color);
 
 //	INIT/EXIT/ERROR
+// init.c
+void			init_prog(t_fdf *d, char *filename);
 // init_subfuncs.c
 void			init_mlx_null(t_mlx *mlx);
 void			init_file(t_file *file, char *filename);
 void			init_map(t_map *map);
 void			init_state(t_state *state);
-// init.c
-void			init_prog(t_fdf *d, char *filename);
 // init_mlx.c
 void			init_mlx(t_fdf *d);
 // exit.c
@@ -278,18 +278,22 @@ void			exit_prog(t_fdf *d, unsigned char exitval);
 // error.c
 void			error_out(t_fdf *d, char *err_str);
 
-//	MAP BUILDING
+//	MAP BUILDING/FILE READING
+// map_build.c
+void			get_map(t_fdf *d);
 // map_file.c
 void			free_file(t_file_contents **file);
 unsigned short	read_file(t_fdf *d);
-// map_build.c
-void			get_map(t_fdf *d);
 // map_valid.c
 void			get_widths(t_fdf d);
 
-//	EVENT HOOKS
+//	EVENT HOOKS/ENGINE LOOP
 // hook.c
 void			set_hooks(t_fdf *d);
+// hook_engine_loop.c
+int				engine_loop(t_fdf *d);
+// hook_key_repeat.c
+void			key_states_handler(t_fdf *d);
 // hook_mouse.c
 int				pointer_motion_hook(int x, int y, t_fdf *d);
 int				mouse_down_hook(int button, int x, int y, t_fdf *d);
@@ -299,8 +303,6 @@ int				key_down_hook(int key, t_fdf *d);
 int				key_up_hook(int key, t_fdf *d);
 // hook_window_button.c
 int				clientmsg_hook(t_fdf *d);
-// hook_engine_loop.c
-int				engine_loop(t_fdf *d);
 
 // INTERACTIVE
 // interact_translate.c
