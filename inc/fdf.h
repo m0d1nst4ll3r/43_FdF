@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 18:37:52 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 19:59:45 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 
 // Interactivity constants
 # define KEY_REPEAT_DELAY_USEC	250000
-# define KYE_REPEAT_RATE_USEC	30000
+# define KEY_REPEAT_RATE_USEC	30000
 # define MOVE_SPEED				15
 # define ZOOM_SPEED				0.1
 # define ANGLE_MOVE				0.01
@@ -39,6 +39,7 @@
 
 // Map building constants
 # define DEFAULT_COLOR		0xffffff
+# define BACKGROUND_COLOR	0x0
 
 // Error strings
 # define DEFAULT_ERR	"Undefined error"
@@ -207,7 +208,7 @@ typedef struct s_key
 	t_repeat	repeat;
 	t_key_state	states[KEY_COUNT];
 	int			codes[KEY_COUNT];
-	void		(*actions[KEY_COUNT])(t_fdf *, int);
+	void		(*actions[KEY_COUNT])(void *, int);
 }	t_key;
 
 // Mouse data
@@ -306,8 +307,10 @@ int				clientmsg_hook(t_fdf *d);
 
 // INTERACTIVE
 // interact_translate.c
-void			move_x(t_fdf *d, int actions);
-void			move_y(t_fdf *d, int actions);
+void			move_right(t_fdf *d, int actions);
+void			move_left(t_fdf *d, int actions);
+void			move_up(t_fdf *d, int actions);
+void			move_down(t_fdf *d, int actions);
 // interact_zoom.c
 void			zoom_in(t_fdf *d, int actions); // TODO: zoom is bad
 void			zoom_out(t_fdf *d, int actions);

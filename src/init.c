@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:02:53 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 16:05:43 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 19:44:03 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ static bool	init_time(t_time *time)
 void	init_prog(t_fdf *d, char *filename)
 {
 	init_mlx_null(&d->mlx);
-	init_file(&d->file);
+	init_file(&d->file, filename);
 	init_map(&d->map);
 	init_state(&d->state);
 	init_key(&d->key);

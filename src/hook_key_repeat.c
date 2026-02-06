@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 17:47:09 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 18:35:20 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 19:59:03 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 //	over to the next loop iteration.
 // This should only be useful in case of either very high key repeat frequency
 //	or very high frametime.
-static int	update_repeat_time_ratio(t_fdf *d)
+static int	get_repeat_actions(t_fdf *d)
 {
 	int	actions;
 
@@ -70,14 +70,14 @@ static bool	execute_keys(t_fdf *d, int actions)
 //		Is it already over?		->	Do nothing.
 static void	update_repeat_state(t_fdf *d, bool any_key_on)
 {
-	if (!any_on)
-		d->key_repeat_state = OFF;
+	if (!any_key_on)
+		d->state.key_repeat_state = OFF;
 	else if (d->key.repeat.state == OFF)
 	{
 		d->time.last_key_repeat = d->time.current;
 		d->key.repeat.state = ON;
 	}
-	else if (d->key_repeat_state == ON
+	else if (d->key.repeat.state == ON
 		&& ft_time_diff(d->time.current, d->time.last_key_repeat)
 		> KEY_REPEAT_DELAY_USEC)
 	{

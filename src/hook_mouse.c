@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 16:48:23 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 17:36:10 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 19:58:34 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	pointer_motion_hook(int x, int y, t_fdf *d)
 		if (y != d->mouse.pos.y)
 		{
 			move_down(d, y - d->mouse.pos.y);
-			d->mouse_pos.y = y;
+			d->mouse.pos.y = y;
 		}
 	}
 	// TODO: rmb_held (when I have good rotation)

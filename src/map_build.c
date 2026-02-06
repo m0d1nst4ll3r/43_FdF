@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:48:13 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 16:35:53 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 20:00:09 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void	get_map(t_fdf *d)
 			d->map.index = malloc(sizeof(*d->map.index) * total_width);
 			if (!d->map.index)
 				error_out(d, ERRMAL);
-			fill_map(*d);
+			fill_map(d);
 		}
 	}
 	free_file(&d->file.contents);

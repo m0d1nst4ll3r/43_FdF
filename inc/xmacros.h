@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 20:37:32 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/02 17:32:12 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 19:56:28 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,58 +14,64 @@
 # define XMACROS_H
 
 // Keys
-# define KEY_ESC						65307
-# define KEY_UP							65362
-# define KEY_DOWN						65364
-# define KEY_LEFT						65361
-# define KEY_RIGHT						65363
-# define KEY_LCTRL						65507
-# define KEY_LSHIFT						65505
+# define KEY_W				'w'
+# define KEY_A				'a'
+# define KEY_S				's'
+# define KEY_D				'd'
+# define KEY_R				'r'
+# define KEY_F				'f'
+# define KEY_ESC			65307
+# define KEY_UP				65362
+# define KEY_DOWN			65364
+# define KEY_LEFT			65361
+# define KEY_RIGHT			65363
+# define KEY_LCTRL			65507
+# define KEY_LSHIFT			65505
 
 // Mouse buttons
-# define BTN_LMB						1
-# define BTN_MMB						2
-# define BTN_RMB						3
-# define BTN_MWU						4
-# define BTN_MWD						5
+# define BTN_LMB			1
+# define BTN_MMB			2
+# define BTN_RMB			3
+# define BTN_MWU			4
+# define BTN_MWD			5
 
 
 // Event names
-# define KEYPRESS					2
-# define KEYRELEASE					3
-# define BUTTONPRESS				4
-# define BUTTONRELEASE				5
-# define MOTIONNOTIFY				6
-# define ENTERNOTIFY				7
-# define LEAVENOTIFY				8
-# define FOCUSIN					9
-# define FOCUSOUT					10
-# define KEYMAPNOTIFY				11
-# define EXPOSE						12
-# define GRAPHICSEXPOSE				13
-# define NOEXPOSE					14
-# define VISIBILITYNOTIFY			15
-# define CREATENOTIFY				16
-# define DESTROYNOTIFY				17
-# define UNMAPNOTIFY				18
-# define MAPNOTIFY					19
-# define MAPREQUEST					20
-# define REPARENTNOTIFY				21
-# define CONFIGURENOTIFY			22
-# define CONFIGUREREQUEST			23
-# define GRAVITYNOTIFY				24
-# define RESIZEREQUEST				25
-# define CIRCULATENOTIFY			26
-# define CIRCULATEREQUEST			27
-# define PROPERTYNOTIFY				28
-# define SELECTIONCLEAR				29
-# define SELECTIONREQUEST			30
-# define SELECTIONNOTIFY			31
-# define COLORMAPNOTIFY				32
-# define CLIENTMESSAGE				33
-# define MAPPINGNOTIFY				34
-# define GENERICEVENT				35
-# define LASTEVENT					36
+# define KEYPRESS			2
+# define KEYRELEASE			3
+# define BUTTONPRESS		4
+# define BUTTONRELEASE		5
+# define MOTIONNOTIFY		6
+# define ENTERNOTIFY		7
+# define LEAVENOTIFY		8
+# define FOCUSIN			9
+# define FOCUSOUT			10
+# define KEYMAPNOTIFY		11
+# define EXPOSE				12
+# define GRAPHICSEXPOSE		13
+# define NOEXPOSE			14
+# define VISIBILITYNOTIFY	15
+# define CREATENOTIFY		16
+# define DESTROYNOTIFY		17
+# define UNMAPNOTIFY		18
+# define MAPNOTIFY			19
+# define MAPREQUEST			20
+# define REPARENTNOTIFY		21
+# define CONFIGURENOTIFY	22
+# define CONFIGUREREQUEST	23
+# define GRAVITYNOTIFY		24
+# define RESIZEREQUEST		25
+# define CIRCULATENOTIFY	26
+# define CIRCULATEREQUEST	27
+# define PROPERTYNOTIFY		28
+# define SELECTIONCLEAR		29
+# define SELECTIONREQUEST	30
+# define SELECTIONNOTIFY	31
+# define COLORMAPNOTIFY		32
+# define CLIENTMESSAGE		33
+# define MAPPINGNOTIFY		34
+# define GENERICEVENT		35
+# define LASTEVENT			36
 
 // Event masks
 // Read these as (1L << 0), (1L << 1), etc...

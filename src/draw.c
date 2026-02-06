@@ -6,16 +6,15 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:05:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 17:20:32 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 19:53:47 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-static void	draw_line_low(t_img img, t_point p1, t_point p2)
+static void	draw_line_low(t_img *img, t_point p1, t_point p2)
 {
 	t_point	t;
-	t_point	i;
 	int		yi;
 	int		d;
 
@@ -28,26 +27,23 @@ static void	draw_line_low(t_img img, t_point p1, t_point p2)
 		t.y = -t.y;
 	}
 	d = (2 * t.y) - t.x;
-	i.y = p1.y;
-	i.x = p1.x;
-	while (i.x < p2.x)
+	while (p1.x < p2.x)
 	{
-		pixel_put(img, i.x, i.y, 0xffffff);
+		pixel_put(img, p1, DEFAULT_COLOR);
 		if (d > 0)
 		{
-			i.y += yi;
+			p1.y += yi;
 			d += 2 * (t.y - t.x);
 		}
 		else
 			d += 2 * t.y;
-		i.x++;
+		p1.x++;
 	}
 }
 
-static void	draw_line_high(t_img img, t_point p1, t_point p2)
+static void	draw_line_high(t_img *img, t_point p1, t_point p2)
 {
 	t_point	t;
-	t_point	i;
 	int		xi;
 	int		d;
 
@@ -60,24 +56,22 @@ static void	draw_line_high(t_img img, t_point p1, t_point p2)
 		t.x = -t.x;
 	}
 	d = (2 * t.x) - t.y;
-	i.y = p1.y;
-	i.x = p1.x;
-	while (i.y < p2.y)
+	while (p1.y < p2.y)
 	{
-		pixel_put(img, i.x, i.y, 0xffffff);
+		pixel_put(img, p1, DEFAULT_COLOR);
 		if (d > 0)
 		{
-			i.x += xi;
+			p1.x += xi;
 			d += 2 * (t.x - t.y);
 		}
 		else
 			d += 2 * t.x;
-		i.y++;
+		p1.y++;
 	}
 }
 
 // Draw a line between point p1 and point p2
-static void	draw_line(t_img img, t_point p1, t_point p2)
+static void	draw_line(t_img *img, t_point p1, t_point p2)
 {
 	if (ft_abs(p2.y - p1.y) < ft_abs(p2.x - p1.x))
 	{
@@ -106,27 +100,33 @@ static t_point	transform(t_point point, int height, float angle)
 }
 
 // Modified version for 3d transform
-static void	link_points(t_fdf *d, int x, int y)
+static bool	link_points(t_fdf *d, t_point point)
 {
 	t_point	cur;
 	t_point	right;
 	t_point	below;
 
-	cur.x = y + d->x_offset + x * d->point_distance;
-	cur.y = d->y_offset + y * d->point_distance;
-	if (y + 1 < d->map_height && x < d->map_widths[y + 1]) // bottom exists
+	cur.x = point.y + d->state.x_offset + point.x * POINT_DISTANCE;
+	cur.y = d->state.y_offset + point.y * POINT_DISTANCE;
+	if (point.y + 1 < d->map.height && point.x < d->map.widths[point.y + 1]) // bottom exists
 	{
-		below.x = (y + 1) + d->x_offset + x * d->point_distance;
-		below.y = d->y_offset + (y + 1) * d->point_distance;
-		draw_line(d->img, transform(cur, d->map[y][x].z * d->height_mod, d->angle),
-				transform(below, d->map[y + 1][x].z * d->height_mod, d->angle));
+		below.x = (point.y + 1) + d->state.x_offset + point.x * POINT_DISTANCE;
+		below.y = d->state.y_offset + (point.y + 1) * POINT_DISTANCE;
+		draw_line(&d->mlx.img,
+			transform(cur, d->map.index[point.y][point.x].z * d->state.height_mod,
+				d->state.angle),
+			transform(below, d->map.index[point.y + 1][point.x].z * d->state.height_mod,
+				d->state.angle));
 	}
-	if (x + 1 < d->map_widths[y])
+	if (point.x + 1 < d->map.widths[point.y])
 	{
-		right.x = y + d->x_offset + (x + 1) * d->point_distance;
-		right.y = d->y_offset + y * d->point_distance;
-		draw_line(d->img, transform(cur, d->map[y][x].z * d->height_mod, d->angle),
-				transform(right, d->map[y][x + 1].z * d->height_mod, d->angle));
+		right.x = point.y + d->state.x_offset + (point.x + 1) * POINT_DISTANCE;
+		right.y = d->state.y_offset + point.y * POINT_DISTANCE;
+		draw_line(&d->mlx.img,
+			transform(cur, d->map.index[point.y][point.x].z * d->state.height_mod,
+				d->state.angle),
+			transform(right, d->map.index[point.y][point.x + 1].z * d->state.height_mod,
+				d->state.angle));
 	}
 }
 
@@ -152,43 +152,45 @@ static void	link_points(t_fdf *d, int x, int y)
 	}
 }*/
 
-void	draw_image(t_fdf *d)
+bool	draw_image(t_fdf *d)
 {
-	int	x;
-	int	y;
+	bool	img_changed;
+	t_point	point;
 
-	y = 0;
-	while (y < d->map_height)
+	img_changed = false;
+	point.y = 0;
+	while (point.y < d->map.height)
 	{
-		x = 0;
-		while (x < d->map_widths[y])
+		point.x = 0;
+		while (point.x < d->map.widths[point.y])
 		{
-			link_points(d, x, y); // TODO: color TODO: not doing useless calculations for stuff outside of screen
-			x++;
+			if (link_points(d, point)) // TODO: color TODO: not doing useless calculations for stuff outside of screen
+			   img_changed = true;
+			point.x++;
 		}
-		y++;
+		point.y++;
 	}
-	d->refresh_needed = 1;
+	return (img_changed);
 }
 
 bool	reset_image(t_img *img)
 {
 	t_point	point;
-	bool	changed;
+	bool	img_changed;
 
-	changed = false;
+	img_changed = false;
 	point.y = 0;
 	while (point.y < WIN_Y)
 	{
 		point.x = 0;
 		while (point.x < WIN_X)
 		{
-			if (pixel_put(img, point, 0))
-				changed = true;
+			if (pixel_put(img, point, BACKGROUND_COLOR))
+				img_changed = true;
 			point.x++;
 		}
 		point.y++;
 	}
-	return (changed);
+	return (img_changed);
 }
 

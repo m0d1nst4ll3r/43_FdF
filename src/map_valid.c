@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:53:56 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 16:29:14 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 19:52:11 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static unsigned short	get_width(t_fdf *d, char *line)
 // Also checks for line format
 void	get_widths(t_fdf *d)
 {
-	t_file_contents	cur;
+	t_file_contents	*cur;
 	int				i;
 
 	cur = d->file.contents;
