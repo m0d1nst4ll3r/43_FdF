@@ -6,24 +6,23 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:48:13 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 16:07:31 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 16:35:53 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
 // Get the combined width of every line (for mallocing 1D map)
-static unsigned int	get_total_width(unsigned short *map_widths,
-		unsigned short map_height)
+static unsigned int	get_total_width(const t_map *map)
 {
 	int				i;
 	unsigned int	sum;
 
 	sum = 0;
 	i = 0;
-	while (i < map_height)
+	while (i < map->height)
 	{
-		sum += map_widths[i];
+		sum += map->widths[i];
 		i++;
 	}
 	return (sum);
@@ -70,24 +69,29 @@ static int	fill_line(t_map_point *map, char *line)
 
 // Fill map_data and also index it into map array
 // Also check for overflowing values
-static void	fill_map(t_fdf d)
+static void	fill_map(t_fdf *d)
 {
-	int		line;
+	t_map_point		*map_tmp;
+	t_file_contents	cur;
+	int				line;
 
+	map_tmp = d->map.data;
+	cur = d->file.contents;
 	line = 0;
-	while (d.file)
+	while (cur)
 	{
-		d.map[line] = d.map_dat;
-		if (fill_line(d.map_dat, d.file->line))
+		d->map.index[line] = map_tmp;
+		if (fill_line(map_tmp, cur->line))
 			error_out(d, ERRVAL);
-		d.map_dat += d.map_widths[line];
+		map_tmp += d->map.widths[line];
 		line++;
-		d.file = d.file->next;
+		cur = cur->next;
 	}
 }
 
+//	Map building steps
 // 1. Try to open map (error: can't open)
-// 2. Read map fully (error: can't read/too many lines)
+// 2. Read map fully (error: can't read/too many lines/malloc)
 // 3. Malloc address map and widths arrays (error: malloc)
 // 4. Check lines, write all their widths (error: bad line format/line too long)
 // 5. Malloc points map (error: malloc)
@@ -97,26 +101,26 @@ void	get_map(t_fdf *d)
 {
 	unsigned int	total_width;
 
-	d->fd = open(d->av[1], O_RDONLY);
-	if (d->fd == -1)
-		error_out(*d, ERROPN);
-	d->map_height = read_file(d);
-	if (d->map_height)
+	d->file.fd = open(d->file.name, O_RDONLY);
+	if (d->file.fd == -1)
+		error_out(d, ERROPN);
+	d->map.height = read_file(d);
+	if (d->map.height)
 	{
-		d->map = malloc(sizeof(*d->map) * d->map_height);
-		d->map_widths = malloc(sizeof(*d->map_widths) * d->map_height);
-		if (!d->map || !d->map_widths)
-			error_out(*d, ERRMAL);
-		get_widths(*d);
-		total_width = get_total_width(d->map_widths, d->map_height);
+		d->map.data = malloc(sizeof(*d->map.data) * d->map.height);
+		d->map.widths = malloc(sizeof(*d->map.widths) * d->map.height);
+		if (!d->map.data || !d->map.widths)
+			error_out(d, ERRMAL);
+		get_widths(d);
+		total_width = get_total_width(&d->map);
 		if (total_width)
 		{
-			d->map_dat = malloc(sizeof(*d->map) * total_width);
-			if (!d->map_dat)
-				error_out(*d, ERRMAL);
+			d->map.index = malloc(sizeof(*d->map.index) * total_width);
+			if (!d->map.index)
+				error_out(d, ERRMAL);
 			fill_map(*d);
 		}
 	}
-	free_file(&d->file);
-	ft_close(&d->fd);
+	free_file(&d->file.contents);
+	ft_close(&d->file.fd);
 }

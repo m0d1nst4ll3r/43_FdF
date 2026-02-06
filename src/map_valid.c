@@ -6,19 +6,19 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:53:56 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/28 15:42:51 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 16:29:14 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-// Valid point regex: -?[0-9]+(,0x[0-9a-fA-F]{1,6}])?
+// Valid point regex: -?[0-9]+(,0x[0-9a-fA-F]{1,6})?
 // - Optional '-'
 // - One or more digits
 // - Optional group of
 //		- ",0x"
 //		- Between 1 and 6 hexadecimal characters
-// Note that overflow is not being checked yet
+// Overflow is not being checked yet
 static int	is_point_valid(char *line, int *i)
 {
 	int	count;
@@ -48,10 +48,10 @@ static int	is_point_valid(char *line, int *i)
 
 // Returns line size
 // Also checks for line format
-static int	get_width(t_fdf d, char *line)
+static unsigned short	get_width(t_fdf *d, char *line)
 {
-	int	i;
-	int	width;
+	int				i;
+	unsigned short	width;
 
 	i = 0;
 	width = 0;
@@ -73,15 +73,17 @@ static int	get_width(t_fdf d, char *line)
 
 // Writes line widths in map_widths array
 // Also checks for line format
-void	get_widths(t_fdf d)
+void	get_widths(t_fdf *d)
 {
-	int	i;
+	t_file_contents	cur;
+	int				i;
 
+	cur = d->file.contents;
 	i = 0;
-	while (d.file)
+	while (cur)
 	{
-		d.map_widths[i] = get_width(d, d.file->line);
-		d.file = d.file->next;
+		d->map.widths[i] = get_width(d, cur->line);
+		cur = cur->next;
 		i++;
 	}
 }
