@@ -6,41 +6,47 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:20:08 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/04 15:44:44 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 01:18:21 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-void	exit_prog(t_fdf *d, unsigned char exitval)
+static void	destroy_mlx(t_mlx *mlx)
 {
-	if (d->map)
-		free(d->map);
-	if (d->map_dat)
-		free(d->map_dat);
-	if (d->map_widths)
-		free(d->map_widths);
-	if (d->file)
-		free_file(&d->file);
-	ft_close(&d->fd);
-	if (d->img.ptr)
-		mlx_destroy_image(d->mlx, d->img.ptr);
-	if (d->win)
-		mlx_destroy_window(d->mlx, d->win);
-	if (d->mlx)
+	if (mlx->img.ptr)
+		mlx_destroy_image(mlx->ptr, mlx->img.ptr);
+	if (mlx->win)
+		mlx_destroy_window(mlx->ptr, mlx->win);
+	if (mlx->ptr)
 	{
-		mlx_do_key_autorepeaton(d->mlx);
-		mlx_destroy_display(d->mlx);
-		free(d->mlx);
+		mlx_do_key_autorepeaton(mlx->ptr);
+		mlx_destroy_display(mlx->ptr);
+		free(mlx->ptr);
 	}
-	exit(exitval);
 }
 
-void	error_out(t_fdf *d, char *s)
+static void	destroy_map(t_map *map)
 {
-	ft_fprintf(2, "fdf: %s", s);
-	if (errno)
-		ft_fprintf(2, ": %s", strerror(errno));
-	ft_fprintf(2, "\n");
-	exit_prog(d, 1);
+	if (map->data)
+		free(map->data);
+	if (map->index)
+		free(map->index);
+	if (map->widths)
+		free(map->widths);
+}
+
+static void	destroy_file(t_file *file)
+{
+	if (file->contents)
+		free_file(&file->contents);
+	ft_close(&d->fd);
+}
+
+void	exit_prog(t_fdf *d, unsigned char exitval)
+{
+	destroy_file(&d->file);
+	destroy_map(&d->map);
+	destroy_mlx(&d->mlx);
+	exit(exitval);
 }

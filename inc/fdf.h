@@ -6,36 +6,34 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/04 18:45:27 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 01:20:38 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FDF_H
 # define FDF_H
 
-// Framerate limit
-// Current 60 hz
-# define REFRESH_RATE	5000
-// How long to hold the key down for it to start repeating (OS is 500ms)
-// Current 250 ms
-# define REPEAT_DELAY	250000
-// Frequency of key repeats (OS is 33hz)
-// Current 33 hz
-# define REPEAT_RATE	30000
-# define WIN_X			1920
-# define WIN_Y			1080
-# define WIN_NAME		"fdf"
+// Window and drawing constants
+# define WIN_NAME			"fdf"
+# define WIN_X				1920
+# define WIN_Y				1080
+# define SHOW_FPS			1
+# define REFRESH_RATE_USEC	16666
+# define REPEAT_DELAY_USEC	250000
+# define REPEAT_RATE_USEC	30000
+# define POINT_DISTANCE		100
+# define MOVE_SPEED			15
+# define ANGLE_MOVE			0.01
 
-# define X_OFFSET		500
-# define Y_OFFSET		500
-# define POINT_DISTANCE	100
-# define HEIGHT_MOD		10
-# define LINE_OFFSET	20
-# define MOVE_SPEED		15
-# define START_ANGLE	0.523599
+// Starting states
+# define DEFAULT_X_OFFSET	500
+# define DEFAULT_Y_OFFSET	500
+# define DEFAULT_HEIGHT_MOD	1
+# define DEFAULT_ZOOM		1
+# define DEFAULT_ANGLE		0.523599
 
-# define ANGLE_MOVE		0.01
-
+// Error strings
+# define DEFAULT_ERR	"Undefined error"
 # define ERRMLX			"Error initializing mlx"
 # define ERRWIN			"Error initializing mlx window"
 # define ERRIMG			"Error initializing mlx image"
@@ -57,14 +55,24 @@
 # include <fcntl.h>
 # include <sys/time.h>
 # include <stdbool.h>
-# include <math.h> // for sin/cos used in 3D transform
+# include <math.h>
 
-// Keys can be:
+// Documents whether to redraw/refresh the image in engine loop
+// - Redraw when engine state changes (e.g user pressed KEY_LEFT)
+// - Refresh when redraw resulted in actual changes in img
+typedef enum	e_img_state
+{
+	IMG_IDLE,
+	IMG_NEED_REDRAW,
+	IMG_NEED_REFRESH
+}	t_img_state;
+
+// Used for key states
 // - Off		Not pressed
 // - On			Pressed, next frame will execute movement and go to repeat
 // - Repeat		First movement was executed, now waiting for repeat timer
 // Keys move states downwards. Releasing the key resets it to Off.
-// Repeat timer is separate.
+// Repeat timer is handled separately.
 typedef enum	e_key_state
 {
 	OFF,
@@ -72,7 +80,7 @@ typedef enum	e_key_state
 	REPEAT
 }	t_key_state;
 
-// These enum values are used as indexes into bindings[] and keymap[]
+// These enum values are used as indexes into key codes[] and key actions[]
 enum	e_keys
 {
 	W,
@@ -90,8 +98,8 @@ enum	e_keys
 	KEY_COUNT
 };
 
-// These are points in our map array (read from map file)
-// Their x,y values are inferred from their positioning in the array
+// Points in the map array (read from map file)
+// Their x,y values are inferred from their positions in the array
 typedef struct	s_map_point
 {
 	short	z;
@@ -112,16 +120,17 @@ typedef struct	s_file_contents
 	struct s_file_contents	*next;
 }	t_file_contents;
 
-// 
+// Mlx img object
 typedef struct	s_img
 {
-	void	*ptr;
-	char	*addr;
-	int		bpp;
-	int		llen;
-	int		endian;
+	void		*ptr;
+	char		*addr;
+	int			bpp;
+	int			llen;
+	int			endian;
 }	t_img;
 
+// Mlx object
 typedef struct s_mlx
 {
 	void	*ptr;
@@ -129,69 +138,134 @@ typedef struct s_mlx
 	t_img	img;
 }	t_mlx;
 
+// All map-related data
+// - data			1D map containing all points
+// - index		2D indexed map
+// - widths		line lengths
+// - height		map height
+// Allocated in get_map() - map_build.c
 typedef struct s_map
 {
-	t_map_point		*map_dat; // This is the 1D map containing all points
-	t_map_point		**map; // This is the 2D map used for browsing 1D map easily
-	unsigned short	map_height; // Total vertical length of map (# of ints in width[])
-	unsigned short	*map_widths; // 1D width map, contains each line length
+	t_map_point		*data;
+	t_map_point		**index;
+	unsigned short	height;
+	unsigned short	*widths;
 }	t_map;
 
+// States used in drawing, modifiable through keybinds
+// - x_offset		where to start drawing horizontally
+// - y_offset		where to start drawing vertically
+// - height_mod		modifier to apply to height values
+// - angle			angle value for 3D drawing
+//					(this needs more work to achieve better 3D)
 typedef struct s_state
 {
-	int		x_offset; // This is for testing/fun but should be useful later for
-	int		y_offset; // -
-	int		point_distance; // -
-	int		height_mod; // -
-	int		line_offset; // -
+	int		x_offset;
+	int		y_offset;
+	float	height_mod;
 	float	angle;
+	float	zoom;
 }	t_state;
 
+// File information used in map building
 typedef struct s_file
 {
 	char			*name;
 	int				fd;
-	t_file_contents	*contents; // This contains read file (only useful during program init)
+	t_file_contents	*contents;
 }	t_file;
 
+// Key repeat data
+// - repeat_ratio	# of times keys repeated since last engine loop iteration
+// - repeat			repeat state (off, wait, repeat)
+// Used for replacing OS key repeat functionality
+typedef struct s_repeat
+{
+	float		ratio;
+	t_key_state	state;
+}	t_repeat;
+
+// Key bindings and related actions
+// - repeat		all data about key repeat
+// - states		state of key (off, on, repeat)
+// - codes		array of physical key codes
+// - actions		corresponding array of actions
+// Used for keyboard interactions
 typedef struct s_key
 {
-	// map
-	// actions
+	t_repeat	repeat;
+	t_key_state	states[KEY_COUNT];
+	int			codes[KEY_COUNT];
+	void		(*actions[KEY_COUNT])(t_fdf *);
 }	t_key;
 
+// Mouse data
+// - lmb_held	is lmb held down
+// - rmb_held	is rmb held down
+// - pos		last known x,y mouse pos from motion notify
+// Used for mouse dragging functionality
+typedef struct s_mouse
+{
+	bool	lmb_held;
+	bool	rmb_held;
+	t_point	pos;
+}	t_mouse;
 
+// Time values used in engine loop
+// - current			current time (updated at engine loop)
+// - refresh			last frame (to sync with refresh rate)
+// - fps				last fps print (every 1 second)
+// - key_repeat	last	key repeat (to sync with repeat rate)
+// - frame_count		for displaying fps
+// - loop_count			for displaying engine loops per second
+// - img_state			if img needs redrawing or refreshing
+typedef struct s_time
+{
+	struct timeval	current;
+	struct timeval	last_refresh;
+	struct timeval	last_fps;
+	struct timeval	last_key_repeat;
+	unsigned int	frame_count;
+	unsigned int	loop_count;
+	t_img_state		img_state;
+}	t_time;
+
+// God struct
+// - mlx	All minilibx data
+// - file	File data used in parsing/building map
+// - map	Map data (what we draw)
+// - state	Engine states (how he draw it)
+// - key	Key data (for key handlers)
+// - mouse	Mouse data (for mouse/pointer handlers)
+// - time	Time values (for syncing and time-sensitive calculations)
 typedef struct	s_fdf
 {
-	char			**av;
-	t_mlx			mlx;
-	t_map			map;
-	t_state			state;
-	t_file			file;
-	t_key_state		key_state[NUM_KEYS];
-	t_key_state		key_repeat_state;
-	struct timeval	key_repeat_time;
-	float			key_repeat_time_ratio;
-	bool			lmb_held;
-	bool			rmb_held;
-	t_point			mouse_pos;
-	bool			refresh_needed; // Note that it should be useful later if I want to implement mouse-dragging to rotate the shape around
-	int				frame_count; // In that case, mlx_loop will not only put_image but also draw_image
-	struct timeval	old_time; // Draw_image in that case should have a dedicated redraw_needed value that updates on user interaction
-	struct timeval	cur_time;
-	struct timeval	fps_time;
-	bool			redraw_needed; // redraw_needed value I'll need eventually
+	t_mlx	mlx;
+	t_file	file;
+	t_map	map;
+	t_state	state;
+	t_key	key;
+	t_mouse	mouse;
+	t_time	time;
 }	t_fdf;
 
 // mlx_util.c
 int				pixel_put(t_img img, int x, int y, int color);
 
+//	INIT/EXIT/ERROR
+// init_subfuncs.c
+void			init_mlx_null(t_mlx *mlx);
+void			init_file(t_file *file, char *filename);
+void			init_map(t_map *map);
+void			init_state(t_state *state);
 // init.c
-void			init_prog(t_fdf *d, char **av);
+void			init_prog(t_fdf *d, char *filename);
+// init_mlx.c
 void			init_mlx(t_fdf *d);
 // exit.c
 void			exit_prog(t_fdf *d, unsigned char exitval);
-void			error_out(t_fdf *d, char *s);
+// error.c
+void			error_out(t_fdf *d, char *err_str);
 
 //	MAP BUILDING
 // map_file.c
@@ -206,7 +280,7 @@ void			get_widths(t_fdf d);
 // hook.c
 void			set_hooks(t_fdf *d);
 // hook_mouse.c
-int				pointer_motion_hook(int x, int y, t_fdf *d); // TODO: pointer motion controls
+int				pointer_motion_hook(int x, int y, t_fdf *d);
 int				mouse_down_hook(int button, int x, int y, t_fdf *d);
 int				mouse_up_hook(int button, int x, int y, t_fdf *d);
 // hook_keyboard.c
@@ -225,7 +299,7 @@ void			shift_left(t_fdf *d, int actions); // TODO: rotate is bad, improve
 void			shift_right(t_fdf *d, int actions); // func names are not even good
 // interact_height.c
 void			shift_up(t_fdf *d, int actions); // TODO: float instead of int
-void			shift_down(t_fdf *d, int actions); // Call this with MWU MWD
+void			shift_down(t_fdf *d, int actions);
 
 // draw.c
 void			draw_image(t_fdf *d); // TODO: improve everything, this was done super fast

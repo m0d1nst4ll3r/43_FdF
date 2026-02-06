@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 21:54:08 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/04 15:50:58 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/06 00:04:52 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,8 +162,18 @@ static void	key_states_handler(t_fdf *d)
 	update_repeat_state(d);
 }
 
-static int	sync_hook(t_fdf *d)
+static void	show_fps(t_fdf *d)
 {
+	ft_printf("Engine speed: %d\nFps: %d\n",
+		d->time.loop_count, d->time.frame_count);
+	d->time.loop_count = 0;
+	d->time.frame_count = 0;
+	d->time.last_fps = d->time.current;
+}
+
+static int	engine_loop(t_fdf *d)
+{
+	d->time.loop_count++;
 	if (gettimeofday(&d->cur_time, NULL))
 	   error_out(*d, ERRTIME);
 	key_states_handler(d);
@@ -180,12 +190,8 @@ static int	sync_hook(t_fdf *d)
 		d->refresh_needed = false;
 		d->frame_count++;
 	}
-	if (ft_time_diff(d->cur_time, d->fps_time) > 1000000)
-	{
-		ft_printf("\r\033[KFps: %d", d->frame_count);
-		d->frame_count = 0;
-		d->fps_time = d->cur_time;
-	}
+	if (SHOW_FPS && ft_time_diff(d->cur_time, d->fps_time) > 1000000)
+		show_fps(d);
 	return (0);
 }
 
@@ -198,5 +204,5 @@ void	set_hooks(t_fdf *d)
 	mlx_hook(d->win, BUTTONRELEASE, BUTTONRELEASEMASK, mouse_up_hook, d);
 	mlx_hook(d->win, MOTIONNOTIFY, POINTERMOTIONMASK, pointer_motion_hook, d);
 	mlx_hook(d->win, CLIENTMESSAGE, 1, clientmsg_hook, d);
-	mlx_loop_hook(d->mlx, sync_hook, d);
+	mlx_loop_hook(d->mlx, engine_loop, d);
 }

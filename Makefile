@@ -6,14 +6,17 @@
 #    By: rpohlen <rpohlen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/20 14:37:51 by rpohlen           #+#    #+#              #
-#    Updated: 2026/02/04 14:03:52 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/06 01:21:33 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Source files
 CFILES				= main.c \
 					  init.c \
+					  init_subfuncs.c \
+					  init_mlx.c \
 					  exit.c \
+					  error.c \
 					  mlx_util.c \
 					  map_file.c \
 					  map_build.c \
