@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:48:13 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 20:00:09 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/07 12:22:41 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ static int	fill_line(t_map_point *map, char *line)
 static void	fill_map(t_fdf *d)
 {
 	t_map_point		*map_tmp;
-	t_file_contents	cur;
+	t_file_contents	*cur;
 	int				line;
 
 	map_tmp = d->map.data;

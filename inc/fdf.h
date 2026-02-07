@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 19:59:45 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/07 12:27:38 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,7 +286,7 @@ void			get_map(t_fdf *d);
 void			free_file(t_file_contents **file);
 unsigned short	read_file(t_fdf *d);
 // map_valid.c
-void			get_widths(t_fdf d);
+void			get_widths(t_fdf *d);
 
 //	EVENT HOOKS/ENGINE LOOP
 // hook.c
@@ -298,10 +298,10 @@ void			key_states_handler(t_fdf *d);
 // hook_mouse.c
 int				pointer_motion_hook(int x, int y, t_fdf *d);
 int				mouse_down_hook(int button, int x, int y, t_fdf *d);
-int				mouse_up_hook(int button, int x, int y, t_fdf *d);
+int				mouse_up_hook(int button, int x, int y, t_mouse *mouse);
 // hook_keyboard.c
-int				key_down_hook(int key, t_fdf *d);
-int				key_up_hook(int key, t_fdf *d);
+int				key_down_hook(int keycode, t_fdf *d);
+int				key_up_hook(int keycode, t_key *key);
 // hook_window_button.c
 int				clientmsg_hook(t_fdf *d);
 

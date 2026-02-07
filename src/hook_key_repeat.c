@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 17:47:09 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 19:59:03 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/07 12:28:10 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static bool	execute_keys(t_fdf *d, int actions)
 static void	update_repeat_state(t_fdf *d, bool any_key_on)
 {
 	if (!any_key_on)
-		d->state.key_repeat_state = OFF;
+		d->key.repeat.state = OFF;
 	else if (d->key.repeat.state == OFF)
 	{
 		d->time.last_key_repeat = d->time.current;

@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 17:09:20 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 17:47:55 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/07 12:23:47 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	redraw_img(t_fdf *d)
 	bool	need_refresh;
 
 	need_refresh = false;
-	if (reset_image(&d->img))
+	if (reset_image(&d->mlx.img))
 		need_refresh = true;
 	if (draw_image(d))
 		need_refresh = true;
@@ -67,7 +67,8 @@ int	engine_loop(t_fdf *d)
 	if (d->time.img_state == IMG_NEED_REDRAW)
 		redraw_img(d);
 	if (d->time.img_state == IMG_NEED_REFRESH
-		&& ft_time_diff(d->time.current, d->time.last_refresh) > REFRESH_RATE)
+		&& ft_time_diff(d->time.current,
+			d->time.last_refresh) > REFRESH_RATE_USEC)
 		refresh_img(d);
 	if (SHOW_FPS && ft_time_diff(d->time.current, d->time.last_fps) > 1000000)
 		show_fps(&d->time);
