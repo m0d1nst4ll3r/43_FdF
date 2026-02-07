@@ -6,66 +6,111 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:05:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/07 14:40:05 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/07 19:09:07 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-static void	draw_line_low(t_img *img, t_point p1, t_point p2)
+// Quick Bresenham explanation:
+// 1. To draw a line between 2 points, first we consider the distance between
+//		the two points on the x and y axes. That is the delta.
+//	 When drawing the line, we will jump pixel by pixel. On one axis, we will
+//		always jump a pixel, on the other, we will sometimes jump a pixel.
+//	 One axis is "dominant" in a way.
+//	 What determines which is the dominant axis is the x/y delta.
+//		- Horizontal distance is longer:	abs(p2.x - p1.x) > abs(p2.y - p1.y)
+//			= always jump a pixel on the X axis
+//		-  Vertical  distance is longer:	abs(p2.x - p1.x) > abs(p2.y - p1.y)
+//			= always jump a pixel on the Y axis
+//	 We have one function for each case, where x and y have reversed roles.
+// 2. If X is the dominant axis, and (p2.x < p1.x), we want to start from p2
+//	 If Y is the dominant axis, and (p2.y < p1.y), we want to start from p2
+//	 This is so we can just increment x or y and not bother about direction.
+//	 We can simply call our function with (p1, p2) OR (p2, p1) to decide where
+//		to start.
+// 3. Finally, AFTER potentially swapping p2 and p1:
+//	 If X is the dominant axis and (p2.y <  p1.y), we will be decrementing y
+//	 If X is the dominant axis and (p2.y >= p1.y), we will be incrementing y
+//	 If Y is the dominant axis and (p2.x <  p1.x), we will be decrementing x
+//	 If Y is the dominant axis and (p2.x >= p1.x), we will be incrementing x
+//	 This is the "direction" x or y will go
+// 4a. There are 8 (2 * 2 * 2) different configurations.
+//	 A way to visualize this is considering a circle with p1 at its center and
+//		p2 somewhere around.
+//	 Divide the circle in octants (eighths, or half quarters), and number
+//		octants clockwise starting from 1
+//	 Octants 2, 3, 6, 7 = horizontal distance is longer
+//	 Octants 1, 4, 5, 8 =  vertical  distance is longer
+// 4b. We can simplify these octants further by swapping p1 and p2 (point 2.)
+//	 In octants 1, 8, consider p2 as the center of the circle, this translates
+//		to octants 4, 5
+//	 In octants 6, 7, consider p2 as the center of the circle, this translates
+//		to octants 2, 3
+// 4c. Finally, for point 3.:
+//		Octant 2 - y decrements
+//		Octant 3 - y increments
+//		Octant 4 - x increments
+//		Octant 5 - x decrements
+// 5. Ok so we always increment x or y, and then the other sometimes increments
+//		(or decrements). But how do we choose when to do it?
+//	 Consider octant 3 (x dominant, no swap, y increases).
+//	 To know where the real line is, 
+//
+static void	draw_line_x_dominant(t_img *img, t_point p1, t_point p2)
 {
-	t_point	t;
-	int		yi;
-	int		d;
+	t_point	delta;
+	int		y_direction;
+	int		error_term;
 
-	t.x = p2.x - p1.x;
-	t.y = p2.y - p1.y;
-	yi = 1;
-	if (t.y < 0)
+	delta.x = p2.x - p1.x;
+	delta.y = p2.y - p1.y;
+	y_direction = 1;
+	if (delta.y < 0)
 	{
-		yi = -1;
-		t.y = -t.y;
+		y_direction = -1;
+		delta.y = -delta.y;
 	}
-	d = (2 * t.y) - t.x;
+	error_term = (2 * delta.y) - delta.x;
 	while (p1.x < p2.x)
 	{
 		pixel_put(img, p1, DEFAULT_COLOR);
-		if (d > 0)
+		if (error_term > 0)
 		{
-			p1.y += yi;
-			d += 2 * (t.y - t.x);
+			p1.y += y_direction;
+			error_term += 2 * (delta.y - delta.x);
 		}
 		else
-			d += 2 * t.y;
+			error_term += 2 * delta.y;
 		p1.x++;
 	}
 }
 
-static void	draw_line_high(t_img *img, t_point p1, t_point p2)
+static void	draw_line_y_dominant(t_img *img, t_point p1, t_point p2)
 {
-	t_point	t;
-	int		xi;
-	int		d;
+	t_point	delta;
+	int		x_direction;
+	int		error_term;
 
-	t.x = p2.x - p1.x;
-	t.y = p2.y - p1.y;
-	xi = 1;
-	if (t.x < 0)
+	delta.x = p2.x - p1.x;
+	delta.y = p2.y - p1.y;
+	x_direction = 1;
+	if (delta.x < 0)
 	{
-		xi = -1;
-		t.x = -t.x;
+		x_direction = -1;
+		delta.x = -delta.x;
 	}
-	d = (2 * t.x) - t.y;
+	error_term = (2 * delta.x) - delta.y;
 	while (p1.y < p2.y)
 	{
 		pixel_put(img, p1, DEFAULT_COLOR);
-		if (d > 0)
+		if (error_term > 0)
 		{
-			p1.x += xi;
-			d += 2 * (t.x - t.y);
+			p1.x += x_direction;
+			error_term += 2 * (delta.x - delta.y);
 		}
 		else
-			d += 2 * t.x;
+			error_term += 2 * delta.x;
 		p1.y++;
 	}
 }
@@ -76,16 +121,16 @@ static void	draw_line(t_img *img, t_point p1, t_point p2)
 	if (ft_abs(p2.y - p1.y) < ft_abs(p2.x - p1.x))
 	{
         if (p1.x > p2.x)
-            draw_line_low(img, p2, p1);
+            draw_line_x_dominant(img, p2, p1);
         else
-            draw_line_low(img, p1, p2);
+            draw_line_x_dominant(img, p1, p2);
 	}
     else
 	{
         if (p1.y > p2.y)
-            draw_line_high(img, p2, p1);
+            draw_line_y_dominant(img, p2, p1);
         else
-            draw_line_high(img, p1, p2);
+            draw_line_y_dominant(img, p1, p2);
 	}
 }
 
