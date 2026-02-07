@@ -203,3 +203,7 @@ regexp - https://regex101.com/
 Bresenham algorithm (to draw lines between points) - https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 
 Midpoint circle algorithm (to draw circles) - https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
+
+Medium article for some help with 3D math - https://medium.com/@amehri_tarik/fdf-42-a-detailed-walkthrough-7184cca317fc
+
+Some more info on 3D math - https://www.kmjn.org/notes/3d_rendering_intro.html

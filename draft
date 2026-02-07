@@ -14,3 +14,33 @@ Missions for now:
 	- Better variable names
 	- Normed comments (before typedef or function)
 	- Use AI to suggest better names - I can improve a lot there
+
+07/02/2026
+
+Code has been refactored. Except draw, because draw is the last hurdle.
+
+It is not *perfect*. It's good enough, however. Next projects will be better, learn as you go, yadda yadda.
+
+God struct now has tons of smaller sub-structs. Init and exit functions benefit hugely from this, they are extremely readable.
+
+Map building is not extremely readable, but it's not bad at all. Will do better next time.
+
+Hooks are very readable. Hook key_repeat is not ideal, has a lot of stuff in there including executing keybind actions. Not the best place. But not bad.
+
+Engine loop was insanely improved. It's very clean.
+
+The last hurdle is draw. Drawing functions were simplified a tiny bit, but are still very complex. After draw is fixed though, the project is complete.
+
+Listing steps to project completion:
+- Fix draw.c
+	- Understand bresenham drawing algorithm fully
+	- Fix translation (add x_offset and y_offset AFTER 3D translation)
+	- Add zoom (multiply values by zoom before/after translation but before adding offsets)
+	- Fix rotation (add 2 modifiers to 3D translation instead of just 1, to rotate 3D at a up/down angle and left/right)
+	- Implement RMB rotation (easy)
+	- Understand 3D translation algorithm fully
+	- Add colors in (send colors to bresenham algorithm, calculate gradient based on where we are in the loop)
+	- Make code concise, organized and readable, of course
+
+Extra stuff I'm not going to do:
+- Overlay for rendering info

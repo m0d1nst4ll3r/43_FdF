@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/07 14:38:05 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/07 15:36:48 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ typedef enum	e_key_state
 // These enum values are used as indexes into key codes[] and key actions[]
 enum	e_keys
 {
+	SPACE,
 	W,
 	A,
 	S,
@@ -325,6 +326,7 @@ void			shift_right(t_fdf *d, int actions); // rename funcs to rotate_x _y
 void			shift_up(t_fdf *d, int actions);
 void			shift_down(t_fdf *d, int actions);
 
+//	RENDERING
 // draw.c
 bool			reset_image(t_img *img);
 bool			draw_image(t_fdf *d);
