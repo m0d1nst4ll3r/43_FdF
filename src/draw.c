@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:05:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 19:53:47 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/07 14:40:05 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ static t_point	transform(t_point point, int height, float angle)
 }
 
 // Modified version for 3d transform
-static bool	link_points(t_fdf *d, t_point point)
+static void	link_points(t_fdf *d, t_point point)
 {
 	t_point	cur;
 	t_point	right;
@@ -157,15 +157,14 @@ bool	draw_image(t_fdf *d)
 	bool	img_changed;
 	t_point	point;
 
-	img_changed = false;
+	img_changed = true; // TODO: fix later
 	point.y = 0;
 	while (point.y < d->map.height)
 	{
 		point.x = 0;
 		while (point.x < d->map.widths[point.y])
 		{
-			if (link_points(d, point)) // TODO: color TODO: not doing useless calculations for stuff outside of screen
-			   img_changed = true;
+			link_points(d, point); // TODO: color TODO: not doing useless calculations for stuff outside of screen
 			point.x++;
 		}
 		point.y++;

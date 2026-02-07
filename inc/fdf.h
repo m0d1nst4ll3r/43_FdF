@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/07 12:27:38 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/07 14:38:05 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,10 @@ enum	e_keys
 	KEY_COUNT
 };
 
+// Forward t_fdf declaration for t_key_action
+typedef struct s_fdf	t_fdf;
+typedef void (*t_key_action)(t_fdf *, int);
+
 // Points in the map array (read from map file)
 // Their x,y values are inferred from their positions in the array
 typedef struct	s_map_point
@@ -205,10 +209,10 @@ typedef struct s_repeat
 // Used for keyboard interactions
 typedef struct s_key
 {
-	t_repeat	repeat;
-	t_key_state	states[KEY_COUNT];
-	int			codes[KEY_COUNT];
-	void		(*actions[KEY_COUNT])(void *, int);
+	t_repeat		repeat;
+	t_key_state		states[KEY_COUNT];
+	int				codes[KEY_COUNT];
+	t_key_action	actions[KEY_COUNT];
 }	t_key;
 
 // Mouse data

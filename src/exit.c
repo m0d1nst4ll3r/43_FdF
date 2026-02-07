@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:20:08 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 01:18:21 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/07 14:38:46 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static void	destroy_file(t_file *file)
 {
 	if (file->contents)
 		free_file(&file->contents);
-	ft_close(&d->fd);
+	ft_close(&file->fd);
 }
 
 void	exit_prog(t_fdf *d, unsigned char exitval)

@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:48:13 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/07 12:22:41 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/07 14:44:17 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,16 +107,16 @@ void	get_map(t_fdf *d)
 	d->map.height = read_file(d);
 	if (d->map.height)
 	{
-		d->map.data = malloc(sizeof(*d->map.data) * d->map.height);
+		d->map.index = malloc(sizeof(*d->map.index) * d->map.height);
 		d->map.widths = malloc(sizeof(*d->map.widths) * d->map.height);
-		if (!d->map.data || !d->map.widths)
+		if (!d->map.index || !d->map.widths)
 			error_out(d, ERRMAL);
 		get_widths(d);
 		total_width = get_total_width(&d->map);
 		if (total_width)
 		{
-			d->map.index = malloc(sizeof(*d->map.index) * total_width);
-			if (!d->map.index)
+			d->map.data = malloc(sizeof(*d->map.data) * total_width);
+			if (!d->map.data)
 				error_out(d, ERRMAL);
 			fill_map(d);
 		}

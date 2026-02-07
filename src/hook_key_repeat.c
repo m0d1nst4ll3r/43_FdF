@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 17:47:09 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/07 12:28:10 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/07 14:48:24 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ static bool	execute_keys(t_fdf *d, int actions)
 	i = 0;
 	while (i < KEY_COUNT)
 	{
-		if (d->key.states[i] == ON || d->key.states[i] == REPEAT)
+		if (d->key.actions[i]
+			&& (d->key.states[i] == ON || d->key.states[i] == REPEAT))
 		{
 			any_key_on = true;
 			if (d->key.states[i] == ON)
@@ -113,6 +114,6 @@ void	key_states_handler(t_fdf *d)
 	bool	any_key_on;
 
 	actions = get_repeat_actions(d);
-	execute_keys(d, actions);
+	any_key_on = execute_keys(d, actions);
 	update_repeat_state(d, any_key_on);
 }
