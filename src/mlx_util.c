@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:21:10 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 17:13:22 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/09 19:00:56 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ bool	pixel_put(t_img *img, t_point point, int color)
 
 	if (point.x < 0 || point.y < 0 || point.x >= WIN_X || point.y >= WIN_Y)
 		return (false);
-	addr = img->addr + point.y * img->llen + point.x * img->bypp;
+	addr = img->addr + point.y * img->llen + point.x * img->bpp / 8;
 	if (*(int *)addr == color)
 		return (false);
 	*(int *)addr = color;

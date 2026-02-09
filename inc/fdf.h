@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/07 15:36:48 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/09 19:01:02 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,17 @@ typedef struct	s_point
 	int	y;
 }	t_point;
 
+// Used in Bresenham line algorithm
+// Only here to save lines, to be below 26
+// Not used in god struct, but needs t_point
+typedef struct	s_bresenham
+{
+	t_point	delta;
+	int		step;
+	int		error_term;
+	int		color_step;
+}	t_bresenham;
+
 // This chained list contains file line by line (only used in map building)
 typedef struct	s_file_contents
 {
@@ -142,7 +153,6 @@ typedef struct	s_img
 	void		*ptr;
 	char		*addr;
 	int			bpp;
-	int			bypp;
 	int			llen;
 	int			endian;
 }	t_img;

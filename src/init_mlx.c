@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 00:59:19 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 16:14:04 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/09 19:14:08 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,4 @@ void	init_mlx(t_fdf *d)
 		error_out(d, ERRIMG);
 	d->mlx.img.addr = mlx_get_data_addr(d->mlx.img.ptr,
 			&d->mlx.img.bpp, &d->mlx.img.llen, &d->mlx.img.endian);
-	d->mlx.img.bypp = d->mlx.img.bpp / 8;
 }
-

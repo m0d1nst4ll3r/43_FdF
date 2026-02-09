@@ -6,15 +6,18 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:05:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/07 19:09:07 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/09 17:41:32 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
+// This improves points[2] and colors[2] readability
+#define START	0
+#define END		1
 
 // Quick Bresenham explanation:
-// 1. To draw a line between 2 points, first we consider the distance between
-//		the two points on the x and y axes. That is the delta.
+// 1. To draw a line between 2 points, consider the distance between the two
+//		points on the x and y axes. That is the delta.
 //	 When drawing the line, we will jump pixel by pixel. On one axis, we will
 //		always jump a pixel, on the other, we will sometimes jump a pixel.
 //	 One axis is "dominant" in a way.
@@ -52,85 +55,132 @@
 //		Octant 3 - y increments
 //		Octant 4 - x increments
 //		Octant 5 - x decrements
-// 5. Ok so we always increment x or y, and then the other sometimes increments
-//		(or decrements). But how do we choose when to do it?
-//	 Consider octant 3 (x dominant, no swap, y increases).
-//	 To know where the real line is, 
-//
-static void	draw_line_x_dominant(t_img *img, t_point p1, t_point p2)
+// 5. What is error_term? How do we decide to jump a pixel or not?
+//	 It's too complicated to explain here. It has to do with math, transforming
+//		float arithmetic into integer arithmetic, and how to decide whether the
+//		real geometric line drawn between two pixel (two points at the centers
+//		of the pixels) has crossed a new pixel's threshold or not.
+//	 For a very quick explanation, the real geometric line's yi coordinate is
+//		calculated, at coordinate xi, as (for octant 3) xi * dy / dx.
+//		yi = xi * dy / dx
+//		The next pixel threshold is yi + 0.5 (half a pixel downwards).
+//		Whether to jump a pixel or not is decided with:
+//		xi * dy / dx > yi + 0.5 ?
+//		Or, in english: is the real line beyond the next pixel's threshold?
+//		Simplify by putting all variables on one side:
+//		xi * dy / dx - yi - 0.5 > 0 ?
+//		This has float arithmetic, we want integer. So, multiply by dx:
+//		xi * dy - yi * dx - 0.5dx > 0 ?
+//		And multiply by 2:
+//		2 xi*dy - 2 yi*dx - dx > 0 ?
+//		xi and yi are 0 when we start
+//		error_term = -dx
+//		Every time x increments, add 2 dy to error_term.
+//		Decide whether to jump y or not (error_term > 0 ?).
+//		If y increments, subtract 2 dx from error_term.
+// 6. Colors
+//	 Just increment colors[START], send it to pixel_put.
+//	 Since color_step is a simple integer division, end color might be
+//		different from colors[END].
+//	 This is deemed an acceptable inaccuracy.
+static void	draw_line_x_dominant(t_img *img, t_point points[2], int colors[2])
 {
-	t_point	delta;
-	int		y_direction;
-	int		error_term;
+	t_bresenham	b;
 
-	delta.x = p2.x - p1.x;
-	delta.y = p2.y - p1.y;
-	y_direction = 1;
-	if (delta.y < 0)
+	b.delta.x = points[END].x - points[START].x;
+	b.delta.y = points[END].y - points[START].y;
+	b.step = 1;
+	if (b.delta.y < 0)
 	{
-		y_direction = -1;
-		delta.y = -delta.y;
+		b.step = -1;
+		b.delta.y = -b.delta.y;
 	}
-	error_term = (2 * delta.y) - delta.x;
-	while (p1.x < p2.x)
+	b.error_term = -b.delta.x;
+	b.color_step = (colors[END] - colors[START]) / b.delta.x;
+	while (points[START].x < points[END].x)
 	{
-		pixel_put(img, p1, DEFAULT_COLOR);
-		if (error_term > 0)
+		if (b.error_term > 0)
 		{
-			p1.y += y_direction;
-			error_term += 2 * (delta.y - delta.x);
+			points[START].y += b.step;
+			b.error_term -= 2 * b.delta.x;
 		}
-		else
-			error_term += 2 * delta.y;
-		p1.x++;
+		pixel_put(img, points[START], colors[START]);
+		b.error_term += 2 * b.delta.y;
+		points[START].x++;
+		colors[START] += b.color_step;
 	}
 }
 
-static void	draw_line_y_dominant(t_img *img, t_point p1, t_point p2)
+// Draw from points[0] to points[1]
+static void	draw_line_y_dominant(t_img *img, t_point points[2], int colors[2])
 {
-	t_point	delta;
-	int		x_direction;
-	int		error_term;
+	t_bresenham	b;
 
-	delta.x = p2.x - p1.x;
-	delta.y = p2.y - p1.y;
-	x_direction = 1;
-	if (delta.x < 0)
+	b.delta.x = points[END].x - points[START].x;
+	b.delta.y = points[END].y - points[START].y;
+	b.step = 1;
+	if (b.delta.x < 0)
 	{
-		x_direction = -1;
-		delta.x = -delta.x;
+		b.step = -1;
+		b.delta.x = -b.delta.x;
 	}
-	error_term = (2 * delta.x) - delta.y;
-	while (p1.y < p2.y)
+	b.error_term = -b.delta.y;
+	b.color_step = (colors[END] - colors[START]) / b.delta.y;
+	while (points[START].y < points[END].y)
 	{
-		pixel_put(img, p1, DEFAULT_COLOR);
-		if (error_term > 0)
+		if (b.error_term > 0)
 		{
-			p1.x += x_direction;
-			error_term += 2 * (delta.x - delta.y);
+			points[START].x += b.step;
+			b.error_term -= 2 * b.delta.y;
 		}
-		else
-			error_term += 2 * delta.x;
-		p1.y++;
+		pixel_put(img, points[START], colors[START]);
+		b.error_term += 2 * b.delta.x;
+		points[START].y++;
+		colors[START] += b.color_step;
 	}
 }
 
 // Draw a line between point p1 and point p2
-static void	draw_line(t_img *img, t_point p1, t_point p2)
+static void	draw_line(t_img *img, t_point p1, t_point p2, int c1, int c2)
 {
+	t_point	points[2];
+	int		colors[2];
+
 	if (ft_abs(p2.y - p1.y) < ft_abs(p2.x - p1.x))
 	{
-        if (p1.x > p2.x)
-            draw_line_x_dominant(img, p2, p1);
-        else
-            draw_line_x_dominant(img, p1, p2);
+		if (p1.x > p2.x)
+		{
+			points[START] = p2;
+			points[END] = p1;
+			colors[START] = c2;
+			colors[END] = c1;
+		}
+		else
+		{
+			points[START] = p1;
+			points[END] = p2;
+			colors[START] = c1;
+			colors[END] = c2;
+		}
+		draw_line_x_dominant(img, points, colors);
 	}
-    else
+	else
 	{
-        if (p1.y > p2.y)
-            draw_line_y_dominant(img, p2, p1);
-        else
-            draw_line_y_dominant(img, p1, p2);
+		if (p1.y > p2.y)
+		{
+			points[START] = p2;
+			points[END] = p1;
+			colors[START] = c2;
+			colors[END] = c1;
+		}
+		else
+		{
+			points[START] = p1;
+			points[END] = p2;
+			colors[START] = c1;
+			colors[END] = c2;
+		}
+		draw_line_y_dominant(img, points, colors);
 	}
 }
 
@@ -161,7 +211,8 @@ static void	link_points(t_fdf *d, t_point point)
 			transform(cur, d->map.index[point.y][point.x].z * d->state.height_mod,
 				d->state.angle),
 			transform(below, d->map.index[point.y + 1][point.x].z * d->state.height_mod,
-				d->state.angle));
+				d->state.angle),
+			d->map.index[point.y][point.x].color, d->map.index[point.y + 1][point.x].color);
 	}
 	if (point.x + 1 < d->map.widths[point.y])
 	{
@@ -171,7 +222,8 @@ static void	link_points(t_fdf *d, t_point point)
 			transform(cur, d->map.index[point.y][point.x].z * d->state.height_mod,
 				d->state.angle),
 			transform(right, d->map.index[point.y][point.x + 1].z * d->state.height_mod,
-				d->state.angle));
+				d->state.angle),
+			d->map.index[point.y][point.x].color, d->map.index[point.y][point.x + 1].color);
 	}
 }
 

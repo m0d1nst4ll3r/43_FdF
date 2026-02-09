@@ -15,6 +15,8 @@ Missions for now:
 	- Normed comments (before typedef or function)
 	- Use AI to suggest better names - I can improve a lot there
 
+
+
 07/02/2026
 
 Code has been refactored. Except draw, because draw is the last hurdle.
@@ -44,3 +46,40 @@ Listing steps to project completion:
 
 Extra stuff I'm not going to do:
 - Overlay for rendering info
+
+
+
+09/02/2029
+
+Trying to refactor draw and add colors.
+
+The two line draw functions were simplified and commented, I understand bresenham now. Colors were added, but look a bit weird because I'm doing simple arithmetic. Working on a better color gradient.
+
+Steps done:
+- Understand bresenham
+
+Steps WIP:
+- Add colors
+- Make code concise
+
+New steps to add:
+- Remove conditionals in hot loop, remove pixel_put returning a value.
+	- Turns out this is useless and hurts more than anything. Also makes code less readable.
+- Add -O3 to Makefile
+	- Should speed up program by 1.5x-2x-3x
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
