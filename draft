@@ -43,9 +43,11 @@ Listing steps to project completion:
 	- Understand 3D translation algorithm fully
 	- Add colors in (send colors to bresenham algorithm, calculate gradient based on where we are in the loop)
 	- Make code concise, organized and readable, of course
+	- (ADDED 09/02) Remove conditionals in hot loop
 
 Extra stuff I'm not going to do:
 - Overlay for rendering info
+- (ADDED 09/02) No outside-of-screen calculations (unless it turns out to be really simple once I think about it?)
 
 
 
@@ -65,6 +67,7 @@ Steps WIP:
 New steps to add:
 - Remove conditionals in hot loop, remove pixel_put returning a value.
 	- Turns out this is useless and hurts more than anything. Also makes code less readable.
+	- Care: cannot remove window boundary conditional because I am drawing lines outside of screen. This is way more complicated than it seems, might work on it.
 - Add -O3 to Makefile
 	- Should speed up program by 1.5x-2x-3x
 
