@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/01/28 17:33:15 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/02 14:31:45 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 # define BRUSH_WID_MAX	255
 # define BRUSH_WID_MIN	0
-# define ROTATE_SPEED	255
+# define ROTATE_SPEED	1
 
 # define ERRMLX			"Error initializing mlx"
 # define ERRWIN			"Error initializing window"

@@ -6,7 +6,7 @@
 #    By: rpohlen <rpohlen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/20 14:37:51 by rpohlen           #+#    #+#              #
-#    Updated: 2026/01/15 22:04:03 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/09 18:58:24 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,7 @@ LINK				= -lXext -lX11
 
 # Compiler settings
 CC					= cc
-CFLAGS				= -Wall -Wextra -Werror -MMD -MP $(addprefix -I,$(INCDIR))
+CFLAGS				= -Wall -Wextra -Werror -O3 -MMD -MP $(addprefix -I,$(INCDIR))
 
 # Make settings
 MAKEFLAGS			+= --no-print-directory -j
