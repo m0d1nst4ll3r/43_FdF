@@ -6,7 +6,7 @@
 #    By: rpohlen <rpohlen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/20 14:37:51 by rpohlen           #+#    #+#              #
-#    Updated: 2026/02/06 18:03:32 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/10 20:50:15 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,6 +31,7 @@ CFILES				= main.c \
 					  hook_engine_loop.c \
 					  hook_key_repeat.c \
 					  hook_window_button.c \
+					  draw_color.c \
 					  draw.c
 SRCDIR				= src
 SRC					= $(addprefix $(SRCDIR)/, $(CFILES))
@@ -57,7 +58,7 @@ LINK				= -lXext -lX11 -lm
 
 # Compiler settings
 CC					= cc
-CFLAGS				= -g -Wall -Wextra -Werror -MMD -MP $(addprefix -I,$(INCDIR))
+CFLAGS				= -g -Wall -Wextra -Werror -O3 -MMD -MP $(addprefix -I,$(INCDIR))
 
 # Make settings
 MAKEFLAGS			+= --no-print-directory

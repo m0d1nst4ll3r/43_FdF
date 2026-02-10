@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:05:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/09 17:41:32 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/10 20:49:33 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,18 +96,19 @@ static void	draw_line_x_dominant(t_img *img, t_point points[2], int colors[2])
 		b.delta.y = -b.delta.y;
 	}
 	b.error_term = -b.delta.x;
-	b.color_step = (colors[END] - colors[START]) / b.delta.x;
-	while (points[START].x < points[END].x)
+	b.c_i = decompose_color(colors[0]);
+	get_color_step(b.c_i, decompose_color(colors[1]), b.delta.x, &b.c_step);
+	while (points[START].x <= points[END].x)
 	{
 		if (b.error_term > 0)
 		{
 			points[START].y += b.step;
 			b.error_term -= 2 * b.delta.x;
 		}
-		pixel_put(img, points[START], colors[START]);
+		pixel_put(img, points[START], recompose_color(b.c_i));
 		b.error_term += 2 * b.delta.y;
 		points[START].x++;
-		colors[START] += b.color_step;
+		add_colors(&b.c_i, b.c_step);
 	}
 }
 
@@ -125,18 +126,19 @@ static void	draw_line_y_dominant(t_img *img, t_point points[2], int colors[2])
 		b.delta.x = -b.delta.x;
 	}
 	b.error_term = -b.delta.y;
-	b.color_step = (colors[END] - colors[START]) / b.delta.y;
-	while (points[START].y < points[END].y)
+	b.c_i = decompose_color(colors[0]);
+	get_color_step(b.c_i, decompose_color(colors[1]), b.delta.y, &b.c_step);
+	while (points[START].y <= points[END].y)
 	{
 		if (b.error_term > 0)
 		{
 			points[START].x += b.step;
 			b.error_term -= 2 * b.delta.y;
 		}
-		pixel_put(img, points[START], colors[START]);
+		pixel_put(img, points[START], recompose_color(b.c_i));
 		b.error_term += 2 * b.delta.x;
 		points[START].y++;
-		colors[START] += b.color_step;
+		add_colors(&b.c_i, b.c_step);
 	}
 }
 
@@ -249,44 +251,38 @@ static void	link_points(t_fdf *d, t_point point)
 	}
 }*/
 
-bool	draw_image(t_fdf *d)
+void	draw_image(t_fdf *d)
 {
-	bool	img_changed;
 	t_point	point;
 
-	img_changed = true; // TODO: fix later
 	point.y = 0;
 	while (point.y < d->map.height)
 	{
 		point.x = 0;
 		while (point.x < d->map.widths[point.y])
 		{
-			link_points(d, point); // TODO: color TODO: not doing useless calculations for stuff outside of screen
+			link_points(d, point);
+			// TODO: not doing useless calculations for stuff outside of screen
 			point.x++;
 		}
 		point.y++;
 	}
-	return (img_changed);
 }
 
-bool	reset_image(t_img *img)
+void	reset_image(t_img *img)
 {
 	t_point	point;
-	bool	img_changed;
 
-	img_changed = false;
 	point.y = 0;
 	while (point.y < WIN_Y)
 	{
 		point.x = 0;
 		while (point.x < WIN_X)
 		{
-			if (pixel_put(img, point, BACKGROUND_COLOR))
-				img_changed = true;
+			pixel_put(img, point, BACKGROUND_COLOR);
 			point.x++;
 		}
 		point.y++;
 	}
-	return (img_changed);
 }
 

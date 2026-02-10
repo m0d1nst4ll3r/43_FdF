@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 17:09:20 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/07 12:23:47 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/10 20:48:19 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,25 +23,12 @@ static void	show_fps(t_time *time)
 
 static void	redraw_img(t_fdf *d)
 {
-	bool	need_refresh;
-
-	need_refresh = false;
-	if (reset_image(&d->mlx.img))
-		need_refresh = true;
-	if (draw_image(d))
-		need_refresh = true;
-	if (need_refresh)
-		d->time.img_state = IMG_NEED_REFRESH;
-	else
-		d->time.img_state = IMG_IDLE;
-}
-
-static void	refresh_img(t_fdf *d)
-{
+	reset_image(&d->mlx.img);
+	draw_image(d);
 	d->time.last_refresh = d->time.current;
 	mlx_put_image_to_window(d->mlx.ptr, d->mlx.win, d->mlx.img.ptr, 0, 0);
 	d->time.frame_count++;
-	d->time.img_state = IMG_IDLE;
+	d->time.img_need_redraw = false;
 }
 
 // Engine loop
@@ -64,12 +51,9 @@ int	engine_loop(t_fdf *d)
 	   error_out(d, ERRTIME);
 	d->time.loop_count++;
 	key_states_handler(d);
-	if (d->time.img_state == IMG_NEED_REDRAW)
-		redraw_img(d);
-	if (d->time.img_state == IMG_NEED_REFRESH
-		&& ft_time_diff(d->time.current,
+	if (d->time.img_need_redraw && ft_time_diff(d->time.current,
 			d->time.last_refresh) > REFRESH_RATE_USEC)
-		refresh_img(d);
+		redraw_img(d);
 	if (SHOW_FPS && ft_time_diff(d->time.current, d->time.last_fps) > 1000000)
 		show_fps(&d->time);
 	return (0);

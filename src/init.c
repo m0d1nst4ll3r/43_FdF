@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:02:53 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 19:44:03 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/10 20:48:02 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ static void	init_mouse(t_mouse *mouse)
 // gettimeofday can fail
 static bool	init_time(t_time *time)
 {
-	time->img_state = IMG_NEED_REDRAW;
+	time->img_need_redraw = true;
 	time->frame_count = 0;
 	time->loop_count = 0;
 	if (gettimeofday(&time->last_refresh, NULL))

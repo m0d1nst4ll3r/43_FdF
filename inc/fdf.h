@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/09 19:01:02 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/10 20:53:08 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 
 // Interactivity constants
 # define KEY_REPEAT_DELAY_USEC	250000
-# define KEY_REPEAT_RATE_USEC	30000
+# define KEY_REPEAT_RATE_USEC	15000
 # define MOVE_SPEED				15
 # define ZOOM_SPEED				0.1
 # define ANGLE_MOVE				0.01
@@ -40,6 +40,9 @@
 // Map building constants
 # define DEFAULT_COLOR		0xffffff
 # define BACKGROUND_COLOR	0x0
+
+// Fixed-point precision for color gradients
+# define FP_SHIFT			16
 
 // Error strings
 # define DEFAULT_ERR	"Undefined error"
@@ -65,16 +68,6 @@
 # include <sys/time.h>
 # include <stdbool.h>
 # include <math.h>
-
-// Documents whether to redraw/refresh the image in engine loop
-// - Redraw when engine state changes (e.g user pressed KEY_LEFT)
-// - Refresh when redraw resulted in actual changes in img
-typedef enum	e_img_state
-{
-	IMG_IDLE,
-	IMG_NEED_REDRAW,
-	IMG_NEED_REFRESH
-}	t_img_state;
 
 // Used for key states
 // - Off		Not pressed
@@ -127,6 +120,13 @@ typedef struct	s_point
 	int	y;
 }	t_point;
 
+typedef struct	s_color
+{
+	int	r;
+	int	g;
+	int	b;
+}	t_color;
+
 // Used in Bresenham line algorithm
 // Only here to save lines, to be below 26
 // Not used in god struct, but needs t_point
@@ -135,7 +135,8 @@ typedef struct	s_bresenham
 	t_point	delta;
 	int		step;
 	int		error_term;
-	int		color_step;
+	t_color	c_i;
+	t_color	c_step;
 }	t_bresenham;
 
 // This chained list contains file line by line (only used in map building)
@@ -254,7 +255,7 @@ typedef struct s_time
 	struct timeval	last_key_repeat;
 	unsigned int	frame_count;
 	unsigned int	loop_count;
-	t_img_state		img_state;
+	bool			img_need_redraw;
 }	t_time;
 
 // God struct
@@ -277,7 +278,7 @@ typedef struct	s_fdf
 }	t_fdf;
 
 // mlx_util.c
-bool			pixel_put(t_img *img, t_point point, int color);
+void			pixel_put(t_img *img, t_point point, int color);
 
 //	INIT/EXIT/ERROR
 // init.c
@@ -338,8 +339,14 @@ void			shift_down(t_fdf *d, int actions);
 
 //	RENDERING
 // draw.c
-bool			reset_image(t_img *img);
-bool			draw_image(t_fdf *d);
+void			reset_image(t_img *img);
+void			draw_image(t_fdf *d);
+// draw_color.c
+t_color			decompose_color(int color_int);
+int				recompose_color(t_color color_rgb);
+void			add_colors(t_color *c1, t_color c2);
+void			get_color_step(t_color c1, t_color c2, int step,
+				t_color *color_step);
 // TODO: improve everything, this was done super fast
 // TODO: draw calculates points and lines outside of screen - bad
 

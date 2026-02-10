@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:00:51 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 17:03:19 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/10 20:45:54 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,11 @@
 void	zoom_in(t_fdf *d, int actions)
 {
 	d->state.zoom *= 1 + actions * ZOOM_SPEED;
-	d->time.img_state = IMG_NEED_REDRAW;
+	d->time.img_need_redraw = true;
 }
 
 void	zoom_out(t_fdf *d, int actions)
 {
 	d->state.zoom /= 1 + actions * ZOOM_SPEED;
-	d->time.img_state = IMG_NEED_REDRAW;
+	d->time.img_need_redraw = true;
 }
