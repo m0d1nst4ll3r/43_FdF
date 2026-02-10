@@ -75,6 +75,35 @@ New steps to add:
 
 
 
+10/02/2029
+
+Colors added. Hot loop conditionals removed, img_state removed (now only a bool). Made draw sync with fps (really dumb that it wasn't the case!). Added -O3.
+
+Still boundary conditionals in pixel_put as I am rendering stuff outside of screen (dumb, but to be fixed later).
+
+Summary of TODOs:
+- Fix draw.c
+	- Fix translation: ez
+	- Fix zoom: ez
+	- Fix rotation: reading to do
+	- Implement RMB rotation: ez once rotation is done, but hard to get good controls in 3D with only 2 axes
+	- Build understanding of sin/cos 3D rotation math: reading and thinking to do
+	- Improve draw.c code, still: ez
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
