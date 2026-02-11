@@ -51,7 +51,7 @@ Extra stuff I'm not going to do:
 
 
 
-09/02/2029
+09/02/2026
 
 Trying to refactor draw and add colors.
 
@@ -75,7 +75,7 @@ New steps to add:
 
 
 
-10/02/2029
+10/02/2026
 
 Colors added. Hot loop conditionals removed, img_state removed (now only a bool). Made draw sync with fps (really dumb that it wasn't the case!). Added -O3.
 
@@ -92,6 +92,16 @@ Summary of TODOs:
 
 
 
+
+11/02/2026
+
+draw.c refactoring draft:
+- The 2 line drawing functions are optimized and normed
+- The function to choose which drawing function to use and compose points and colors into the arguments is too long
+	- Fixed
+- I have a transform function to make points into 3D which I think is probably bad
+- The function to link points together and decide their x/y is too big and very badly designed
+- Draw image function is ok (could eventually grow)
 
 
 

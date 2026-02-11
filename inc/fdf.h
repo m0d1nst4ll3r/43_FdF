@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/10 20:53:08 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/11 16:17:47 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,11 +113,12 @@ typedef struct	s_map_point
 	int		color;
 }	t_map_point;
 
-// Simple point structure for passing around points in graph functions
+// Simple 2D point structure for passing around points in graph functions
 typedef struct	s_point
 {
 	int	x;
 	int	y;
+	int	color;
 }	t_point;
 
 typedef struct	s_color
@@ -328,8 +329,10 @@ void			move_left(t_fdf *d, int actions);
 void			move_up(t_fdf *d, int actions);
 void			move_down(t_fdf *d, int actions);
 // interact_zoom.c
-void			zoom_in(t_fdf *d, int actions); // TODO: zoom is bad
+void			zoom_in(t_fdf *d, int actions);
 void			zoom_out(t_fdf *d, int actions);
+void			zoom_in_mouse(t_fdf *d, int x, int y);
+void			zoom_out_mouse(t_fdf *d, int x, int y);
 // interact_rotate.c
 void			shift_left(t_fdf *d, int actions); // TODO: rotate is bad, improve
 void			shift_right(t_fdf *d, int actions); // rename funcs to rotate_x _y

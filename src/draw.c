@@ -6,14 +6,11 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:05:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/10 20:49:33 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/11 15:58:08 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
-// This improves points[2] and colors[2] readability
-#define START	0
-#define END		1
 
 // Quick Bresenham explanation:
 // 1. To draw a line between 2 points, consider the distance between the two
@@ -55,10 +52,10 @@
 //		Octant 3 - y increments
 //		Octant 4 - x increments
 //		Octant 5 - x decrements
-// 5. What is error_term? How do we decide to jump a pixel or not?
+// 5. What is error_term? How do we decide whether to jump a pixel or not?
 //	 It's too complicated to explain here. It has to do with math, transforming
 //		float arithmetic into integer arithmetic, and how to decide whether the
-//		real geometric line drawn between two pixel (two points at the centers
+//		real geometric line drawn between two pixels (two points at the centers
 //		of the pixels) has crossed a new pixel's threshold or not.
 //	 For a very quick explanation, the real geometric line's yi coordinate is
 //		calculated, at coordinate xi, as (for octant 3) xi * dy / dx.
@@ -79,16 +76,18 @@
 //		Decide whether to jump y or not (error_term > 0 ?).
 //		If y increments, subtract 2 dx from error_term.
 // 6. Colors
-//	 Just increment colors[START], send it to pixel_put.
-//	 Since color_step is a simple integer division, end color might be
-//		different from colors[END].
-//	 This is deemed an acceptable inaccuracy.
-static void	draw_line_x_dominant(t_img *img, t_point points[2], int colors[2])
+//	 First, we always decompose colors (RGB channels are not linear in an int).
+//	 Then, we used fixed-point arithmetic to avoid integer truncation and drift
+//		issues (dividing a hypothetical R value of 80 by 81 yields 0).
+//	 This avoids floating point operations and produces acceptable precision.
+//	 Then, we just do (c2 - c1) / (pixel_count - 1) to find color step, and add
+//		it to the starting color every iteration.
+static void	draw_line_x_dominant(t_img *img, t_point p1, t_point p2)
 {
 	t_bresenham	b;
 
-	b.delta.x = points[END].x - points[START].x;
-	b.delta.y = points[END].y - points[START].y;
+	b.delta.x = p2.x - p1.x;
+	b.delta.y = p2.y - p1.y;
 	b.step = 1;
 	if (b.delta.y < 0)
 	{
@@ -96,29 +95,29 @@ static void	draw_line_x_dominant(t_img *img, t_point points[2], int colors[2])
 		b.delta.y = -b.delta.y;
 	}
 	b.error_term = -b.delta.x;
-	b.c_i = decompose_color(colors[0]);
-	get_color_step(b.c_i, decompose_color(colors[1]), b.delta.x, &b.c_step);
-	while (points[START].x <= points[END].x)
+	b.c_i = decompose_color(p1.color);
+	get_color_step(b.c_i, decompose_color(p2.color), b.delta.x, &b.c_step);
+	while (p1.x <= p2.x)
 	{
 		if (b.error_term > 0)
 		{
-			points[START].y += b.step;
+			p1.y += b.step;
 			b.error_term -= 2 * b.delta.x;
 		}
-		pixel_put(img, points[START], recompose_color(b.c_i));
+		pixel_put(img, p1, recompose_color(b.c_i));
 		b.error_term += 2 * b.delta.y;
-		points[START].x++;
+		p1.x++;
 		add_colors(&b.c_i, b.c_step);
 	}
 }
 
 // Draw from points[0] to points[1]
-static void	draw_line_y_dominant(t_img *img, t_point points[2], int colors[2])
+static void	draw_line_y_dominant(t_img *img, t_point p1, t_point p2)
 {
 	t_bresenham	b;
 
-	b.delta.x = points[END].x - points[START].x;
-	b.delta.y = points[END].y - points[START].y;
+	b.delta.x = p2.x - p1.x;
+	b.delta.y = p2.y - p1.y;
 	b.step = 1;
 	if (b.delta.x < 0)
 	{
@@ -126,146 +125,117 @@ static void	draw_line_y_dominant(t_img *img, t_point points[2], int colors[2])
 		b.delta.x = -b.delta.x;
 	}
 	b.error_term = -b.delta.y;
-	b.c_i = decompose_color(colors[0]);
-	get_color_step(b.c_i, decompose_color(colors[1]), b.delta.y, &b.c_step);
-	while (points[START].y <= points[END].y)
+	b.c_i = decompose_color(p1.color);
+	get_color_step(b.c_i, decompose_color(p2.color), b.delta.y, &b.c_step);
+	while (p1.y <= p2.y)
 	{
 		if (b.error_term > 0)
 		{
-			points[START].x += b.step;
+			p1.x += b.step;
 			b.error_term -= 2 * b.delta.y;
 		}
-		pixel_put(img, points[START], recompose_color(b.c_i));
+		pixel_put(img, p1, recompose_color(b.c_i));
 		b.error_term += 2 * b.delta.x;
-		points[START].y++;
+		p1.y++;
 		add_colors(&b.c_i, b.c_step);
 	}
 }
 
 // Draw a line between point p1 and point p2
-static void	draw_line(t_img *img, t_point p1, t_point p2, int c1, int c2)
+static void	draw_line(t_img *img, t_point p1, t_point p2)
 {
-	t_point	points[2];
-	int		colors[2];
-
-	if (ft_abs(p2.y - p1.y) < ft_abs(p2.x - p1.x))
+	if (ft_abs(p2.x - p1.x) > ft_abs(p2.y - p1.y))
 	{
 		if (p1.x > p2.x)
-		{
-			points[START] = p2;
-			points[END] = p1;
-			colors[START] = c2;
-			colors[END] = c1;
-		}
+			draw_line_x_dominant(img, p2, p1);
 		else
-		{
-			points[START] = p1;
-			points[END] = p2;
-			colors[START] = c1;
-			colors[END] = c2;
-		}
-		draw_line_x_dominant(img, points, colors);
+			draw_line_x_dominant(img, p1, p2);
 	}
 	else
 	{
 		if (p1.y > p2.y)
-		{
-			points[START] = p2;
-			points[END] = p1;
-			colors[START] = c2;
-			colors[END] = c1;
-		}
+			draw_line_y_dominant(img, p2, p1);
 		else
-		{
-			points[START] = p1;
-			points[END] = p2;
-			colors[START] = c1;
-			colors[END] = c2;
-		}
-		draw_line_y_dominant(img, points, colors);
+			draw_line_y_dominant(img, p1, p2);
 	}
 }
 
-static t_point	transform(t_point point, int height, float angle)
+static void	transform_3d(t_point *point, int height, float angle)
 {
 	int	tmp;
 
-	tmp = point.x;
-	point.x = (tmp - point.y) * cos(angle);
-	point.y = (tmp + point.y) * sin(angle) - height;
-	return (point);
+	tmp = point->x;
+	point->x = (tmp - point->y) * cos(angle);
+	point->y = (tmp + point->y) * sin(angle) - height;
 }
 
-// Modified version for 3d transform
-static void	link_points(t_fdf *d, t_point point)
+static void	link_right(t_fdf *d, int x, int y)
 {
-	t_point	cur;
-	t_point	right;
-	t_point	below;
+	t_point	p1;
+	t_point	p2;
 
-	cur.x = point.y + d->state.x_offset + point.x * POINT_DISTANCE;
-	cur.y = d->state.y_offset + point.y * POINT_DISTANCE;
-	if (point.y + 1 < d->map.height && point.x < d->map.widths[point.y + 1]) // bottom exists
-	{
-		below.x = (point.y + 1) + d->state.x_offset + point.x * POINT_DISTANCE;
-		below.y = d->state.y_offset + (point.y + 1) * POINT_DISTANCE;
-		draw_line(&d->mlx.img,
-			transform(cur, d->map.index[point.y][point.x].z * d->state.height_mod,
-				d->state.angle),
-			transform(below, d->map.index[point.y + 1][point.x].z * d->state.height_mod,
-				d->state.angle),
-			d->map.index[point.y][point.x].color, d->map.index[point.y + 1][point.x].color);
-	}
-	if (point.x + 1 < d->map.widths[point.y])
-	{
-		right.x = point.y + d->state.x_offset + (point.x + 1) * POINT_DISTANCE;
-		right.y = d->state.y_offset + point.y * POINT_DISTANCE;
-		draw_line(&d->mlx.img,
-			transform(cur, d->map.index[point.y][point.x].z * d->state.height_mod,
-				d->state.angle),
-			transform(right, d->map.index[point.y][point.x + 1].z * d->state.height_mod,
-				d->state.angle),
-			d->map.index[point.y][point.x].color, d->map.index[point.y][point.x + 1].color);
-	}
+	p1.x = x * POINT_DISTANCE;
+	p1.y = y * POINT_DISTANCE;
+	p1.color = d->map.index[y][x].color;
+	p2.x = p1.x + POINT_DISTANCE;
+	p2.y = p1.y;
+	p2.color = d->map.index[y][x + 1].color;
+	transform_3d(&p1, d->map.index[y][x].z * d->state.height_mod, d->state.angle);
+	transform_3d(&p2, d->map.index[y][x + 1].z * d->state.height_mod, d->state.angle);
+	p1.x *= d->state.zoom;
+	p1.y *= d->state.zoom;
+	p2.x *= d->state.zoom;
+	p2.y *= d->state.zoom;
+	p1.x += d->state.x_offset;
+	p1.y += d->state.y_offset;
+	p2.x += d->state.x_offset;
+	p2.y += d->state.y_offset;
+	draw_line(&d->mlx.img, p1, p2);
 }
 
-/*static void	link_points(t_fdf *d, int x, int y)
+static void	link_below(t_fdf *d, int x, int y)
 {
-	t_coord	cur;
-	t_coord	right;
-	t_coord	below;
+	t_point	p1;
+	t_point	p2;
 
-	cur.x = y * d->line_offset + d->x_offset + x * d->point_distance;
-	cur.y = d->y_offset + y * d->point_distance - d->map[y][x].height * d->height_mod;
-	if (y + 1 < d->map_height && x < d->map_widths[y + 1]) // bottom exists
-	{
-		below.x = (y + 1) * d->line_offset + d->x_offset + x * d->point_distance;
-		below.y = d->y_offset + (y + 1) * d->point_distance - d->map[y + 1][x].height * d->height_mod;
-		draw_line(d->img, cur, below); // note that for color gradient we will need 4 args (colors)
-	}
-	if (x + 1 < d->map_widths[y])
-	{
-		right.x = y * d->line_offset + d->x_offset + (x + 1) * d->point_distance;
-		right.y = d->y_offset + y * d->point_distance - d->map[y][x + 1].height * d->height_mod;
-		draw_line(d->img, cur, right);
-	}
-}*/
+	p1.x = x * POINT_DISTANCE;
+	p1.y = y * POINT_DISTANCE;
+	p1.color = d->map.index[y][x].color;
+	p2.x = p1.x;
+	p2.y = p1.y + POINT_DISTANCE;
+	p2.color = d->map.index[y + 1][x].color;
+	transform_3d(&p1, d->map.index[y][x].z * d->state.height_mod, d->state.angle);
+	transform_3d(&p2, d->map.index[y + 1][x].z * d->state.height_mod, d->state.angle);
+	p1.x *= d->state.zoom;
+	p1.y *= d->state.zoom;
+	p2.x *= d->state.zoom;
+	p2.y *= d->state.zoom;
+	p1.x += d->state.x_offset;
+	p1.y += d->state.y_offset;
+	p2.x += d->state.x_offset;
+	p2.y += d->state.y_offset;
+	draw_line(&d->mlx.img, p1, p2);
+}
 
 void	draw_image(t_fdf *d)
 {
-	t_point	point;
+	int	x;
+	int	y;
 
-	point.y = 0;
-	while (point.y < d->map.height)
+	y = 0;
+	while (y < d->map.height)
 	{
-		point.x = 0;
-		while (point.x < d->map.widths[point.y])
+		x = 0;
+		while (x < d->map.widths[y])
 		{
-			link_points(d, point);
+			if (x + 1 < d->map.widths[y])
+				link_right(d, x, y);
+			if (y + 1 < d->map.height && x < d->map.widths[y + 1])
+				link_below(d, x, y);
 			// TODO: not doing useless calculations for stuff outside of screen
-			point.x++;
+			x++;
 		}
-		point.y++;
+		y++;
 	}
 }
 
