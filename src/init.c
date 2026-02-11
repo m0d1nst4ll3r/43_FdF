@@ -6,70 +6,41 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:02:53 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/10 20:48:02 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/11 19:45:58 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-static void	init_key_codes_and_actions(t_key *key)
+static void	init_mlx_null(t_mlx *mlx)
 {
-	key->codes[W] = KEY_W;
-	key->codes[A] = KEY_A;
-	key->codes[S] = KEY_S;
-	key->codes[D] = KEY_D;
-	key->codes[R] = KEY_R;
-	key->codes[F] = KEY_F;
-	key->codes[UP] = KEY_UP;
-	key->codes[LEFT] = KEY_LEFT;
-	key->codes[DOWN] = KEY_DOWN;
-	key->codes[RIGHT] = KEY_RIGHT;
-	key->codes[LSHIFT] = KEY_LSHIFT;
-	key->codes[LCTRL] = KEY_LCTRL;
-	key->actions[R] = shift_up;
-	key->actions[F] = shift_down;
-	key->actions[UP] = move_up;
-	key->actions[LEFT] = move_left;
-	key->actions[DOWN] = move_down;
-	key->actions[RIGHT] = move_right;
-	key->actions[LSHIFT] = zoom_in;
-	key->actions[LCTRL] = zoom_out;
+	mlx->ptr = NULL;
+	mlx->win = NULL;
+	mlx->img.ptr = NULL;
 }
 
-// Zero fill actions to avoid accidental segfaults
-//	when adding keys and forgetting to add corresponding actions
-static void	init_key(t_key *key)
+static void	init_file(t_file *file, char *filename)
 {
-	int	i;
-
-	i = 0;
-	while (i < KEY_COUNT)
-	{
-		key->states[i] = OFF;
-		key->actions[i] = 0;
-		key->codes[i] = 0;
-		i++;
-	}
-	init_key_codes_and_actions(key);
-	key->repeat.state = OFF;
+	file->name = filename;
+	file->contents = NULL;
 }
 
-static void	init_mouse(t_mouse *mouse)
+static void	init_map(t_map *map)
 {
-	mouse->lmb_held = false;
-	mouse->rmb_held = false;
+	map->data = NULL;
+	map->index = NULL;
+	map->widths = NULL;
 }
 
-// gettimeofday can fail
-static bool	init_time(t_time *time)
-{
-	time->img_need_redraw = true;
-	time->frame_count = 0;
-	time->loop_count = 0;
-	if (gettimeofday(&time->last_refresh, NULL))
-		return (false);
-	time->last_fps = time->last_refresh;
-	return (true);
+static void	init_state(t_state *state)
+{// TODO: STATES WILL EVENTUALLY GET VALUES THROUGH MATH & LOGIC, TO CENTER DRAWING
+	state->x_offset = DEFAULT_X_OFFSET;
+	state->y_offset = DEFAULT_Y_OFFSET;
+	state->height_mod = DEFAULT_HEIGHT_MOD;
+	state->angle_x = DEFAULT_ANGLE_X;
+	state->angle_y = DEFAULT_ANGLE_Y;
+	state->angle_z = DEFAULT_ANGLE_Z;
+	state->zoom = DEFAULT_ZOOM;
 }
 
 // Values to init

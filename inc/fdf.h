@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/11 16:17:47 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/11 21:20:40 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 // Window and drawing constants
 # define WIN_NAME			"fdf"
-# define WIN_X				1920
-# define WIN_Y				1080
+# define WIN_X				800
+# define WIN_Y				600
 # define REFRESH_RATE_USEC	16666
 # define SHOW_FPS			1
 # define POINT_DISTANCE		100
@@ -26,16 +26,18 @@
 # define KEY_REPEAT_RATE_USEC	15000
 # define MOVE_SPEED				15
 # define ZOOM_SPEED				0.1
-# define ANGLE_MOVE				0.01
+# define ANGLE_MOVE				0.001
 # define HEIGHT_MOVE			0.1
 # define HEIGHT_MIN				0.2
 
 // Starting states
 # define DEFAULT_X_OFFSET	500
 # define DEFAULT_Y_OFFSET	500
-# define DEFAULT_HEIGHT_MOD	1
+# define DEFAULT_HEIGHT_MOD	5
 # define DEFAULT_ZOOM		1
-# define DEFAULT_ANGLE		0.523599
+# define DEFAULT_ANGLE_X	0.61548
+# define DEFAULT_ANGLE_Y	0
+# define DEFAULT_ANGLE_Z	0.785398
 
 // Map building constants
 # define DEFAULT_COLOR		0xffffff
@@ -86,6 +88,8 @@ typedef enum	e_key_state
 enum	e_keys
 {
 	SPACE,
+	Q,
+	E,
 	W,
 	A,
 	S,
@@ -192,7 +196,9 @@ typedef struct s_state
 	int		x_offset;
 	int		y_offset;
 	float	height_mod;
-	float	angle;
+	float	angle_x;
+	float	angle_y;
+	float	angle_z;
 	float	zoom;
 }	t_state;
 
@@ -285,10 +291,9 @@ void			pixel_put(t_img *img, t_point point, int color);
 // init.c
 void			init_prog(t_fdf *d, char *filename);
 // init_subfuncs.c
-void			init_mlx_null(t_mlx *mlx);
-void			init_file(t_file *file, char *filename);
-void			init_map(t_map *map);
-void			init_state(t_state *state);
+void			init_key(t_key *key);
+void			init_mouse(t_mouse *mouse);
+bool			init_time(t_time *time);
 // init_mlx.c
 void			init_mlx(t_fdf *d);
 // exit.c
@@ -334,8 +339,12 @@ void			zoom_out(t_fdf *d, int actions);
 void			zoom_in_mouse(t_fdf *d, int x, int y);
 void			zoom_out_mouse(t_fdf *d, int x, int y);
 // interact_rotate.c
-void			shift_left(t_fdf *d, int actions); // TODO: rotate is bad, improve
-void			shift_right(t_fdf *d, int actions); // rename funcs to rotate_x _y
+void			rotate_x_increase(t_fdf *d, int actions);
+void			rotate_x_decrease(t_fdf *d, int actions);
+void			rotate_y_increase(t_fdf *d, int actions);
+void			rotate_y_decrease(t_fdf *d, int actions);
+void			rotate_z_increase(t_fdf *d, int actions);
+void			rotate_z_decrease(t_fdf *d, int actions);
 // interact_height.c
 void			shift_up(t_fdf *d, int actions);
 void			shift_down(t_fdf *d, int actions);

@@ -6,38 +6,83 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 01:11:54 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 01:16:19 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/11 19:39:35 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
 // I hate the norm. These could be statics in init.c, but noOooOo
-void	init_mlx_null(t_mlx *mlx)
+static void	init_key_codes(int codes[KEY_COUNT])
 {
-	mlx->ptr = NULL;
-	mlx->win = NULL;
-	mlx->img.ptr = NULL;
+	codes[Q] = KEY_Q;
+	codes[E] = KEY_E;
+	codes[W] = KEY_W;
+	codes[A] = KEY_A;
+	codes[S] = KEY_S;
+	codes[D] = KEY_D;
+	codes[R] = KEY_R;
+	codes[F] = KEY_F;
+	codes[UP] = KEY_UP;
+	codes[LEFT] = KEY_LEFT;
+	codes[DOWN] = KEY_DOWN;
+	codes[RIGHT] = KEY_RIGHT;
+	codes[LSHIFT] = KEY_LSHIFT;
+	codes[LCTRL] = KEY_LCTRL;
 }
 
-void	init_file(t_file *file, char *filename)
+static void	init_key_actions(t_key_action actions[KEY_COUNT])
 {
-	file->name = filename;
-	file->contents = NULL;
+	actions[R] = shift_up;
+	actions[F] = shift_down;
+	actions[Q] = rotate_y_increase;
+	actions[E] = rotate_y_decrease;
+	actions[W] = rotate_x_increase;
+	actions[S] = rotate_x_decrease;
+	actions[A] = rotate_z_increase;
+	actions[D] = rotate_z_decrease;
+	actions[UP] = move_up;
+	actions[LEFT] = move_left;
+	actions[DOWN] = move_down;
+	actions[RIGHT] = move_right;
+	actions[LSHIFT] = zoom_in;
+	actions[LCTRL] = zoom_out;
 }
 
-void	init_map(t_map *map)
+// Zero fill actions to avoid accidental segfaults when adding keys
+//	and forgetting to add corresponding actions
+void	init_key(t_key *key)
 {
-	map->data = NULL;
-	map->index = NULL;
-	map->widths = NULL;
+	int	i;
+
+	i = 0;
+	while (i < KEY_COUNT)
+	{
+		key->states[i] = OFF;
+		key->actions[i] = 0;
+		key->codes[i] = 0;
+		i++;
+	}
+	init_key_codes(key->codes);
+	init_key_actions(key->actions);
+	key->repeat.state = OFF;
 }
 
-void	init_state(t_state *state)
-{// TODO: STATES WILL EVENTUALLY GET VALUES THROUGH MATH & LOGIC, TO CENTER DRAWING
-	state->x_offset = DEFAULT_X_OFFSET;
-	state->y_offset = DEFAULT_Y_OFFSET;
-	state->height_mod = DEFAULT_HEIGHT_MOD;
-	state->angle = DEFAULT_ANGLE;
-	state->zoom = DEFAULT_ZOOM;
+void	init_mouse(t_mouse *mouse)
+{
+	mouse->lmb_held = false;
+	mouse->rmb_held = false;
 }
+
+// gettimeofday can fail
+bool	init_time(t_time *time)
+{
+	time->img_need_redraw = true;
+	time->frame_count = 0;
+	time->loop_count = 0;
+	if (gettimeofday(&time->last_refresh, NULL))
+		return (false);
+	time->last_fps = time->last_refresh;
+	return (true);
+}
+

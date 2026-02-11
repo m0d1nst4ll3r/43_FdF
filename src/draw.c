@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:05:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/11 15:58:08 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/11 21:21:36 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,13 +160,45 @@ static void	draw_line(t_img *img, t_point p1, t_point p2)
 	}
 }
 
-static void	transform_3d(t_point *point, int height, float angle)
+static void transform_rotate_x(t_point *point, int *z, float angle)
+{
+	int	tmp;
+
+	tmp = point->y;
+	point->y = tmp * cos(angle) - *z * sin(angle);
+	*z = tmp * sin(angle) + *z * cos(angle);
+}
+
+static void transform_rotate_y(t_point *point, int *z, float angle)
 {
 	int	tmp;
 
 	tmp = point->x;
-	point->x = (tmp - point->y) * cos(angle);
-	point->y = (tmp + point->y) * sin(angle) - height;
+	point->x = *z * sin(angle) + tmp * cos(angle);
+	*z = *z * cos(angle) - tmp * sin(angle);
+}
+
+static void transform_rotate_z(t_point *point, float angle)
+{
+	int	tmp;
+
+	tmp = point->x;
+	point->x = tmp * cos(angle) - point->y * sin(angle);
+	point->y = tmp * sin(angle) + point->y * cos(angle);
+}
+
+static void	transform_isometric(t_point *point, int z)
+{
+//	point->x = (point->x - point->y);
+	point->y -= z;
+}
+
+static void	transform_3d(t_point *point, int z, t_state *state)
+{
+	transform_rotate_x(point, &z, state->angle_x);
+	transform_rotate_y(point, &z, state->angle_y);
+	transform_rotate_z(point, state->angle_z);
+	transform_isometric(point, z);
 }
 
 static void	link_right(t_fdf *d, int x, int y)
@@ -180,8 +212,8 @@ static void	link_right(t_fdf *d, int x, int y)
 	p2.x = p1.x + POINT_DISTANCE;
 	p2.y = p1.y;
 	p2.color = d->map.index[y][x + 1].color;
-	transform_3d(&p1, d->map.index[y][x].z * d->state.height_mod, d->state.angle);
-	transform_3d(&p2, d->map.index[y][x + 1].z * d->state.height_mod, d->state.angle);
+	transform_3d(&p1, d->map.index[y][x].z * d->state.height_mod, &d->state);
+	transform_3d(&p2, d->map.index[y][x + 1].z * d->state.height_mod, &d->state);
 	p1.x *= d->state.zoom;
 	p1.y *= d->state.zoom;
 	p2.x *= d->state.zoom;
@@ -204,8 +236,8 @@ static void	link_below(t_fdf *d, int x, int y)
 	p2.x = p1.x;
 	p2.y = p1.y + POINT_DISTANCE;
 	p2.color = d->map.index[y + 1][x].color;
-	transform_3d(&p1, d->map.index[y][x].z * d->state.height_mod, d->state.angle);
-	transform_3d(&p2, d->map.index[y + 1][x].z * d->state.height_mod, d->state.angle);
+	transform_3d(&p1, d->map.index[y][x].z * d->state.height_mod, &d->state);
+	transform_3d(&p2, d->map.index[y + 1][x].z * d->state.height_mod, &d->state);
 	p1.x *= d->state.zoom;
 	p1.y *= d->state.zoom;
 	p2.x *= d->state.zoom;

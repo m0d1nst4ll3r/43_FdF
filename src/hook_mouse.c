@@ -6,28 +6,46 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 16:48:23 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/11 16:16:55 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/11 19:56:59 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
+static void	lmb_handler(int x, int y, t_fdf *d)
+{
+	if (x != d->mouse.pos.x)
+	{
+		move_right(d, d->mouse.pos.x - x);
+		d->mouse.pos.x = x;
+	}
+	if (y != d->mouse.pos.y)
+	{
+		move_down(d, d->mouse.pos.y - y);
+		d->mouse.pos.y = y;
+	}
+}
+
+static void	rmb_handler(int x, int y, t_fdf *d)
+{
+	if (x != d->mouse.pos.x)
+	{
+		rotate_z_increase(d, d->mouse.pos.x - x);
+		d->mouse.pos.x = x;
+	}
+	if (y != d->mouse.pos.y)
+	{
+		rotate_x_increase(d, d->mouse.pos.y - y);
+		d->mouse.pos.y = y;
+	}
+}
+
 int	pointer_motion_hook(int x, int y, t_fdf *d)
 {
 	if (d->mouse.lmb_held)
-	{
-		if (x != d->mouse.pos.x)
-		{
-			move_right(d, d->mouse.pos.x - x);
-			d->mouse.pos.x = x;
-		}
-		if (y != d->mouse.pos.y)
-		{
-			move_down(d, d->mouse.pos.y - y);
-			d->mouse.pos.y = y;
-		}
-	}
-	// TODO: rmb_held (when I have good rotation)
+		lmb_handler(x, y, d);
+	else if (d->mouse.rmb_held)
+		rmb_handler(x, y, d);
 	return (0);
 }
 

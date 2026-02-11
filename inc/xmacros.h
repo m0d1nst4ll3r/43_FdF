@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 20:37:32 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 19:56:28 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/11 19:26:41 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define XMACROS_H
 
 // Keys
+# define KEY_Q				'q'
+# define KEY_E				'e'
 # define KEY_W				'w'
 # define KEY_A				'a'
 # define KEY_S				's'

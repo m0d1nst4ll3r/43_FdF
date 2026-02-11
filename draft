@@ -100,14 +100,64 @@ draw.c refactoring draft:
 - The function to choose which drawing function to use and compose points and colors into the arguments is too long
 	- Fixed
 - I have a transform function to make points into 3D which I think is probably bad
+	- WIP now
 - The function to link points together and decide their x/y is too big and very badly designed
+	- Fixed
 - Draw image function is ok (could eventually grow)
+	- Ok for now
+
+
+- Translate is fixed
+- Zoom is "fixed" (more on this)
+- Rotate is WIP right now
+
+- Zoom issues:
+	- Due to the way I'm drawing, my zoom by default zooms to point 0,0 of my wireframe model, not pixel 0,0 of the screen.
+	- Zooming works, but is not centered at the middle of the screen (and no easy way to center it to the cursor's screen position).
+	- Fixing this takes more than a clever formula, it takes rethinking the way that I draw my model. Don't need to modify absolutely everything, but just need to rethink it at a base level and touch a few values here and there.
+	- Right now, this is one of the last hurdles that I'm bundling with (2) hiding stuff behind terrain and (3) not processing points/lines outside of the screen. Basically I'll work on it once everything else is squeaky clean. Or just turn in and say fuck it.
+
+- Rotate:
+	- Works, but the stupid isometric transformation kind of ruins the way my thing rotates. Maybe unavoidable. Might be fine. Will test more.
+- One extra thing
+	- Gonna code "R" or MMB to reset states back to their default
+
+Summary of stuff that's done:
+- Fixing translate (was ez)
+- Fixing zoom (ez)
+- Fixing rotation (not perfect, can nitpick)
+- RMB rotation (ez)
 
 
 
+Big summary:
+This is starting to get good, but:
+0. Clean up code, but this comes at the end. Code is already 90% clean anyway, but draw.c still needs more cleaning.
+1. Every transformation is centered at 0,0 of the wireframe model. Would be better if:
+	- Rotation was centered at the center of the model
+	- Zoom was centered either at the center of the screen, or where the mouse is
+2. The figure doesn't start out properly centered & de-zoomed
+	- Need to get a good picture from the start instead of having to play with controls to center the model
+3. I'm still not 100% on the orthographic projection and what angles to start with to simulate an isometric view
+	- Maybe remove POINT_DISTANCE nonsense to start with (just need to control zoom)
+4. Controls, keyboard is too slow, mouse is ok
+	- Just speed up keyboard controls
+	- Add keybinds: R (or MMB) to reset to default view
+		- 1 2 3 to switch between 3 orthographic POVs
+5. Extra stuff
+	- Again, calculating stuff that's outside the screen
+	- And hiding some stuff behind the terrain
+	- Eventually, adding some sort of perspective
+	- Eventually eventually, just redoing this entire piece of shit but way better
 
-
-
+PS:
+The more I spend time on this the more I realize how much better I could've made it. Typical. It should be possible to code something right away that will work for full 3D (parsing .obj blender files or whatever) and adapt it to FdF files.
+At this point though, 2 things:
+1. This project isn't as crazy interesting to me as fractol or some others. I just didn't have THAT much fun with it.
+2. I'm already late on my projects. Philosophers and Minishell await
+Verdict:
+Get it clean, but don't do extra stuff. Keep the ideas somewhere just in case, but close the case and move on.
+Points 0, 1, 2, 3, 4 remain. Once that's done, buh-bye.
 
 
 
