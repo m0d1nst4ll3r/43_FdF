@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 20:09:27 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/10 20:38:50 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 11:43:13 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ t_color	decompose_color(int color_int)
 int	recompose_color(t_color color_rgb)
 {
 	return ((((color_rgb.r >> FP_SHIFT & 0xff) << 16))
-			+ (((color_rgb.g >> FP_SHIFT & 0xff) << 8))
-			+ (color_rgb.b >> FP_SHIFT & 0xff));
+		+ (((color_rgb.g >> FP_SHIFT & 0xff) << 8))
+		+ (color_rgb.b >> FP_SHIFT & 0xff));
 }
 
 void	add_colors(t_color *c1, t_color c2)

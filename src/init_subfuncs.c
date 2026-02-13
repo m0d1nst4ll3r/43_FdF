@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 01:11:54 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/11 19:39:35 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 11:41:13 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,24 +29,32 @@ static void	init_key_codes(int codes[KEY_COUNT])
 	codes[RIGHT] = KEY_RIGHT;
 	codes[LSHIFT] = KEY_LSHIFT;
 	codes[LCTRL] = KEY_LCTRL;
+	codes[ONE] = KEY_ONE;
+	codes[TWO] = KEY_TWO;
+	codes[THREE] = KEY_THREE;
+	codes[FOUR] = KEY_FOUR;
 }
 
 static void	init_key_actions(t_key_action actions[KEY_COUNT])
 {
 	actions[R] = shift_up;
 	actions[F] = shift_down;
-	actions[Q] = rotate_y_increase;
-	actions[E] = rotate_y_decrease;
+	actions[Q] = rotate_z_increase;
+	actions[E] = rotate_z_decrease;
 	actions[W] = rotate_x_increase;
 	actions[S] = rotate_x_decrease;
-	actions[A] = rotate_z_increase;
-	actions[D] = rotate_z_decrease;
+	actions[A] = rotate_y_increase;
+	actions[D] = rotate_y_decrease;
 	actions[UP] = move_up;
 	actions[LEFT] = move_left;
 	actions[DOWN] = move_down;
 	actions[RIGHT] = move_right;
 	actions[LSHIFT] = zoom_in;
 	actions[LCTRL] = zoom_out;
+	actions[ONE] = reset_view;
+	actions[TWO] = ortho_view_1;
+	actions[THREE] = ortho_view_2;
+	actions[FOUR] = ortho_view_3;
 }
 
 // Zero fill actions to avoid accidental segfaults when adding keys
@@ -85,4 +93,3 @@ bool	init_time(t_time *time)
 	time->last_fps = time->last_refresh;
 	return (true);
 }
-

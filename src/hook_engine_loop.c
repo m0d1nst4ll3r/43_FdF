@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 17:09:20 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/11 20:44:00 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 11:43:47 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,6 @@ static void	redraw_img(t_fdf *d)
 	d->time.img_need_redraw = false;
 }
 
-#include <stdio.h>
-
 // Engine loop
 //	- Update key repeat timer
 //		- If repeat timer is active and enough time's passed, keys will now
@@ -50,15 +48,12 @@ static void	redraw_img(t_fdf *d)
 int	engine_loop(t_fdf *d)
 {
 	if (gettimeofday(&d->time.current, NULL))
-	   error_out(d, ERRTIME);
+		error_out(d, ERRTIME);
 	d->time.loop_count++;
 	key_states_handler(d);
 	if (d->time.img_need_redraw && ft_time_diff(d->time.current,
 			d->time.last_refresh) > REFRESH_RATE_USEC)
-	{
-		printf("Drawing image with: x %f y %f z %f\n", d->state.angle_x, d->state.angle_y, d->state.angle_z);
 		redraw_img(d);
-	}
 	if (SHOW_FPS && ft_time_diff(d->time.current, d->time.last_fps) > 1000000)
 		show_fps(&d->time);
 	return (0);

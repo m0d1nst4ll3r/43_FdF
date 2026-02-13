@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:02:53 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/11 19:45:58 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 11:41:40 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void	init_map(t_map *map)
 }
 
 static void	init_state(t_state *state)
-{// TODO: STATES WILL EVENTUALLY GET VALUES THROUGH MATH & LOGIC, TO CENTER DRAWING
+{
 	state->x_offset = DEFAULT_X_OFFSET;
 	state->y_offset = DEFAULT_Y_OFFSET;
 	state->height_mod = DEFAULT_HEIGHT_MOD;
@@ -66,5 +66,5 @@ void	init_prog(t_fdf *d, char *filename)
 	init_key(&d->key);
 	init_mouse(&d->mouse);
 	if (!init_time(&d->time))
-	   error_out(d, ERRTIME);
+		error_out(d, ERRTIME);
 }

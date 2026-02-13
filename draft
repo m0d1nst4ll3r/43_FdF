@@ -161,8 +161,39 @@ Points 0, 1, 2, 3, 4 remain. Once that's done, buh-bye.
 
 
 
+13/02/2026
 
+WIP now:
 
+DONE:
+- Added keybinds 1, 2, 3, 4 to switch views (isometric, ortho 1, 2, 3)
+	- These don't really work yet but only because I need to fix projection
+- Controls are fixed, mouse and keyboard both feel fine, except when it starts lagging
+	- Lag is caused by me stupidly doing out-of-screen calculations, to be fixed
+- Zoom and rotate now zoom and rotate based on the center of the model (this is fucked btw if the model starts with a super long or short line compared to the rest)
+	- Won't fix the problem with 1st line, fuck it at this point
+- Isometric/orthographic projection is done and clean
+	- POINT_DISTANCE is necessary or the distance between points gets to be so small it's either 0 or 1
+	- There should be a better fix for this but I'm just over with this project at this point
+- Height_mod can easily overflow, but this is a bit whatever
+	- Doesn't really matter - it's not the cleanest, but not a problem
+- Code cleaned up - no norm errors
+
+In other words, points 1, 3 and 4 are done. 2 remains, then we're done (almost).
+Note: I can't leave this the way it is, I HAVE to find a solution to stop calculating stuff that's outside the screen. Models turn into a laggy mess very fast when zooming in too much.
+
+2. Fixing default position on screen
+- We want the model to be centered based on screen height/width
+	- We'll ignore height values
+	- We'll consider widths[0] to be the width
+	- Since model can be rectangular, we'll compare height with width and take the highest value
+	- Horizontal and vertical distances are distorted in isometric perspective
+		- X is multiplied by about 0.707
+		- Y is multiplied by about 0.5
+	- X * 0.707 * width[0] * POINT_DISTANCE * ZOOM is how much X screen space is taken by the model
+		- Not really since Y (height) also affects it
+	- Y * 0.5 * height * POINT_DISTANCE * ZOOM is how much Y screen space
+	- You have WIN_X and WIN_Y to work with, but 
 
 
 

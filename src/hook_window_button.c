@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 17:10:17 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 17:10:30 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 11:44:36 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,4 +17,3 @@ int	clientmsg_hook(t_fdf *d)
 	exit_prog(d, 0);
 	return (0);
 }
-

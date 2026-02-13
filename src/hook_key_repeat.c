@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 17:47:09 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/07 14:48:24 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 09:37:40 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,26 +20,23 @@
 //	over to the next loop iteration.
 // This should only be useful in case of either very high key repeat frequency
 //	or very high frametime.
-static int	get_repeat_actions(t_fdf *d)
+static void	get_num_presses(t_fdf *d)
 {
-	int	actions;
-
+	d->key.num_presses = 1;
 	if (d->key.repeat.state == REPEAT)
 	{
 		d->key.repeat.time_ratio += (float)ft_time_diff(d->time.current,
 				d->time.last_key_repeat) / KEY_REPEAT_RATE_USEC;
 		d->time.last_key_repeat = d->time.current;
-		actions = (int)d->key.repeat.time_ratio;
-		d->key.repeat.time_ratio -= actions;
-		return (actions);
+		d->key.num_presses = (int)d->key.repeat.time_ratio;
+		d->key.repeat.time_ratio -= d->key.num_presses;
 	}
-	return (0);
 }
 
 // If key is on, execute once, go to repeat
 // If key is repeat, execute however many key repeats were simulated
 // Return value is used to update key repeat state
-static bool	execute_keys(t_fdf *d, int actions)
+static bool	execute_keys(t_fdf *d)
 {
 	bool	any_key_on;
 	int		i;
@@ -51,12 +48,10 @@ static bool	execute_keys(t_fdf *d, int actions)
 		if (d->key.actions[i]
 			&& (d->key.states[i] == ON || d->key.states[i] == REPEAT))
 		{
-			any_key_on = true;
-			if (d->key.states[i] == ON)
-				d->key.actions[i](d, 1);
-			else if (actions)
-				d->key.actions[i](d, actions);
+			if (d->key.states[i] == ON || d->key.repeat.state == REPEAT)
+				d->key.actions[i](d);
 			d->key.states[i] = REPEAT;
+			any_key_on = true;
 		}
 		i++;
 	}
@@ -110,10 +105,9 @@ static void	update_repeat_state(t_fdf *d, bool any_key_on)
 //			the next engine loop iteration
 void	key_states_handler(t_fdf *d)
 {
-	int		actions;
 	bool	any_key_on;
 
-	actions = get_repeat_actions(d);
-	any_key_on = execute_keys(d, actions);
+	get_num_presses(d);
+	any_key_on = execute_keys(d);
 	update_repeat_state(d, any_key_on);
 }

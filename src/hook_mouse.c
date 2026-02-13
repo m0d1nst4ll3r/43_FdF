@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 16:48:23 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/11 19:56:59 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 09:59:56 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@ static void	lmb_handler(int x, int y, t_fdf *d)
 {
 	if (x != d->mouse.pos.x)
 	{
-		move_right(d, d->mouse.pos.x - x);
+		move_x_mouse(d, d->mouse.pos.x - x);
 		d->mouse.pos.x = x;
 	}
 	if (y != d->mouse.pos.y)
 	{
-		move_down(d, d->mouse.pos.y - y);
+		move_y_mouse(d, d->mouse.pos.y - y);
 		d->mouse.pos.y = y;
 	}
 }
@@ -30,12 +30,12 @@ static void	rmb_handler(int x, int y, t_fdf *d)
 {
 	if (x != d->mouse.pos.x)
 	{
-		rotate_z_increase(d, d->mouse.pos.x - x);
+		rotate_y_mouse(d, d->mouse.pos.x - x);
 		d->mouse.pos.x = x;
 	}
 	if (y != d->mouse.pos.y)
 	{
-		rotate_x_increase(d, d->mouse.pos.y - y);
+		rotate_x_mouse(d, d->mouse.pos.y - y);
 		d->mouse.pos.y = y;
 	}
 }
@@ -66,9 +66,9 @@ int	mouse_down_hook(int button, int x, int y, t_fdf *d)
 		d->mouse.rmb_held = true;
 	}
 	else if (button == BTN_MWU)
-		zoom_in_mouse(d, x, y);
+		zoom_in_mouse(d);
 	else if (button == BTN_MWD)
-		zoom_out_mouse(d, x, y);
+		zoom_out_mouse(d);
 	return (0);
 }
 

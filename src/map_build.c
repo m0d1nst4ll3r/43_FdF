@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:48:13 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/07 14:44:17 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 11:43:26 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static int	fill_line(t_map_point *map, char *line)
 		if (!ft_isspace(line[i]))
 		{
 			if (fill_point(map + x, line, &i))
-					return (1);
+				return (1);
 			x++;
 		}
 		else

@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 20:37:32 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/11 19:26:41 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 11:38:31 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,10 @@
 # define KEY_D				'd'
 # define KEY_R				'r'
 # define KEY_F				'f'
+# define KEY_ONE			'1'
+# define KEY_TWO			'2'
+# define KEY_THREE			'3'
+# define KEY_FOUR			'4'
 # define KEY_ESC			65307
 # define KEY_UP				65362
 # define KEY_DOWN			65364
@@ -36,7 +40,6 @@
 # define BTN_RMB			3
 # define BTN_MWU			4
 # define BTN_MWD			5
-
 
 // Event names
 # define KEYPRESS			2

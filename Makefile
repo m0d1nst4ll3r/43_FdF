@@ -6,7 +6,7 @@
 #    By: rpohlen <rpohlen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/20 14:37:51 by rpohlen           #+#    #+#              #
-#    Updated: 2026/02/10 20:50:15 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/13 09:21:36 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,8 +23,12 @@ CFILES				= main.c \
 					  map_valid.c \
 					  interact_height.c \
 					  interact_zoom.c \
-					  interact_rotate.c \
+					  interact_rotate_x.c \
+					  interact_rotate_y.c \
+					  interact_rotate_z.c \
 					  interact_translate.c \
+					  interact_translate_mouse.c \
+					  interact_view.c \
 					  hook.c \
 					  hook_mouse.c \
 					  hook_keyboard.c \

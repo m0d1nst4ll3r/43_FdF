@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/11 21:20:40 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 11:40:51 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,29 +15,29 @@
 
 // Window and drawing constants
 # define WIN_NAME			"fdf"
-# define WIN_X				800
-# define WIN_Y				600
+# define WIN_X				1920
+# define WIN_Y				1080
 # define REFRESH_RATE_USEC	16666
-# define SHOW_FPS			1
-# define POINT_DISTANCE		100
+# define SHOW_FPS			0
+# define POINT_DISTANCE		100000
 
 // Interactivity constants
-# define KEY_REPEAT_DELAY_USEC	250000
+# define KEY_REPEAT_DELAY_USEC	150000
 # define KEY_REPEAT_RATE_USEC	15000
-# define MOVE_SPEED				15
-# define ZOOM_SPEED				0.1
-# define ANGLE_MOVE				0.001
-# define HEIGHT_MOVE			0.1
-# define HEIGHT_MIN				0.2
+# define MOVE_SPEED				5
+# define ZOOM_SPEED				0.0150
+# define ANGLE_MOVE				0.0150
+# define HEIGHT_MOVE			0.0150
+# define HEIGHT_MIN				0.1
 
 // Starting states
 # define DEFAULT_X_OFFSET	500
 # define DEFAULT_Y_OFFSET	500
-# define DEFAULT_HEIGHT_MOD	5
-# define DEFAULT_ZOOM		1
+# define DEFAULT_HEIGHT_MOD	0.1
+# define DEFAULT_ZOOM		0.001
 # define DEFAULT_ANGLE_X	0.61548
-# define DEFAULT_ANGLE_Y	0
-# define DEFAULT_ANGLE_Z	0.785398
+# define DEFAULT_ANGLE_Y	0.52359
+# define DEFAULT_ANGLE_Z	-0.61548
 
 // Map building constants
 # define DEFAULT_COLOR		0xffffff
@@ -77,7 +77,7 @@
 // - Repeat		First movement was executed, now waiting for repeat timer
 // Keys move states downwards. Releasing the key resets it to Off.
 // Repeat timer is handled separately.
-typedef enum	e_key_state
+typedef enum e_key_state
 {
 	OFF,
 	ON,
@@ -87,7 +87,6 @@ typedef enum	e_key_state
 // These enum values are used as indexes into key codes[] and key actions[]
 enum	e_keys
 {
-	SPACE,
 	Q,
 	E,
 	W,
@@ -102,30 +101,35 @@ enum	e_keys
 	RIGHT,
 	LSHIFT,
 	LCTRL,
+	ONE,
+	TWO,
+	THREE,
+	FOUR,
 	KEY_COUNT
 };
 
 // Forward t_fdf declaration for t_key_action
 typedef struct s_fdf	t_fdf;
-typedef void (*t_key_action)(t_fdf *, int);
+typedef void			(*t_key_action)(t_fdf *);
 
 // Points in the map array (read from map file)
 // Their x,y values are inferred from their positions in the array
-typedef struct	s_map_point
+typedef struct s_map_point
 {
 	short	z;
 	int		color;
 }	t_map_point;
 
 // Simple 2D point structure for passing around points in graph functions
-typedef struct	s_point
+typedef struct s_point
 {
 	int	x;
 	int	y;
+	int	z;
 	int	color;
 }	t_point;
 
-typedef struct	s_color
+typedef struct s_color
 {
 	int	r;
 	int	g;
@@ -135,7 +139,7 @@ typedef struct	s_color
 // Used in Bresenham line algorithm
 // Only here to save lines, to be below 26
 // Not used in god struct, but needs t_point
-typedef struct	s_bresenham
+typedef struct s_bresenham
 {
 	t_point	delta;
 	int		step;
@@ -145,7 +149,7 @@ typedef struct	s_bresenham
 }	t_bresenham;
 
 // This chained list contains file line by line (only used in map building)
-typedef struct	s_file_contents
+typedef struct s_file_contents
 {
 	char					*line;
 	struct s_file_contents	*next;
@@ -154,7 +158,7 @@ typedef struct	s_file_contents
 // Mlx img object
 // - bypp	bytes per pixel (bpp / 8), in case compiler does not optimize
 //			the redundant / 8 operation made on each pixel_put
-typedef struct	s_img
+typedef struct s_img
 {
 	void		*ptr;
 	char		*addr;
@@ -221,14 +225,16 @@ typedef struct s_repeat
 }	t_repeat;
 
 // Key bindings and related actions
-// - repeat		all data about key repeat
-// - states		state of key (off, on, repeat)
-// - codes		array of physical key codes
+// - repeat			all data about key repeat
+// - num_presses	how many keys were pressed last
+// - states			state of key (off, on, repeat)
+// - codes			array of physical key codes
 // - actions		corresponding array of actions
 // Used for keyboard interactions
 typedef struct s_key
 {
 	t_repeat		repeat;
+	int				num_presses;
 	t_key_state		states[KEY_COUNT];
 	int				codes[KEY_COUNT];
 	t_key_action	actions[KEY_COUNT];
@@ -254,6 +260,7 @@ typedef struct s_mouse
 // - frame_count		for displaying fps
 // - loop_count			for displaying engine loops per second
 // - img_state			if img needs redrawing or refreshing
+// - img_need_redraw	set to true on all interaction from user
 typedef struct s_time
 {
 	struct timeval	current;
@@ -273,7 +280,7 @@ typedef struct s_time
 // - key	Key data (for key handlers)
 // - mouse	Mouse data (for mouse/pointer handlers)
 // - time	Time values (for syncing and time-sensitive calculations)
-typedef struct	s_fdf
+typedef struct s_fdf
 {
 	t_mlx	mlx;
 	t_file	file;
@@ -329,37 +336,49 @@ int				clientmsg_hook(t_fdf *d);
 
 // INTERACTIVE
 // interact_translate.c
-void			move_right(t_fdf *d, int actions);
-void			move_left(t_fdf *d, int actions);
-void			move_up(t_fdf *d, int actions);
-void			move_down(t_fdf *d, int actions);
+void			move_right(t_fdf *d);
+void			move_left(t_fdf *d);
+void			move_up(t_fdf *d);
+void			move_down(t_fdf *d);
+void			move_x_mouse(t_fdf *d, int x);
+void			move_y_mouse(t_fdf *d, int y);
 // interact_zoom.c
-void			zoom_in(t_fdf *d, int actions);
-void			zoom_out(t_fdf *d, int actions);
-void			zoom_in_mouse(t_fdf *d, int x, int y);
-void			zoom_out_mouse(t_fdf *d, int x, int y);
+void			zoom_in(t_fdf *d);
+void			zoom_out(t_fdf *d);
+void			zoom_in_mouse(t_fdf *d);
+void			zoom_out_mouse(t_fdf *d);
 // interact_rotate.c
-void			rotate_x_increase(t_fdf *d, int actions);
-void			rotate_x_decrease(t_fdf *d, int actions);
-void			rotate_y_increase(t_fdf *d, int actions);
-void			rotate_y_decrease(t_fdf *d, int actions);
-void			rotate_z_increase(t_fdf *d, int actions);
-void			rotate_z_decrease(t_fdf *d, int actions);
+void			rotate_x_increase(t_fdf *d);
+void			rotate_x_decrease(t_fdf *d);
+void			rotate_y_increase(t_fdf *d);
+void			rotate_y_decrease(t_fdf *d);
+void			rotate_z_increase(t_fdf *d);
+void			rotate_z_decrease(t_fdf *d);
+void			rotate_x_mouse(t_fdf *d, int x);
+void			rotate_y_mouse(t_fdf *d, int y);
+void			rotate_z_mouse(t_fdf *d, int z);
 // interact_height.c
-void			shift_up(t_fdf *d, int actions);
-void			shift_down(t_fdf *d, int actions);
+void			shift_up(t_fdf *d);
+void			shift_down(t_fdf *d);
+// interact_view.c
+void			reset_view(t_fdf *d);
+void			ortho_view_1(t_fdf *d);
+void			ortho_view_2(t_fdf *d);
+void			ortho_view_3(t_fdf *d);
 
 //	RENDERING
 // draw.c
 void			reset_image(t_img *img);
 void			draw_image(t_fdf *d);
+// draw_3d.c
+void			set_point(t_fdf *d, int x, int y, t_point *point);
+// draw_line.c
+void			draw_line(t_img *img, t_point p1, t_point p2);
 // draw_color.c
 t_color			decompose_color(int color_int);
 int				recompose_color(t_color color_rgb);
 void			add_colors(t_color *c1, t_color c2);
 void			get_color_step(t_color c1, t_color c2, int step,
-				t_color *color_step);
-// TODO: improve everything, this was done super fast
-// TODO: draw calculates points and lines outside of screen - bad
+					t_color *color_step);
 
 #endif
