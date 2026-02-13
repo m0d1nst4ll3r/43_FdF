@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 12:15:33 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/13 16:58:16 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 19:04:28 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ void	init_zoom(t_fdf *d)
 	float	zoom_x;
 	t_point	corners[4];
 
+	if (!d->map.height)
+		return ;
 	set_point_init(d, d->map.widths[0] - 1, 0, &corners[CTOP]);
 	set_point_init(d, 0, d->map.height - 1, &corners[CBOTTOM]);
 	set_point_init(d, 0, 0, &corners[CLEFT]);

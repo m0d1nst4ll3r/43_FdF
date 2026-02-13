@@ -190,7 +190,7 @@ mlx tutorial - https://harm-smits.github.io/42docs/libs/minilibx/getting_started
 
 x.h file - https://codebrowser.dev/kde/include/X11/X.h.html
 
-regexp - https://regex101.com/
+regexp (for parsing) - https://regex101.com/
 
 Bresenham algorithm (to draw lines between points) - https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 
@@ -199,3 +199,5 @@ Midpoint circle algorithm (to draw circles) - https://en.wikipedia.org/wiki/Midp
 Medium article for some help with 3D math - https://medium.com/@amehri_tarik/fdf-42-a-detailed-walkthrough-7184cca317fc
 
 Some more info on 3D math - https://www.kmjn.org/notes/3d_rendering_intro.html
+
+Info about isometric projection - https://en.wikipedia.org/wiki/Isometric_projection

@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:02:19 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/13 16:52:24 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 19:03:19 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 void	shift_down(t_fdf *d)
 {
+	if (d->state.height_mod <= -HEIGHT_MAX)
+		return ;
 	if (d->state.height_mod <= HEIGHT_MIN
 		&& d->state.height_mod >= -HEIGHT_MIN)
 		d->state.height_mod -= d->key.num_presses * HEIGHT_MOVE * HEIGHT_MIN;
@@ -27,6 +29,8 @@ void	shift_down(t_fdf *d)
 
 void	shift_up(t_fdf *d)
 {
+	if (d->state.height_mod >= HEIGHT_MAX)
+		return ;
 	if (d->state.height_mod <= HEIGHT_MIN
 		&& d->state.height_mod >= -HEIGHT_MIN)
 		d->state.height_mod += d->key.num_presses * HEIGHT_MOVE * HEIGHT_MIN;

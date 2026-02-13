@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/13 16:55:23 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 19:01:33 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # define ANGLE_MOVE				0.0150
 # define HEIGHT_MOVE			0.0150
 # define HEIGHT_MIN				0.1
+# define HEIGHT_MAX				1000
 
 // Starting states
 # define DEFAULT_HEIGHT_MOD	0.1
