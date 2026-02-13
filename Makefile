@@ -6,7 +6,7 @@
 #    By: rpohlen <rpohlen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/20 14:37:51 by rpohlen           #+#    #+#              #
-#    Updated: 2026/02/13 16:57:22 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/13 18:08:49 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,9 +59,13 @@ DEP					= $(OBJ:.o=.d)
 NAME				= fdf
 
 # Libraries
-LIB					= libft/libft.a \
-					  mlx/libmlx_Linux.a
+LIB					= $(LIBFT) \
+					  $(MLX)
 LINK				= -lXext -lX11 -lm
+LIBFT				= libft/libft.a
+MLX					= mlx/libmlx_Linux.a
+LIBFT_REPO			= https://github.com/m0d1nst4ll3r/43_mylibft
+MLX_REPO			= https://github.com/42paris/minilibx-linux
 
 # Compiler settings
 CC					= cc
@@ -78,12 +82,22 @@ all:				$(NAME)
 $(NAME):			$(OBJ) $(LIB)
 					$(CC) $(CFLAGS) $^ $(LINK) -o $@
 
+# Clone lib repos
+mlx:
+					git clone $(MLX_REPO) $@
+
+libft:
+					git clone $(LIBFT_REPO) $@
+
 # Build libraries
-$(LIB):
+$(MLX):				mlx
+					$(MAKE) -C $(@D)
+
+$(LIBFT):			libft
 					$(MAKE) -C $(@D)
 
 # Compile source -> object (auto-create directories)
-$(BUILDDIR)/%.o:	%.c
+$(BUILDDIR)/%.o:	%.c | mlx libft
 					@mkdir -p $(@D)
 					$(CC) $(CFLAGS) -c -o $@ $<
 
