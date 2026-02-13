@@ -10,21 +10,13 @@ This project is about creating a simple wireframe model representation of a 3D l
 ```bash
 git clone https://github.com/m0d1nst4ll3r/43_FdF.git && cd 43_FdF
 ```
-2. Clone mlx
-```bash
-git clone https://github.com/42paris/minilibx-linux.git
-```
-3. Clone libft
-```bash
-git clone https://github.com/m0d1nst4ll3r/43_mylibft.git
-```
-4. Run make
+2. Run make
 ```bash
 make
 ```
-5. Run fdf
+3. Run fdf
 ```bash
-./fdf
+./fdf test_map/t1.fdf
 ```
 
 If make fails, see [minilibx readme](https://github.com/42paris/minilibx-linux/blob/master/README.md) for packages to install.
