@@ -6,7 +6,7 @@
 #    By: rpohlen <rpohlen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/20 14:37:51 by rpohlen           #+#    #+#              #
-#    Updated: 2026/02/13 09:21:36 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/13 14:00:55 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,7 @@ CFILES				= main.c \
 					  init.c \
 					  init_subfuncs.c \
 					  init_mlx.c \
+					  init_win_pos.c \
 					  exit.c \
 					  error.c \
 					  mlx_util.c \
@@ -36,6 +37,8 @@ CFILES				= main.c \
 					  hook_key_repeat.c \
 					  hook_window_button.c \
 					  draw_color.c \
+					  draw_3d.c \
+					  draw_line.c \
 					  draw.c
 SRCDIR				= src
 SRC					= $(addprefix $(SRCDIR)/, $(CFILES))

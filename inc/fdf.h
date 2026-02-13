@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/13 11:40:51 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 16:22:46 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,7 @@
 # define HEIGHT_MIN				0.1
 
 // Starting states
-# define DEFAULT_X_OFFSET	500
-# define DEFAULT_Y_OFFSET	500
 # define DEFAULT_HEIGHT_MOD	0.1
-# define DEFAULT_ZOOM		0.001
 # define DEFAULT_ANGLE_X	0.61548
 # define DEFAULT_ANGLE_Y	0.52359
 # define DEFAULT_ANGLE_Z	-0.61548
@@ -292,7 +289,7 @@ typedef struct s_fdf
 }	t_fdf;
 
 // mlx_util.c
-void			pixel_put(t_img *img, t_point point, int color);
+bool			pixel_put(t_img *img, t_point point, int color);
 
 //	INIT/EXIT/ERROR
 // init.c
@@ -301,6 +298,8 @@ void			init_prog(t_fdf *d, char *filename);
 void			init_key(t_key *key);
 void			init_mouse(t_mouse *mouse);
 bool			init_time(t_time *time);
+// init_win_pos.c
+void			init_win_pos(t_fdf *d);
 // init_mlx.c
 void			init_mlx(t_fdf *d);
 // exit.c
@@ -372,6 +371,7 @@ void			reset_image(t_img *img);
 void			draw_image(t_fdf *d);
 // draw_3d.c
 void			set_point(t_fdf *d, int x, int y, t_point *point);
+void			set_point_init(t_fdf *d, int x, int y, t_point *point);
 // draw_line.c
 void			draw_line(t_img *img, t_point p1, t_point p2);
 // draw_color.c

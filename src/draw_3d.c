@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 11:25:44 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/13 11:42:01 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 16:21:27 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,16 @@ void	set_point(t_fdf *d, int x, int y, t_point *point)
 	transform_rotate_z(point, d->state.angle_z);
 	point->x = point->x * d->state.zoom + d->state.x_offset;
 	point->y = point->y * d->state.zoom + d->state.y_offset;
+}
+
+void	set_point_init(t_fdf *d, int x, int y, t_point *point)
+{
+	point->x = POINT_DISTANCE * x;
+	point->y = POINT_DISTANCE * y;
+	point->z = 0;
+	transform_rotate_x(point, d->state.angle_x);
+	transform_rotate_y(point, d->state.angle_y);
+	transform_rotate_z(point, d->state.angle_z);
+	point->x = point->x;
+	point->y = point->y;
 }

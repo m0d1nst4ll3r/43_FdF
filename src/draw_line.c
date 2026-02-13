@@ -6,29 +6,36 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 11:26:44 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/13 11:30:02 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 14:54:04 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
+
+static void	setup_x(t_bresenham *b, t_point p1, t_point p2)
+{
+	b->delta.x = p2.x - p1.x;
+	b->delta.y = p2.y - p1.y;
+	b->step = 1;
+	if (b->delta.y < 0)
+	{
+		b->step = -1;
+		b->delta.y = -b->delta.y;
+	}
+	b->error_term = -b->delta.x;
+	b->c_i = decompose_color(p1.color);
+	get_color_step(b->c_i, decompose_color(p2.color), b->delta.x, &b->c_step);
+}
 
 // Draw from p1 to p2
 // delta.x > delta.y (shallow slope)
 static void	draw_line_x_dominant(t_img *img, t_point p1, t_point p2)
 {
 	t_bresenham	b;
+	bool		has_drawn;
 
-	b.delta.x = p2.x - p1.x;
-	b.delta.y = p2.y - p1.y;
-	b.step = 1;
-	if (b.delta.y < 0)
-	{
-		b.step = -1;
-		b.delta.y = -b.delta.y;
-	}
-	b.error_term = -b.delta.x;
-	b.c_i = decompose_color(p1.color);
-	get_color_step(b.c_i, decompose_color(p2.color), b.delta.x, &b.c_step);
+	setup_x(&b, p1, p2);
+	has_drawn = false;
 	while (p1.x <= p2.x)
 	{
 		if (b.error_term > 0)
@@ -36,11 +43,29 @@ static void	draw_line_x_dominant(t_img *img, t_point p1, t_point p2)
 			p1.y += b.step;
 			b.error_term -= 2 * b.delta.x;
 		}
-		pixel_put(img, p1, recompose_color(b.c_i));
+		if (pixel_put(img, p1, recompose_color(b.c_i)))
+			has_drawn = true;
+		else if (has_drawn)
+			return ;
 		b.error_term += 2 * b.delta.y;
 		p1.x++;
 		add_colors(&b.c_i, b.c_step);
 	}
+}
+
+static void	setup_y(t_bresenham *b, t_point p1, t_point p2)
+{
+	b->delta.x = p2.x - p1.x;
+	b->delta.y = p2.y - p1.y;
+	b->step = 1;
+	if (b->delta.x < 0)
+	{
+		b->step = -1;
+		b->delta.x = -b->delta.x;
+	}
+	b->error_term = -b->delta.y;
+	b->c_i = decompose_color(p1.color);
+	get_color_step(b->c_i, decompose_color(p2.color), b->delta.y, &b->c_step);
 }
 
 // Draw from p1 to p2
@@ -48,18 +73,10 @@ static void	draw_line_x_dominant(t_img *img, t_point p1, t_point p2)
 static void	draw_line_y_dominant(t_img *img, t_point p1, t_point p2)
 {
 	t_bresenham	b;
+	bool		has_drawn;
 
-	b.delta.x = p2.x - p1.x;
-	b.delta.y = p2.y - p1.y;
-	b.step = 1;
-	if (b.delta.x < 0)
-	{
-		b.step = -1;
-		b.delta.x = -b.delta.x;
-	}
-	b.error_term = -b.delta.y;
-	b.c_i = decompose_color(p1.color);
-	get_color_step(b.c_i, decompose_color(p2.color), b.delta.y, &b.c_step);
+	setup_y(&b, p1, p2);
+	has_drawn = false;
 	while (p1.y <= p2.y)
 	{
 		if (b.error_term > 0)
@@ -67,7 +84,10 @@ static void	draw_line_y_dominant(t_img *img, t_point p1, t_point p2)
 			p1.x += b.step;
 			b.error_term -= 2 * b.delta.y;
 		}
-		pixel_put(img, p1, recompose_color(b.c_i));
+		if (pixel_put(img, p1, recompose_color(b.c_i)))
+			has_drawn = true;
+		else if (has_drawn)
+			return ;
 		b.error_term += 2 * b.delta.x;
 		p1.y++;
 		add_colors(&b.c_i, b.c_step);

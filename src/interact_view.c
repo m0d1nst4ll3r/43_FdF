@@ -6,18 +6,18 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 08:54:27 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/13 11:43:00 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 14:03:06 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-// TODO - figure out init values
 void	reset_view(t_fdf *d)
 {
 	d->state.angle_x = DEFAULT_ANGLE_X;
 	d->state.angle_y = DEFAULT_ANGLE_Y;
 	d->state.angle_z = DEFAULT_ANGLE_Z;
+	init_win_pos(d);
 	d->time.img_need_redraw = true;
 }
 

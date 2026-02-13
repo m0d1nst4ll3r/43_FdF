@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:06 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/06 01:24:21 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 14:00:19 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ int	main(int ac, char **av)
 		return (0);
 	init_prog(&data, av[1]);
 	get_map(&data);
+	init_win_pos(&data);
 	init_mlx(&data);
 	set_hooks(&data);
 	mlx_loop(data.mlx.ptr);

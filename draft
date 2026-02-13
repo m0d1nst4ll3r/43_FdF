@@ -183,20 +183,101 @@ In other words, points 1, 3 and 4 are done. 2 remains, then we're done (almost).
 Note: I can't leave this the way it is, I HAVE to find a solution to stop calculating stuff that's outside the screen. Models turn into a laggy mess very fast when zooming in too much.
 
 2. Fixing default position on screen
-- We want the model to be centered based on screen height/width
-	- We'll ignore height values
-	- We'll consider widths[0] to be the width
-	- Since model can be rectangular, we'll compare height with width and take the highest value
-	- Horizontal and vertical distances are distorted in isometric perspective
-		- X is multiplied by about 0.707
-		- Y is multiplied by about 0.5
-	- X * 0.707 * width[0] * POINT_DISTANCE * ZOOM is how much X screen space is taken by the model
-		- Not really since Y (height) also affects it
-	- Y * 0.5 * height * POINT_DISTANCE * ZOOM is how much Y screen space
-	- You have WIN_X and WIN_Y to work with, but 
+- Get the x distance that model takes (without zoom)
+get x y of last theoretical point (if model is rectangular)
+x will be widths[0], y will be height
+calculate where its screen x, y are with all transforms
+formula should be simpler than all 3 transforms, we ignore z, just want x and y without z
+actually we just want x
+- Get the y distance
+point at 0, widths[0] is at the top, get its y value
+point at height, widths[0] is at the bottom, get its y value
+subtract both, we got y delta
+
+x and y deltas tell us how big the model is
+we want to make em both small enough that neither of them is bigger than 80% of win_x or win_y
+that's for zoom
+
+now for x_offset and y_offset
+knowing zoom and model width/height, we want to center model
+x_offset should be (win_x - model_actual_width_with_zoom) / 2
+y_offset should be (win_y - model_actual_height_with_zoom) / 2
+
+easy enough, lets go
 
 
 
+1.
+x depends on y so I need to know both
+as I said, x is widths[0] and y is height
+need to transform those into a final X using the formulas we got
+X = widths[0] * POINT_DISTANCE * cos(y) * cos(z) - height * POINT_DISTANCE * sin(z)
+this should be the formula for our final X
+zoom = (WIN_X * 0.8) / X
+
+2.
+y depends on x also
+a. x is widths[0] and y is 0
+b. x is widths[0] and y is height
+b - a gives final Y
+point->y = x * cos(y) * sin(z) + y * cos(x) * cos(z)
+Y = height * cos(x) * cos(z)
+Should be the simplified equation
+zoom = (WIN_Y * 0.8) / Y
+
+We have 2 zoom values. The smaller one wins. Use that one, set it for zoom.
+
+
+
+
+
+END SPRINT:
+
+Working on:
+1. Centering
+
+Had a problem. Let's take this slower.
+
+x3 = (y * sin(x) * sin(y) + x * cos(y)) * cos(z) - y * cos(x) * sin(z)
+
+Now for y
+
+y3 = (y * sin(x) * sin(y) + x * cos(y)) * sin(z) + y * cos(x) * cos(z)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2. Not processing points outside of screen (got a strategy for it)
+	- If p1.x and p2.x < 0 or p1.x and p2.x >= WIN_X or p1.y and p1.y < 0 or p1.y and p2.y >= WIN_Y, skip
+	- This saves some lag but not all of it (in case of stupid height values)
+	- I added a condition to bresenham draw to try and avoid lag with stupid height, but it only works if the line starts drawing from the pixel inside of the screen.
+		- The only option to fix this is to draw lines on all 8 octants, and start from wherever, but always start from the point that's closest to the center of the screen
+		- Note that this isn't 100% foolproof, if you try to draw from a pixel that's very far to a pixel that's very far, well, fuck you.
+			- Not gonna try to improve this for now, fuuuuuuuck it.
 
 
 

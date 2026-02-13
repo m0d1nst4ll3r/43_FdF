@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 18:02:53 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/13 11:41:40 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 12:17:38 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,14 @@ static void	init_map(t_map *map)
 	map->widths = NULL;
 }
 
+// We are not setting zoom and offsets, this will be done after building map
+// We need map values to know how to center the wireframe model
 static void	init_state(t_state *state)
 {
-	state->x_offset = DEFAULT_X_OFFSET;
-	state->y_offset = DEFAULT_Y_OFFSET;
-	state->height_mod = DEFAULT_HEIGHT_MOD;
 	state->angle_x = DEFAULT_ANGLE_X;
 	state->angle_y = DEFAULT_ANGLE_Y;
 	state->angle_z = DEFAULT_ANGLE_Z;
-	state->zoom = DEFAULT_ZOOM;
+	state->height_mod = DEFAULT_HEIGHT_MOD;
 }
 
 // Values to init

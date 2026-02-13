@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:05:55 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/13 11:44:41 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 14:35:29 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,20 @@ static void	link_points(t_fdf *d, int x, int y)
 	if (x + 1 < d->map.widths[y])
 	{
 		set_point(d, x + 1, y, &right);
-		draw_line(&d->mlx.img, cur, right);
+		if (!((cur.x < 0 && right.x < 0)
+				|| (cur.x >= WIN_X && right.x >= WIN_X)
+				|| (cur.y < 0 && right.y < 0)
+				|| (cur.y >= WIN_Y && right.y >= WIN_Y)))
+			draw_line(&d->mlx.img, cur, right);
 	}
 	if (y + 1 < d->map.height && x < d->map.widths[y + 1])
 	{
 		set_point(d, x, y + 1, &below);
-		draw_line(&d->mlx.img, cur, below);
+		if (!((cur.x < 0 && below.x < 0)
+				|| (cur.x >= WIN_X && below.x >= WIN_X)
+				|| (cur.y < 0 && below.y < 0)
+				|| (cur.y >= WIN_Y && below.y >= WIN_Y)))
+			draw_line(&d->mlx.img, cur, below);
 	}
 }
 
