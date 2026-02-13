@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:02:19 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/13 14:41:10 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 16:52:24 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,5 +35,4 @@ void	shift_up(t_fdf *d)
 	else
 		d->state.height_mod /= 1 + d->key.num_presses * HEIGHT_MOVE;
 	d->time.img_need_redraw = true;
-	printf("%f\n", d->state.height_mod);
 }

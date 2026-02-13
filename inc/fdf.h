@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/13 16:22:46 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/13 16:55:23 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -299,7 +299,7 @@ void			init_key(t_key *key);
 void			init_mouse(t_mouse *mouse);
 bool			init_time(t_time *time);
 // init_win_pos.c
-void			init_win_pos(t_fdf *d);
+void			init_zoom(t_fdf *d);
 // init_mlx.c
 void			init_mlx(t_fdf *d);
 // exit.c

@@ -6,7 +6,7 @@
 #    By: rpohlen <rpohlen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/20 14:37:51 by rpohlen           #+#    #+#              #
-#    Updated: 2026/02/13 14:00:55 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/13 16:57:22 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ CFILES				= main.c \
 					  init.c \
 					  init_subfuncs.c \
 					  init_mlx.c \
-					  init_win_pos.c \
+					  init_zoom.c \
 					  exit.c \
 					  error.c \
 					  mlx_util.c \
