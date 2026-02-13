@@ -182,6 +182,14 @@ Note that the mlx does not use your gpu, only your cpu. Not sure if there's a wa
 
 ### Thanks for reading and happy coding ^-^
 
+## Possible improvements
+
+- Hiding wires behind "terrain", in a sense
+- Completely fixing lag by avoiding useless calculations
+- Default colors, different palettes, different gradient algorithm to create interesting colors
+- Redo entire data structure/logic to allow parsing and displaying obj files (raw text describing 3d models)
+- Some kind of perspective and "fps camera" to feel like you're moving on the terrain
+
 ## Resources
 
 mlx - https://github.com/42paris/minilibx-linux
