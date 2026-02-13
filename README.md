@@ -18,6 +18,11 @@ make
 ```bash
 ./fdf test_maps/t1.fdf
 ```
+Move around by holding LMB, rotate by holding RMB, zoom with MWU/MWD.
+
+Alternatively, move with arrow keys, rotate with WASD+QE, zoom with LSHIFT/LCTRL.
+
+Reset view with 1/2/3/4, modify height with RF.
 
 If make fails, see [minilibx readme](https://github.com/42paris/minilibx-linux/blob/master/README.md) for packages to install.
 
@@ -187,8 +192,10 @@ Note that the mlx does not use your gpu, only your cpu. Not sure if there's a wa
 - Hiding wires behind "terrain", in a sense
 - Completely fixing lag by avoiding useless calculations
 - Default colors, different palettes, different gradient algorithm to create interesting colors
+- Changing background color
 - Redo entire data structure/logic to allow parsing and displaying obj files (raw text describing 3d models)
 - Some kind of perspective and "fps camera" to feel like you're moving on the terrain
+- Menu on the side with real-time info about rendering and/or help with controls
 
 ## Resources
 
