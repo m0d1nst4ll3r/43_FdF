@@ -16,7 +16,7 @@ make
 ```
 3. Run fdf
 ```bash
-./fdf test_map/t1.fdf
+./fdf test_maps/t1.fdf
 ```
 
 If make fails, see [minilibx readme](https://github.com/42paris/minilibx-linux/blob/master/README.md) for packages to install.
