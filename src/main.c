@@ -6,11 +6,28 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:06 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/13 16:56:24 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/16 16:45:02 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
+
+// Quick & dirty .ber check that I'd forgotten
+static bool	is_ber_file(char *filename)
+{
+	int	i;
+
+	i = 0;
+	while (filename[i])
+		i++;
+	if (i < 5
+		|| filename[i - 1] != 'r'
+		|| filename[i - 2] != 'e'
+		|| filename[i - 3] != 'b'
+		|| filename[i - 4] != '.')
+		return (false);
+	return (true);
+}
 
 //	Program steps
 // 1. Init all values
@@ -34,6 +51,11 @@ int	main(int ac, char **av)
 
 	if (ac != 2)
 		return (0);
+	if (!is_ber_file(av[1]))
+	{
+		ft_printf("fdf: Map needs to be a .ber file\n");
+		return (0);
+	}
 	init_prog(&data, av[1]);
 	get_map(&data);
 	init_zoom(&data);
