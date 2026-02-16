@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 11:25:44 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/13 16:52:18 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/16 14:14:14 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ static void	transform_rotate_z(t_point *point, float angle)
 // POINT_DISTANCE and zoom are used in conjunction to gain precision
 void	set_point(t_fdf *d, int x, int y, t_point *point)
 {
-	point->x = POINT_DISTANCE * (x - d->map.widths[0] / 2);
-	point->y = POINT_DISTANCE * (y - d->map.height / 2);
+	point->x = POINT_DISTANCE * (x - (d->map.widths[0] - 1) / 2.0);
+	point->y = POINT_DISTANCE * (y - (d->map.height - 1) / 2.0);
 	point->z = POINT_DISTANCE * d->map.index[y][x].z * d->state.height_mod;
 	point->color = d->map.index[y][x].color;
 	transform_rotate_x(point, d->state.angle_x);
