@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:26 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/13 19:01:33 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/16 05:53:28 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # define WIN_Y				1080
 # define REFRESH_RATE_USEC	16666
 # define SHOW_FPS			0
-# define POINT_DISTANCE		100000
+# define POINT_DISTANCE		1000
 
 // Interactivity constants
 # define KEY_REPEAT_DELAY_USEC	150000
@@ -29,7 +29,7 @@
 # define ANGLE_MOVE				0.0150
 # define HEIGHT_MOVE			0.0150
 # define HEIGHT_MIN				0.1
-# define HEIGHT_MAX				1000
+# define HEIGHT_MAX				64
 
 // Starting states
 # define DEFAULT_HEIGHT_MOD	0.1

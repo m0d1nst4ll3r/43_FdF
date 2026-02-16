@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/06 17:47:09 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/13 09:37:40 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/16 05:43:39 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static void	get_num_presses(t_fdf *d)
 	d->key.num_presses = 1;
 	if (d->key.repeat.state == REPEAT)
 	{
-		d->key.repeat.time_ratio += (float)ft_time_diff(d->time.current,
+		d->key.repeat.time_ratio += (float)ft_time_sub(d->time.current,
 				d->time.last_key_repeat) / KEY_REPEAT_RATE_USEC;
 		d->time.last_key_repeat = d->time.current;
 		d->key.num_presses = (int)d->key.repeat.time_ratio;
@@ -74,7 +74,7 @@ static void	update_repeat_state(t_fdf *d, bool any_key_on)
 		d->key.repeat.state = ON;
 	}
 	else if (d->key.repeat.state == ON
-		&& ft_time_diff(d->time.current, d->time.last_key_repeat)
+		&& ft_time_sub(d->time.current, d->time.last_key_repeat)
 		> KEY_REPEAT_DELAY_USEC)
 	{
 		d->key.repeat.state = REPEAT;
