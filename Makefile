@@ -6,7 +6,7 @@
 #    By: rpohlen <rpohlen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/12/20 14:37:51 by rpohlen           #+#    #+#              #
-#    Updated: 2026/02/13 18:08:49 by rapohlen         ###   ########.fr        #
+#    Updated: 2026/02/16 06:53:14 by rapohlen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -69,7 +69,7 @@ MLX_REPO			= https://github.com/42paris/minilibx-linux
 
 # Compiler settings
 CC					= cc
-CFLAGS				= -g -Wall -Wextra -Werror -O3 -MMD -MP $(addprefix -I,$(INCDIR))
+CFLAGS				= -g -O3 -MMD -MP $(addprefix -I,$(INCDIR))
 
 # Make settings
 MAKEFLAGS			+= --no-print-directory
@@ -80,24 +80,19 @@ all:				$(NAME)
 
 # Link
 $(NAME):			$(OBJ) $(LIB)
-					$(CC) $(CFLAGS) $^ $(LINK) -o $@
-
-# Clone lib repos
-mlx:
-					git clone $(MLX_REPO) $@
-
-libft:
-					git clone $(LIBFT_REPO) $@
+					$(CC) $^ $(LINK) -o $@
 
 # Build libraries
-$(MLX):				mlx
+$(MLX):
+					@if [ ! -d mlx ]; then git clone $(MLX_REPO) mlx; fi
 					$(MAKE) -C $(@D)
 
-$(LIBFT):			libft
+$(LIBFT):
+					@if [ ! -d libft ]; then git clone $(LIBFT_REPO) libft; fi
 					$(MAKE) -C $(@D)
 
 # Compile source -> object (auto-create directories)
-$(BUILDDIR)/%.o:	%.c | mlx libft
+$(BUILDDIR)/%.o:	%.c | $(LIB)
 					@mkdir -p $(@D)
 					$(CC) $(CFLAGS) -c -o $@ $<
 
