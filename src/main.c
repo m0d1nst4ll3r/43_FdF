@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:06 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/16 16:45:02 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/17 14:49:11 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	main(int ac, char **av)
 		return (0);
 	if (!is_ber_file(av[1]))
 	{
-		ft_printf("fdf: Map needs to be a .ber file\n");
+		ft_printf("fdf: Map needs to be a .fdf file\n");
 		return (0);
 	}
 	init_prog(&data, av[1]);
