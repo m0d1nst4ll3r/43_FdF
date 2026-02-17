@@ -6,7 +6,7 @@
 /*   By: rapohlen <rapohlen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 11:58:06 by rapohlen          #+#    #+#             */
-/*   Updated: 2026/02/17 14:49:11 by rapohlen         ###   ########.fr       */
+/*   Updated: 2026/02/17 18:10:28 by rapohlen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ static bool	is_ber_file(char *filename)
 	while (filename[i])
 		i++;
 	if (i < 5
-		|| filename[i - 1] != 'r'
-		|| filename[i - 2] != 'e'
-		|| filename[i - 3] != 'b'
+		|| filename[i - 1] != 'f'
+		|| filename[i - 2] != 'd'
+		|| filename[i - 3] != 'f'
 		|| filename[i - 4] != '.')
 		return (false);
 	return (true);
